@@ -1,26 +1,76 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --brand: #0f766e;
+  --brand-dark: #115e59;
+  --brand-light: #14b8a6;
+  --sos: #dc2626;
+  --sos-dark: #b91c1c;
+  --amber: #d97706;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-light: var(--brand-light);
+  --color-sos: var(--sos);
+  --color-sos-dark: var(--sos-dark);
+  --color-amber: var(--amber);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  font-size: 16px;
+}
+
+/* Mode Teks Besar (aksesibilitas lansia) */
+html.ruan-large-text {
+  font-size: 20px;
+}
+
+/* Mode Kontras Tinggi (akasesibilitas low-vision) */
+html.ruan-high-contrast {
+  --brand: #ffffff;
+  --brand-dark: #ffffff;
+  --brand-light: #ffffff;
+  filter: contrast(1.15);
+}
+html.ruan-high-contrast body {
+  background: #000000;
+  color: #ffffff;
+}
+html.ruan-high-contrast a,
+html.ruan-high-contrast button {
+  outline-width: 2px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+}
+
+/* Leaflet */
+.leaflet-container {
+  font-family: inherit;
+  z-index: 0;
+}
+.beacon-pulse {
+  animation: beaconPulse 2s ease-out infinite;
+}
+@keyframes beaconPulse {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.sos-route-line {
+  animation: routeDash 1s linear infinite;
+}
+@keyframes routeDash {
+  to { stroke-dashoffset: -20; }
+}
+
+/* Fokus keyboard jelas (a11y) */
+:focus-visible {
+  outline: 3px solid #0f766e;
+  outline-offset: 2px;
 }

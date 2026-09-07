@@ -1,0 +1,99 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isSelf(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    // Whitelist admin — satu-satunya email yang boleh membuat dokumen ber-role admin
+    function isWhitelistedAdminEmail() {
+      return isSignedIn()
+        && request.auth.token.email == 'alfarel3134@gmail.com';
+    }
+    function isBeaconOwner() {
+      return isSignedIn(); // last-writer-win, skala demo
+    }
+
+    // users: profil sendiri; role & city TIDAK bisa ditulis klien (kecuali admin seed via Admin SDK)
+    match /users/{uid} {
+      allow read: if isSignedIn();
+      allow create: if isSelf(uid)
+        && (
+          request.resource.data.role == 'user'
+          || (isWhitelistedAdminEmail() && request.resource.data.role == 'admin')
+        )
+        && request.resource.data.city == 'Bekasi';
+      allow update: if isSelf(uid)
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.city == resource.data.city;
+      allow delete: if false;
+    }
+
+    // presence: 1 dokumen per pengguna aktif; hanya tulis milik sendiri
+    match /presence/{uid} {
+      allow read: if isSignedIn();
+      allow write: if isSelf(uid);
+    }
+
+    // beacons: hasil agregasi klaster — read semua yang login, write yang login
+    match /beacons/{id} {
+      allow read: if isSignedIn();
+      allow create, update: if isBeaconOwner()
+        && request.resource.data.count is int
+        && request.resource.data.count >= 0;
+      allow delete: if isBeaconOwner();
+    }
+
+    // reports: verified tampil publik; pending/rejected hanya admin atau pelapor;
+    // create dipaksa status pending; update status hanya admin
+    match /reports/{id} {
+      allow read: if resource.data.status == 'verified'
+        || isAdmin()
+        || (isSignedIn() && resource.data.reporterUid == request.auth.uid);
+      allow create: if isSignedIn()
+        && request.resource.data.status == 'pending'
+        && request.resource.data.reporterUid == request.auth.uid
+        && request.resource.data.city == 'Bekasi'
+        && request.resource.data.type in ['banjir','kebakaran','kejahatan','jalan_rusak','kehilangan','lainnya']
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.description is string
+        && request.resource.data.description.size() > 0
+        && request.resource.data.description.size() <= 2000;
+      allow update: if isAdmin()
+        || (resource.data.reporterUid == request.auth.uid
+            && request.resource.data.status == resource.data.status);
+      allow delete: if isAdmin();
+    }
+
+    // places & guides: read semua yang login, tulis hanya via Admin SDK (seed)
+    match /places/{id} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+    match /guides/{id} {
+      allow read: if true; // panduan publik, konten aman
+      allow write: if false;
+    }
+
+    // emergencies: create sendiri; read: milik sendiri, admin, atau semua-login (kesadaran demo);
+    // resolve milik sendiri atau admin
+    match /emergencies/{id} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'active';
+      allow update: if isAdmin() || resource.data.uid == request.auth.uid;
+      allow delete: if false;
+    }
+  }
+}

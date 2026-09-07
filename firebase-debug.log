@@ -1,0 +1,68 @@
+[debug] [2026-09-07T07:10:23.418Z] ----------------------------------------------------------------------
+[debug] [2026-09-07T07:10:23.423Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\HP VICTUS\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2026-09-07T07:10:23.423Z] CLI Version:   15.29.0
+[debug] [2026-09-07T07:10:23.423Z] Platform:      win32
+[debug] [2026-09-07T07:10:23.424Z] Node Version:  v24.20.0
+[debug] [2026-09-07T07:10:23.424Z] Detected Agent: unknown
+[debug] [2026-09-07T07:10:23.424Z] Time:          Mon Sep 07 2026 14:10:23 GMT+0700 (Western Indonesia Time)
+[debug] [2026-09-07T07:10:23.424Z] ----------------------------------------------------------------------
+[debug] 
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Data Mull\Lomba\Exasti\Ruanv2\ruan
+
+Before we get started, keep in mind:
+
+  * You are currently outside your home directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] 
+[debug] [2026-09-07T07:16:13.035Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-09-07T07:16:13.036Z] > authorizing via signed-in user (alfarel3131@gmail.com)
+[debug] [2026-09-07T07:16:13.051Z] Checked if tokens are valid: true, expires at: 1788768585199
+[debug] [2026-09-07T07:16:13.051Z] Checked if tokens are valid: true, expires at: 1788768585199
+[debug] [2026-09-07T07:16:13.053Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=100
+[debug] [2026-09-07T07:16:13.852Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2026-09-07T07:16:13.853Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[info] 
+=== Firestore Setup
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2026-09-07T07:16:17.951Z] Checked if tokens are valid: true, expires at: 1788768585199
+[debug] [2026-09-07T07:16:17.952Z] Checked if tokens are valid: true, expires at: 1788768585199
+[debug] [2026-09-07T07:16:17.953Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/ruan-bekasi/services/firestore.googleapis.com [none]
+[debug] [2026-09-07T07:16:17.953Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/ruan-bekasi/services/firestore.googleapis.com  x-goog-user-project=ruan-bekasi
+[debug] [2026-09-07T07:16:19.391Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/ruan-bekasi/services/firestore.googleapis.com 200
+[debug] [2026-09-07T07:16:19.391Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/ruan-bekasi/services/firestore.googleapis.com [omitted]
+[info] +  firestore: required API firestore.googleapis.com is enabled 
+[debug] [2026-09-07T07:16:19.398Z] Checked if tokens are valid: true, expires at: 1788768585199
+[debug] [2026-09-07T07:16:19.398Z] Checked if tokens are valid: true, expires at: 1788768585199
+[debug] [2026-09-07T07:16:19.398Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/ruan-bekasi/databases [none]
+[debug] [2026-09-07T07:16:19.987Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/ruan-bekasi/databases 200
+[debug] [2026-09-07T07:16:19.987Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/ruan-bekasi/databases {"databases":[{"name":"projects/ruan-bekasi/databases/(default)","uid":"4172252e-bf33-449d-ab80-3d9a54ccb294","createTime":"2026-09-07T05:36:22.186320Z","updateTime":"2026-09-07T05:36:22.186320Z","locationId":"asia-southeast2","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2026-09-07T06:16:24.719067Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"zet","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","enhancedTextSearchQueryMode":"ENHANCED_QUERY_MODE_ENABLED","etag":"IM7xw6r225YDMPKmkv/f25YD"}]}
+[info] 
+[info] Firestore Security Rules allow you to define how and when to allow
+[info] requests. You can keep these rules in your project directory
+[info] and publish them with firebase deploy.
+[info] 
+[debug] [2026-09-07T07:16:43.092Z] Checked if tokens are valid: true, expires at: 1788768585199
+[debug] [2026-09-07T07:16:43.092Z] Checked if tokens are valid: true, expires at: 1788768585199
+[debug] [2026-09-07T07:16:43.095Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/ruan-bekasi/releases pageSize=10&pageToken=
+[debug] [2026-09-07T07:16:44.878Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/ruan-bekasi/releases 200
+[debug] [2026-09-07T07:16:44.878Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/ruan-bekasi/releases {"releases":[{"name":"projects/ruan-bekasi/releases/cloud.firestore","rulesetName":"projects/ruan-bekasi/rulesets/5b77938f-5f5f-456b-bcb2-a44d39be1bd5","createTime":"2026-09-07T05:36:26.027131Z","updateTime":"2026-09-07T05:36:26.027131Z"}]}
+[debug] [2026-09-07T07:16:44.879Z] Checked if tokens are valid: true, expires at: 1788768585199
+[debug] [2026-09-07T07:16:44.879Z] Checked if tokens are valid: true, expires at: 1788768585199
+[debug] [2026-09-07T07:16:44.879Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/ruan-bekasi/rulesets/5b77938f-5f5f-456b-bcb2-a44d39be1bd5 [none]
+[debug] [2026-09-07T07:16:45.226Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/ruan-bekasi/rulesets/5b77938f-5f5f-456b-bcb2-a44d39be1bd5 200
+[debug] [2026-09-07T07:16:45.226Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/ruan-bekasi/rulesets/5b77938f-5f5f-456b-bcb2-a44d39be1bd5 [omitted]
+[info] i  Downloaded the existing Firestore Security Rules from the Firebase console 
