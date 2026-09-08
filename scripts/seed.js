@@ -260,6 +260,37 @@ const REPORTS = [
     reporterName: "Warga Bekasi Barat", city: "Bekasi",
     ageHours: 2,
   },
+  // ─── Laporan begal demo (verified, umur < 7 hari) — koridor jalan utama
+  //     supaya algoritma Rute Aman terlihat menghindarinya saat gladi/demo.
+  //     CATATAN: window kejahatan 7 hari — JALANKAN ULANG `npm run seed`
+  //     sebelum hari demo agar umur tetap segar.
+  {
+    type: "kejahatan",
+    title: "Begal motor di Jalan Ahmad Yani dekat Al-Barkah",
+    description:
+      "Pria motor tanpa helm merampas tas pejalan kaki pukul 21:10. Kawasan ini sepi setelah mall tutup — hindari bila sendirian, pilih jalur selatan yang lebih ramai.",
+    lat: -6.2360, lng: 106.9820, status: "verified",
+    reporterName: "Warga Bekasi Timur", city: "Bekasi",
+    ageHours: 5,
+  },
+  {
+    type: "kejahatan",
+    title: "Begal jam malam di Jalan Kartini dekat Metro",
+    description:
+      "Dua pelaku motor menodongkan benda tajam merampas HP warga pulang kerja pukul 22:40. Sering terjadi di sepanjang Kartini utara — disarankan lewat Veterans yang ramai.",
+    lat: -6.2395, lng: 106.9805, status: "verified",
+    reporterName: "Warga Bekasi", city: "Bekasi",
+    ageHours: 9,
+  },
+  {
+    type: "kejahatan",
+    title: "Perampasan di gang menuju Stasiun Bekasi",
+    description:
+      "Gang sempit penghubung menuju stasiun jadi titik rawan begal subuh (04:30-05:30) terhadap pejalan naik kerja pagi. Gunakan jalur utama Stasiun yang terang.",
+    lat: -6.2370, lng: 106.9900, status: "verified",
+    reporterName: "Warga Kranji", city: "Bekasi",
+    ageHours: 30,
+  },
 ];
 
 async function seed() {

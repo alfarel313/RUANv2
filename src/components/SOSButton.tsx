@@ -1,11 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs } from "firebase/firestore";
 import { useAuth } from "@/hooks/useAuth";
 import { usePresenceCtx } from "@/components/PresenceContext";
+import { computeAndSetRoute, useRouteCtx } from "@/components/RouteContext";
 import { db } from "@/lib/firebase";
-import type { EmergencyType, NearestHelp, PlaceData } from "@/lib/types";
+import type {
+  EmergencyType,
+  NearestHelp,
+  PlaceData,
+  ReportData,
+} from "@/lib/types";
 import { haversineM, isOpenNow, walkMinutes, formatDistance } from "@/lib/geo";
 
 const TYPES: { value: EmergencyType; label: string; icon: string }[] = [
@@ -18,10 +24,12 @@ const TYPES: { value: EmergencyType; label: string; icon: string }[] = [
 export default function SOSButton() {
   const { user, userData } = useAuth();
   const { beacons } = usePresenceCtx();
+  const { setRoute, setLoading } = useRouteCtx();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [help, setHelp] = useState<NearestHelp | null>(null);
   const [myPos, setMyPos] = useState<{ lat: number; lng: number } | null>(null);
+  const [routing, setRouting] = useState(false);
 
   if (!user) {
     return (
@@ -49,7 +57,6 @@ export default function SOSButton() {
       setMyPos(pos);
 
       // 2. kandidat bantuan: beacon aktif + tempat yang masih buka
-      const { getDocs } = await import("firebase/firestore");
       const snap = await getDocs(collection(db, "places"));
       const now = new Date();
       const candidates: NearestHelp[] = [];
@@ -117,6 +124,32 @@ export default function SOSButton() {
       }
     } else {
       await navigator.clipboard?.writeText(text);
+    }
+  };
+
+  // Rute aman in-app ke bantuan terdekat (dihitung penuh, bukan sekadar flyTo)
+  const showSafeRoute = async () => {
+    if (!help || !myPos) return;
+    setRouting(true);
+    try {
+      let reports: ReportData[] = [];
+      try {
+        const snap = await getDocs(collection(db, "reports"));
+        reports = snap.docs.map((d) => d.data() as ReportData);
+      } catch {
+        reports = [];
+      }
+      await computeAndSetRoute(
+        myPos,
+        { lat: help.lat, lng: help.lng },
+        help.name,
+        reports,
+        setRoute,
+        setLoading
+      );
+      setOpen(false); // tutup dialog → peta menampilkan rute
+    } finally {
+      setRouting(false);
     }
   };
 
@@ -197,13 +230,22 @@ export default function SOSButton() {
                   </p>
                 </div>
                 {myPos && (
+                  <button
+                    onClick={showSafeRoute}
+                    disabled={routing}
+                    className="mt-3 block min-h-[52px] w-full rounded-xl bg-slate-900 py-3 text-center text-sm font-bold text-white hover:bg-slate-800 disabled:opacity-50"
+                  >
+                    {routing ? "Menghitung rute…" : "🧭 Tampilkan Rute Aman di Peta"}
+                  </button>
+                )}
+                {myPos && (
                   <a
                     href={`https://www.google.com/maps/dir/?api=1&origin=${myPos.lat},${myPos.lng}&destination=${help.lat},${help.lng}&travelmode=walking`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-3 block min-h-[52px] rounded-xl bg-slate-900 py-3 text-center text-sm font-bold text-white hover:bg-slate-800"
+                    className="mt-2 block min-h-[48px] rounded-xl border-2 border-slate-200 py-3 text-center text-xs font-bold text-slate-600 hover:bg-slate-50"
                   >
-                    🧭 Buka Rute di Peta
+                    🗺️ Cadangan: buka di Google Maps
                   </a>
                 )}
                 <a

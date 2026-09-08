@@ -5,8 +5,11 @@ import { collection, getDocs } from "firebase/firestore";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { db } from "@/lib/firebase";
-import type { PlaceData } from "@/lib/types";
+import type { PlaceData, ReportData } from "@/lib/types";
 import { isOpenNow } from "@/lib/geo";
+import { computeAndSetRoute, useRouteCtx } from "@/components/RouteContext";
+import { useLiveLocation } from "@/hooks/useLiveLocation";
+import { BEKASI_CENTER } from "@/lib/batas-bekasi";
 
 const ICONS: Record<string, string> = {
   polisi: "👮",
@@ -46,9 +49,23 @@ function placeIcon(p: PlaceData, open: boolean): L.DivIcon {
   });
 }
 
+async function fetchVerifiedReports(): Promise<ReportData[]> {
+  try {
+    const snap = await getDocs(collection(db, "reports"));
+    const list: ReportData[] = [];
+    snap.forEach((d) => list.push(d.data() as ReportData));
+    return list;
+  } catch {
+    return []; // Firestore error → treat 0 insiden, tidak crash
+  }
+}
+
 export default function PlaceLayer() {
   const [places, setPlaces] = useState<PlaceData[] | null>(null);
   const [now, setNow] = useState(() => new Date());
+  const { pos } = useLiveLocation();
+  const { setRoute, setLoading } = useRouteCtx();
+  const [routingFor, setRoutingFor] = useState<string | null>(null);
 
   useEffect(() => {
     getDocs(collection(db, "places"))
@@ -63,6 +80,24 @@ export default function PlaceLayer() {
   }, []);
 
   if (!places) return null;
+
+  const routeTo = async (p: PlaceData) => {
+    setRoutingFor(p.name);
+    try {
+      const reports = await fetchVerifiedReports();
+      const origin = pos ?? { lat: BEKASI_CENTER[0], lng: BEKASI_CENTER[1] };
+      await computeAndSetRoute(
+        origin,
+        { lat: p.lat, lng: p.lng },
+        p.name,
+        reports,
+        setRoute,
+        setLoading
+      );
+    } finally {
+      setRoutingFor(null);
+    }
+  };
 
   return (
     <>
@@ -97,6 +132,25 @@ export default function PlaceLayer() {
                   <a href={`tel:${p.phone}`}>📞 {p.phone}</a>
                 </>
               )}
+              <br />
+              <button
+                onClick={() => routeTo(p)}
+                disabled={routingFor === p.name}
+                style={{
+                  marginTop: 6,
+                  minHeight: 40,
+                  width: "100%",
+                  borderRadius: 10,
+                  border: "2px solid #0f766e",
+                  background: routingFor === p.name ? "#e6f2f1" : "#0f766e",
+                  color: routingFor === p.name ? "#0f766e" : "#ffffff",
+                  fontWeight: 700,
+                  cursor: routingFor === p.name ? "wait" : "pointer",
+                  fontSize: 13,
+                }}
+              >
+                {routingFor === p.name ? "Menghitung rute…" : "🧭 Rute Aman ke sini"}
+              </button>
             </Popup>
           </Marker>
         );
