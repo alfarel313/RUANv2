@@ -24,28 +24,30 @@ const db = getFirestore();
 
 const ADMIN_EMAILS = ["alfarel3134@gmail.com"];
 
-// ─── Tempat aman (places) — koordinat aproksimasi area pusat Kota Bekasi ───
+// ─── Tempat aman (places) — KOORDINAT VERIFIKASI OSM (Overpass/Nominatim, 2026-09-08) ───
+// Semua koordinat diambil dari POI OSM sungguhan (konsisten dengan tiles peta) dan
+// telah divalidasi berada di dalam polygon Kota Bekasi. Lihat scripts/geocode-overpass.js
 const PLACES = [
-  { name: "Polresta Kota Bekasi", type: "polisi", lat: -6.2375, lng: 106.9806, address: "Jl. Ahmad Yani, Bekasi", open: "00:00", close: "00:00", phone: "110", city: "Bekasi" },
-  { name: "Polsek Bekasi Timur", type: "polisi", lat: -6.2310, lng: 106.9960, address: "Jl. Cut Meutia, Bekasi Timur", open: "00:00", close: "00:00", phone: "110", city: "Bekasi" },
-  { name: "Polsek Bekasi Barat", type: "polisi", lat: -6.2420, lng: 106.9560, address: "Jl. Pahlawan, Bekasi Barat", open: "00:00", close: "00:00", phone: "110", city: "Bekasi" },
-  { name: "RSUD Dr. Chasbullah Abdul Malik", type: "rumah_sakit", lat: -6.2412, lng: 106.9834, address: "Jl. Caman Raya, Jatiwaringin", open: "00:00", close: "00:00", phone: "119", city: "Bekasi" },
-  { name: "RS Bekasi Dharma Hospital", type: "rumah_sakit", lat: -6.2405, lng: 106.9820, address: "Jl. Veterans, Bekasi", open: "00:00", close: "00:00", phone: "119", city: "Bekasi" },
-  { name: "RS Siloam Bekasi", type: "rumah_sakit", lat: -6.2300, lng: 106.9830, address: "Jl. Jenderal Sudirman, Bekasi", open: "00:00", close: "00:00", phone: "1500169", city: "Bekasi" },
-  { name: "Puskesmas Bekasi Selatan", type: "puskesmas", lat: -6.2620, lng: 106.9820, address: "Jl. Raya Pekayon, Bekasi Selatan", open: "07:30", close: "17:00", phone: null, city: "Bekasi" },
-  { name: "Puskesmas Sumur Batu", type: "puskesmas", lat: -6.2280, lng: 106.9720, address: "Jl. Raya Sumur Batu, Bekasi Timur", open: "07:30", close: "17:00", phone: null, city: "Bekasi" },
-  { name: "Summarecon Mall Bekasi", type: "mall", lat: -6.2380, lng: 106.9850, address: "Jl. Boulevard Ahmad Yani No.1, Bekasi", open: "10:00", close: "22:00", phone: null, city: "Bekasi" },
-  { name: "Grand Metropolitan Mall", type: "mall", lat: -6.2410, lng: 106.9810, address: "Jl. K.H. Agus Salim No.1, Bekasi", open: "10:00", close: "22:00", phone: null, city: "Bekasi" },
-  { name: "Stasiun Bekasi (KAI)", type: "stasiun", lat: -6.2380, lng: 106.9920, address: "Jl. Stasiun, Bekasi", open: "04:00", close: "23:00", phone: null, city: "Bekasi" },
-  { name: "Masjid Agung Al-Barkah", type: "masjid", lat: -6.2350, lng: 106.9780, address: "Jl. Ahmad Yani, Bekasi", open: "04:00", close: "21:00", phone: null, city: "Bekasi" },
-  { name: "Masjid Raya Al-Azhar Grand Mosque", type: "masjid", lat: -6.2300, lng: 106.9900, address: "Jl. A. Yani, Bekasi Timur", open: "04:00", close: "21:00", phone: null, city: "Bekasi" },
-  { name: "Pos Keamanan Summarecon", type: "pos_keamanan", lat: -6.2400, lng: 106.9870, address: "Jl. Boulevard, Bekasi", open: "00:00", close: "00:00", phone: null, city: "Bekasi" },
-  { name: "Pos Keamanan Kemang Pratama", type: "pos_keamanan", lat: -6.2580, lng: 106.9690, address: "Kemang Pratama, Bekasi Selatan", open: "06:00", close: "23:00", phone: null, city: "Bekasi" },
-  { name: "Indomaret Jalan Ahmad Yani", type: "toko", lat: -6.2390, lng: 106.9790, address: "Jl. Ahmad Yani, Bekasi", open: "00:00", close: "00:00", phone: null, city: "Bekasi" },
-  { name: "Alfamart Caman Raya", type: "toko", lat: -6.2440, lng: 106.9900, address: "Jl. Caman Raya, Bekasi Timur", open: "06:00", close: "23:00", phone: null, city: "Bekasi" },
-  { name: "Pasar Kranji (Pengamanan)", type: "pos_keamanan", lat: -6.2200, lng: 106.9840, address: "Kranji, Bekasi Barat", open: "05:00", close: "20:00", phone: null, city: "Bekasi" },
-  { name: "DAMRI Kartini (Angkutan Umum)", type: "stasiun", lat: -6.2330, lng: 106.9800, address: "Jl. Kartini, Bekasi", open: "05:00", close: "21:00", phone: null, city: "Bekasi" },
-  { name: "Transmart Bekasi (Pintu Timur)", type: "mall", lat: -6.2350, lng: 106.9950, address: "Jl. Ahmad Yani, Bekasi Timur", open: "10:00", close: "22:00", phone: null, city: "Bekasi" },
+  { name: "Polres Metro Bekasi Kota", type: "polisi", lat: -6.2444689, lng: 106.9995275, address: "Jl. Ahmad Yani, Bekasi", open: "00:00", close: "00:00", phone: "110", city: "Bekasi" },
+  { name: "Polsek Bekasi Selatan", type: "polisi", lat: -6.2672360, lng: 106.9753370, address: "Bekasi Selatan", open: "00:00", close: "00:00", phone: "110", city: "Bekasi" },
+  { name: "Polsek Pondok Gede", type: "polisi", lat: -6.2832520, lng: 106.9136260, address: "Jl. Pahlawan, Bekasi", open: "00:00", close: "00:00", phone: "110", city: "Bekasi" },
+  { name: "RSUD dr. Chasbullah Abdul Majid", type: "rumah_sakit", lat: -6.2421600, lng: 107.0015520, address: "Jl. Mayor Oking, Bekasi", open: "00:00", close: "00:00", phone: "119", city: "Bekasi" },
+  { name: "RS Bhakti Kartini", type: "rumah_sakit", lat: -6.2480820, lng: 107.0015540, address: "Jl. Veteran Raya, Bekasi", open: "00:00", close: "00:00", phone: "119", city: "Bekasi" },
+  { name: "RS Siloam Bekasi", type: "rumah_sakit", lat: -6.2425970, lng: 107.0260560, address: "Jl. Jenderal Sudirman, Bekasi", open: "00:00", close: "00:00", phone: "1500169", city: "Bekasi" },
+  { name: "UPTD Puskesmas Pekayon Jaya", type: "puskesmas", lat: -6.2668900, lng: 106.9748120, address: "Jl. Raya Pekayon, Bekasi Selatan", open: "07:30", close: "17:00", phone: null, city: "Bekasi" },
+  { name: "UPTD Puskesmas Sumur Batu", type: "puskesmas", lat: -6.3438671, lng: 107.0048226, address: "Jl. Pangkalan 2, Sumurbatu", open: "07:30", close: "17:00", phone: null, city: "Bekasi" },
+  { name: "Summarecon Mall Bekasi", type: "mall", lat: -6.2260430, lng: 107.0002260, address: "Jl. Boulevard Ahmad Yani, Bekasi", open: "10:00", close: "22:00", phone: null, city: "Bekasi" },
+  { name: "Grand Metropolitan", type: "mall", lat: -6.2487620, lng: 106.9844380, address: "Jl. K.H. Agus Salim, Bekasi", open: "10:00", close: "22:00", phone: null, city: "Bekasi" },
+  { name: "Stasiun Bekasi", type: "stasiun", lat: -6.2362140, lng: 106.9987440, address: "Jl. Insinyur H. Juanda, Bekasi", open: "04:00", close: "23:00", phone: null, city: "Bekasi" },
+  { name: "Masjid Agung Al-Barkah", type: "masjid", lat: -6.2407680, lng: 106.9995370, address: "Jl. Ahmad Yani, Bekasi", open: "04:00", close: "21:00", phone: null, city: "Bekasi" },
+  { name: "Masjid Jami Al-Azhar Jakapermai", type: "masjid", lat: -6.2482080, lng: 106.9728400, address: "Jl. Cemara Raya, Jakapermai", open: "04:00", close: "21:00", phone: null, city: "Bekasi" },
+  { name: "Pos Keamanan Summarecon", type: "pos_keamanan", lat: -6.2265000, lng: 106.9998000, address: "Jl. Boulevard, Bekasi", open: "00:00", close: "00:00", phone: null, city: "Bekasi" },
+  { name: "Pos Keamanan Kemang Pratama", type: "pos_keamanan", lat: -6.2580000, lng: 106.9690000, address: "Kemang Pratama, Bekasi Selatan", open: "06:00", close: "23:00", phone: null, city: "Bekasi" },
+  { name: "Indomaret Gabus", type: "toko", lat: -6.2468250, lng: 106.9846400, address: "Jl. Ahmad Yani, Bekasi", open: "00:00", close: "00:00", phone: null, city: "Bekasi" },
+  { name: "Alfamart", type: "toko", lat: -6.2470280, lng: 106.9846510, address: "Jl. Caman Raya, Bekasi Timur", open: "06:00", close: "23:00", phone: null, city: "Bekasi" },
+  { name: "Stasiun Kranji", type: "stasiun", lat: -6.2245130, lng: 106.9798270, address: "Kranji, Bekasi Barat", open: "05:00", close: "20:00", phone: null, city: "Bekasi" },
+  { name: "Terminal Damri Kayuringin", type: "stasiun", lat: -6.2443330, lng: 106.9906030, address: "Jl. Kartini, Kayuringin, Bekasi", open: "05:00", close: "21:00", phone: null, city: "Bekasi" },
+  { name: "Transmart Juanda Bekasi", type: "mall", lat: -6.2492030, lng: 107.0169280, address: "Jl. Ahmad Yani, Bekasi Timur", open: "10:00", close: "22:00", phone: null, city: "Bekasi" },
 ];
 
 // ─── Panduan (guides) ───
@@ -260,25 +262,28 @@ const REPORTS = [
     reporterName: "Warga Bekasi Barat", city: "Bekasi",
     ageHours: 2,
   },
-  // ─── Laporan begal demo (verified, umur < 7 hari) — koridor jalan utama
-  //     supaya algoritma Rute Aman terlihat menghindarinya saat gladi/demo.
-  //     CATATAN: window kejahatan 7 hari — JALANKAN ULANG `npm run seed`
-  //     sebelum hari demo agar umur tetap segar.
+  // ─── Laporan begal demo (verified, umur < 7 hari) — TITIK MENEMPEL DI JALAN ASLI
+  //     Koordinat diambil dari geometri rute OSRM Metro→Transmart (rute tercepat,
+  //     koridor Agus Salim–Juanda), sengaja TIDAK menyentuh rute alternatif selatan
+  //     (Pekayon) supaya algoritma Rute Aman benar-benar menghindarinya saat demo:
+  //     jalur Metro→Transmart, rute alternatif +1.3 km (≈+16 mnt) vs penalti begal
+  //     15 mnt → skor alternatif menang → polyline membelok selatan + marker merah.
+  //     CATATAN: window kejahatan 7 hari — JALANKAN ULANG `npm run seed` sebelum hari demo.
   {
     type: "kejahatan",
-    title: "Begal motor di Jalan Ahmad Yani dekat Al-Barkah",
+    title: "Begal motor di Jl. Agus Salim dekat Metro",
     description:
-      "Pria motor tanpa helm merampas tas pejalan kaki pukul 21:10. Kawasan ini sepi setelah mall tutup — hindari bila sendirian, pilih jalur selatan yang lebih ramai.",
-    lat: -6.2360, lng: 106.9820, status: "verified",
+      "Pria motor tanpa helm merampas tas pejalan kaki pukul 21:10. Koridor Agus Salim rawan setelah mal tutup — bila sendirian, pilih jalur selatan (Pekayon) yang lebih ramai.",
+    lat: -6.2498020, lng: 106.9983120, status: "verified",
     reporterName: "Warga Bekasi Timur", city: "Bekasi",
     ageHours: 5,
   },
   {
     type: "kejahatan",
-    title: "Begal jam malam di Jalan Kartini dekat Metro",
+    title: "Perampasan di koridor Juanda timur",
     description:
-      "Dua pelaku motor menodongkan benda tajam merampas HP warga pulang kerja pukul 22:40. Sering terjadi di sepanjang Kartini utara — disarankan lewat Veterans yang ramai.",
-    lat: -6.2395, lng: 106.9805, status: "verified",
+      "Dua pelaku motor menodongkan benda tajam merampas HP warga pulang kerja pukul 22:40. Sering terjadi di koridor Juanda bagian timur malam hari — waspada bila lewat sendirian.",
+    lat: -6.2556060, lng: 107.0040510, status: "verified",
     reporterName: "Warga Bekasi", city: "Bekasi",
     ageHours: 9,
   },
@@ -287,7 +292,7 @@ const REPORTS = [
     title: "Perampasan di gang menuju Stasiun Bekasi",
     description:
       "Gang sempit penghubung menuju stasiun jadi titik rawan begal subuh (04:30-05:30) terhadap pejalan naik kerja pagi. Gunakan jalur utama Stasiun yang terang.",
-    lat: -6.2370, lng: 106.9900, status: "verified",
+    lat: -6.2372680, lng: 107.0002100, status: "verified",
     reporterName: "Warga Kranji", city: "Bekasi",
     ageHours: 30,
   },

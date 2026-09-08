@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePresence } from "@/hooks/usePresence";
 import { PresenceContext } from "@/components/PresenceContext";
 import { RouteProvider } from "@/components/RouteContext";
+import { LiveLocationProvider } from "@/components/LiveLocationContext";
 import CheckInButton from "@/components/CheckInButton";
 import SOSButton from "@/components/SOSButton";
 import LoginGate from "@/components/LoginGate";
@@ -26,8 +27,9 @@ export default function Home() {
 
   return (
     <PresenceContext.Provider value={presence}>
-      <RouteProvider>
-        <main className="relative">
+      <LiveLocationProvider>
+        <RouteProvider>
+          <main className="relative">
           <div className="h-[72dvh] md:h-[78dvh]">
             <LiveMap />
           </div>
@@ -60,8 +62,9 @@ export default function Home() {
           ) : null}
 
           {!user && !loading && <LoginGate />}
-        </main>
-      </RouteProvider>
+          </main>
+        </RouteProvider>
+      </LiveLocationProvider>
     </PresenceContext.Provider>
   );
 }

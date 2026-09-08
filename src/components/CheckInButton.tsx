@@ -50,9 +50,9 @@ export default function CheckInButton() {
           className="mt-1.5 text-center text-xs font-semibold text-white drop-shadow"
           role="status"
         >
-          {activeCount >= 4
+          {activeCount >= 1
             ? `🟢 Beacon aktif — ${activeCount} orang di area Anda`
-            : `Menanti ${4 - activeCount} orang lagi untuk membentuk beacon…`}
+            : `Menanti ${1 - activeCount} orang lagi untuk membentuk beacon…`}
         </p>
       )}
       {error && (

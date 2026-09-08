@@ -1,8 +1,8 @@
 // Geospasial murni — unit-testable tanpa Firebase
 
 export const BEACON_RADIUS_M = 15 // radius penggabungan klaster (±10–15 m)
-export const BEACON_MIN_PEOPLE = 4 // minimal orang membentuk beacon
-export const BEACON_DISSOLVE_BELOW = 3 // ≤3 orang memulai hitungan dissolve
+export const BEACON_MIN_PEOPLE = 1 // MODE DEMO: 1 orang cukup membentuk beacon (aslinya 4 — kembalikan saat produksi)
+export const BEACON_DISSOLVE_BELOW = 1 // MODE DEMO: beacon hilang saat 0 orang tersisa (aslinya 3)
 export const BEACON_DISSOLVE_MS = 2 * 60 * 1000 // 2 menit
 export const PRESENCE_TTL_MS = 60 * 1000 // heartbeat dianggap mati >60 detik
 

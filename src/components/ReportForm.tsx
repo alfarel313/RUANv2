@@ -1,11 +1,27 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useAuth } from "@/hooks/useAuth";
 import { db } from "@/lib/firebase";
 import type { ReportType } from "@/lib/types";
 import { loginGoogle } from "@/lib/firebase";
+import dynamicImport from "next/dynamic";
+
+// Peta (leaflet) WAJIB client-only — ssr:false seperti LiveMap
+const LocationPicker = dynamicImport(
+  () => import("@/components/LocationPicker"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-64 items-center justify-center rounded-xl border-2 border-slate-200 bg-slate-100">
+        <p className="animate-pulse text-sm font-semibold text-slate-500">
+          Memuat peta…
+        </p>
+      </div>
+    ),
+  }
+);
 
 const TYPES: { value: ReportType; label: string; icon: string }[] = [
   { value: "banjir", label: "Banjir", icon: "🌊" },
@@ -34,9 +50,18 @@ export default function ReportForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
+  const [pos, setPos] = useState<{ lat: number; lng: number } | null>(null);
+  const [posSource, setPosSource] = useState<"gps" | "peta">("gps");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // ambil posisi GPS sekali saat form dibuka (bisa diganti via peta)
+  useEffect(() => {
+    getPos().then((p) => {
+      setPos((cur) => (cur ? cur : p));
+    });
+  }, []);
 
   if (!user) {
     return (
@@ -78,13 +103,13 @@ export default function ReportForm() {
     setBusy(true);
     setError(null);
     try {
-      const pos = await getPos();
+      const finalPos = pos ?? (await getPos());
       await addDoc(collection(db, "reports"), {
         type,
         title: title.trim(),
         description: description.trim(),
-        lat: pos.lat,
-        lng: pos.lng,
+        lat: finalPos.lat,
+        lng: finalPos.lng,
         photoURL: photo,
         status: "pending",
         reporterUid: user.uid,
@@ -99,6 +124,7 @@ export default function ReportForm() {
       setTitle("");
       setDescription("");
       setPhoto(null);
+      setPosSource("gps");
     } catch {
       setError("Gagal mengirim laporan. Periksa koneksi lalu coba lagi.");
     } finally {
@@ -214,6 +240,26 @@ export default function ReportForm() {
             src={photo}
             alt="Pratinjau foto laporan"
             className="max-h-40 rounded-xl border border-slate-200"
+          />
+        </div>
+      )}
+
+      <label className="mt-4 block text-sm font-bold text-slate-800">
+        5. Lokasi kejadian
+      </label>
+      <p className="mt-1 text-xs font-semibold text-slate-600">
+        {posSource === "gps"
+          ? "📍 Menggunakan posisi GPS Anda — bisa diganti dengan menandai peta."
+          : "📌 Menggunakan penanda yang Anda pilih di peta."}
+      </p>
+      {pos && (
+        <div className="mt-2">
+          <LocationPicker
+            value={pos}
+            onChange={(v) => {
+              setPos(v);
+              setPosSource("peta");
+            }}
           />
         </div>
       )}

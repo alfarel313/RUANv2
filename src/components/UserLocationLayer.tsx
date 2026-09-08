@@ -1,16 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CircleMarker, Circle, useMap } from "react-leaflet";
-import { useLiveLocation } from "@/hooks/useLiveLocation";
+import { useLiveLocationCtx } from "@/components/LiveLocationContext";
 
-/** Pan mengikuti marker user saat follow aktif; toggle via kartu aksi peta */
-function FollowUser({ pos, follow }: { pos: { lat: number; lng: number } | null; follow: boolean }) {
+/**
+ * Follow pintar: pan mengikuti HANYA bila peta sedang idle (tidak digeser/diketuk user).
+ * Interaksi user apa pun (dragstart/click) mematikan follow otomatis —
+ * mencegah peta "melompat balik ke titik saya" saat user menekan tombol/marker.
+ */
+function FollowUser({ pos, follow, onUserInteract }: { pos: { lat: number; lng: number } | null; follow: boolean; onUserInteract: () => void }) {
   const map = useMap();
+  const idleRef = useRef(true);
+
   useEffect(() => {
-    if (!follow || !pos) return;
+    const stop = () => {
+      idleRef.current = false;
+      onUserInteract();
+    };
+    map.on("dragstart", stop);
+    map.on("zoomstart", stop);
+    return () => {
+      map.off("dragstart", stop);
+      map.off("zoomstart", stop);
+    };
+  }, [map, onUserInteract]);
+
+  useEffect(() => {
+    if (!follow || !pos || !idleRef.current) return;
     map.panTo([pos.lat, pos.lng], { animate: true });
   }, [pos, follow, map]);
+
   return null;
 }
 
@@ -19,14 +39,8 @@ function FollowUser({ pos, follow }: { pos: { lat: number; lng: number } | null;
  * Hook aktif otomatis di-mount; auto-stop 30 menit dari hook (hemat baterai).
  */
 export default function UserLocationLayer() {
-  const { pos, accuracy, active, start, error } = useLiveLocation();
-  const [follow] = useState(true);
-
-  // mulai watch saat layer mount (sekali)
-  useEffect(() => {
-    start();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { pos, accuracy, active, error } = useLiveLocationCtx();
+  const [follow, setFollow] = useState(true);
 
   if (error && !pos) return null;
   if (!pos || !active) return null;
@@ -58,7 +72,11 @@ export default function UserLocationLayer() {
         }}
         aria-label="Posisi Anda sekarang"
       />
-      <FollowUser pos={pos} follow={follow} />
+      <FollowUser
+        pos={pos}
+        follow={follow}
+        onUserInteract={() => setFollow(false)}
+      />
     </>
   );
 }

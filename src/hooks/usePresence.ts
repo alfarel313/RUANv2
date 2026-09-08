@@ -53,7 +53,8 @@ function beaconIdFor(lat: number, lng: number): string {
 
 /**
  * Check-in + heartbeat + pemeliharaan beacon oleh semua klien aktif (last-writer-win).
- * Kontrak (SPEC.md): ≥4 orang ≤15m → beacon; ≤3 orang selama 2 menit → hilang.
+ * MODE DEMO (lihat geo.ts): 1 orang cukup membentuk beacon; beacon hilang saat 0 orang
+ * selama BEACON_DISSOLVE_MS. Kontrak produksi (SPEC.md): ≥4 orang ≤15m; ≤3 org 2 menit → hilang.
  */
 export function usePresence(): UsePresenceResult {
   const { user } = useAuth();
@@ -135,7 +136,7 @@ export function usePresence(): UsePresenceResult {
           return;
         }
         const b = d.data() as BeaconData & { lowSince?: number | null };
-        // beacon tak punya klaster ≥4 lagi: tandai lowSince bila count rendah / kosong
+        // beacon tak punya klaster valid lagi: mulai hitungan dissolve bila 0 orang tersisa
         const countNow = b.count ?? 0;
         if (countNow > BEACON_DISSOLVE_BELOW) {
           lowSinceRef.current.delete(id);

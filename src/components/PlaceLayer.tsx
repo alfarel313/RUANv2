@@ -8,8 +8,7 @@ import { db } from "@/lib/firebase";
 import type { PlaceData, ReportData } from "@/lib/types";
 import { isOpenNow } from "@/lib/geo";
 import { computeAndSetRoute, useRouteCtx } from "@/components/RouteContext";
-import { useLiveLocation } from "@/hooks/useLiveLocation";
-import { BEKASI_CENTER } from "@/lib/batas-bekasi";
+import { useLiveLocationCtx } from "@/components/LiveLocationContext";
 
 const ICONS: Record<string, string> = {
   polisi: "👮",
@@ -63,7 +62,8 @@ async function fetchVerifiedReports(): Promise<ReportData[]> {
 export default function PlaceLayer() {
   const [places, setPlaces] = useState<PlaceData[] | null>(null);
   const [now, setNow] = useState(() => new Date());
-  const { pos } = useLiveLocation();
+  const [noLocation, setNoLocation] = useState(false);
+  const { pos } = useLiveLocationCtx();
   const { setRoute, setLoading } = useRouteCtx();
   const [routingFor, setRoutingFor] = useState<string | null>(null);
 
@@ -82,12 +82,16 @@ export default function PlaceLayer() {
   if (!places) return null;
 
   const routeTo = async (p: PlaceData) => {
+    if (!pos) {
+      setNoLocation(true); // jujur: tanpa titik awal, jangan karang rute dari pusat kota
+      return;
+    }
+    setNoLocation(false);
     setRoutingFor(p.name);
     try {
       const reports = await fetchVerifiedReports();
-      const origin = pos ?? { lat: BEKASI_CENTER[0], lng: BEKASI_CENTER[1] };
       await computeAndSetRoute(
-        origin,
+        pos,
         { lat: p.lat, lng: p.lng },
         p.name,
         reports,
@@ -133,6 +137,21 @@ export default function PlaceLayer() {
                 </>
               )}
               <br />
+              {noLocation && (
+                <span
+                  role="alert"
+                  style={{
+                    display: "block",
+                    marginTop: 6,
+                    color: "#b91c1c",
+                    fontWeight: 700,
+                    fontSize: 12,
+                  }}
+                >
+                  ⚠️ Lokasi Anda belum terdeteksi — izinkan akses lokasi lalu
+                  coba lagi.
+                </span>
+              )}
               <button
                 onClick={() => routeTo(p)}
                 disabled={routingFor === p.name}

@@ -1,34 +1,27 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
-import { Polyline, CircleMarker, Popup, useMapEvents } from "react-leaflet";
+import { Polyline, CircleMarker, Popup } from "react-leaflet";
 import { useRouteCtx } from "@/components/RouteContext";
 import { REPORT_LABELS } from "@/lib/routing";
 
-/** flyTo rute saat rute baru diset (sekali per rute) */
+/**
+ * flyTo bounds HANYA saat rute benar-benar baru (identitas objek result berubah),
+ * bukan saat toggleCompare — mencegah peta melompat saat menekan tombol bandingkan.
+ */
 function FlyToRoute() {
   const map = useMap();
   const { route } = useRouteCtx();
+  const lastResultRef = useRef<unknown>(null);
   useEffect(() => {
     if (!route) return;
+    if (lastResultRef.current === route.result) return; // toggle bandingkan — jangan fly
+    lastResultRef.current = route.result;
     const bounds = L.latLngBounds(route.result.chosen.coords.map((c) => L.latLng(c[0], c[1])));
     map.flyToBounds(bounds, { padding: [48, 96], maxZoom: 16, duration: 0.8 });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [route]);
-  return null;
-}
-
-/** Tutup popup (mis. tempat) supaya kartu rute terlihat jelas saat rute tampil */
-function ClosePopups() {
-  const map = useMap();
-  const { route } = useRouteCtx();
-  useMapEvents({
-    popupopen: () => {
-      if (route) map.closePopup();
-    },
-  });
+  }, [route, map]);
   return null;
 }
 
@@ -109,7 +102,6 @@ export default function RouteLayer() {
         </CircleMarker>
       ))}
       <FlyToRoute />
-      <ClosePopups />
     </>
   );
 }

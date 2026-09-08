@@ -5,6 +5,7 @@ import { addDoc, collection, getDocs } from "firebase/firestore";
 import { useAuth } from "@/hooks/useAuth";
 import { usePresenceCtx } from "@/components/PresenceContext";
 import { computeAndSetRoute, useRouteCtx } from "@/components/RouteContext";
+import { useLiveLocationCtx } from "@/components/LiveLocationContext";
 import { db } from "@/lib/firebase";
 import type {
   EmergencyType,
@@ -25,11 +26,13 @@ export default function SOSButton() {
   const { user, userData } = useAuth();
   const { beacons } = usePresenceCtx();
   const { setRoute, setLoading } = useRouteCtx();
+  const { pos: livePos } = useLiveLocationCtx();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [help, setHelp] = useState<NearestHelp | null>(null);
   const [myPos, setMyPos] = useState<{ lat: number; lng: number } | null>(null);
   const [routing, setRouting] = useState(false);
+  const [locError, setLocError] = useState(false);
 
   if (!user) {
     return (
@@ -46,14 +49,22 @@ export default function SOSButton() {
   const pick = async (type: EmergencyType) => {
     setBusy(true);
     try {
-      // 1. posisi
-      const pos = await new Promise<{ lat: number; lng: number }>((resolve) => {
-        navigator.geolocation?.getCurrentPosition(
-          (p) => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
-          () => resolve({ lat: -6.2382, lng: 106.9756 }),
-          { enableHighAccuracy: true, timeout: 8000 }
-        );
-      });
+      // 1. posisi — dari live watcher; bila belum ada, ambil sekali (TANPA fallback koordinat palsu)
+      const pos =
+        livePos ??
+        (await new Promise<{ lat: number; lng: number } | null>((resolve) => {
+          if (!navigator.geolocation) return resolve(null);
+          navigator.geolocation.getCurrentPosition(
+            (p) => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
+            () => resolve(null),
+            { enableHighAccuracy: true, timeout: 8000 }
+          );
+        }));
+      if (!pos) {
+        setLocError(true);
+        return;
+      }
+      setLocError(false);
       setMyPos(pos);
 
       // 2. kandidat bantuan: beacon aktif + tempat yang masih buka
@@ -157,6 +168,7 @@ export default function SOSButton() {
     setOpen(false);
     setHelp(null);
     setMyPos(null);
+    setLocError(false);
   };
 
   return (
@@ -201,6 +213,16 @@ export default function SOSButton() {
                     </button>
                   ))}
                 </div>
+                {locError && (
+                  <p
+                    role="alert"
+                    className="mt-3 rounded-xl bg-sos/10 px-3 py-2 text-sm font-bold text-sos"
+                  >
+                    ⚠️ Lokasi Anda tidak terdeteksi. Izinkan akses lokasi di
+                    browser (ikon 🔒 di address bar) lalu coba lagi — bantuan
+                    terdekat dihitung dari posisi Anda.
+                  </p>
+                )}
                 <button
                   onClick={close}
                   className="mt-3 min-h-[48px] w-full rounded-xl border-2 border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50"
