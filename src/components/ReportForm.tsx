@@ -32,13 +32,12 @@ const TYPES: { value: ReportType; label: string; icon: string }[] = [
   { value: "lainnya", label: "Lainnya", icon: "📋" },
 ];
 
-async function getPos(): Promise<{ lat: number; lng: number }> {
+async function getPos(): Promise<{ lat: number; lng: number } | null> {
+  if (typeof navigator === "undefined" || !navigator.geolocation) return null;
   return new Promise((resolve) => {
-    if (!navigator.geolocation)
-      return resolve({ lat: -6.2382, lng: 106.9756 });
     navigator.geolocation.getCurrentPosition(
       (p) => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
-      () => resolve({ lat: -6.2382, lng: 106.9756 }),
+      () => resolve(null), // jujur: tanpa koordinat palsu — UI yang menangani
       { enableHighAccuracy: true, timeout: 8000 }
     );
   });
@@ -52,14 +51,23 @@ export default function ReportForm() {
   const [photo, setPhoto] = useState<string | null>(null);
   const [pos, setPos] = useState<{ lat: number; lng: number } | null>(null);
   const [posSource, setPosSource] = useState<"gps" | "peta">("gps");
+  const [gpsFailed, setGpsFailed] = useState(false);
+  const [pinMoved, setPinMoved] = useState(false); // pin pernah digeser/ketuk user?
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // ambil posisi GPS sekali saat form dibuka (bisa diganti via peta)
+  // Ambil posisi GPS sekali saat form dibuka. Gagal → jujur: tandai via peta
+  // (pin default pusat Bekasi, label "peta"), BUKAN koordinat palsu senyap.
   useEffect(() => {
     getPos().then((p) => {
-      setPos((cur) => (cur ? cur : p));
+      if (p) {
+        setPos((cur) => (cur ? cur : p));
+      } else {
+        setGpsFailed(true);
+        setPosSource("peta");
+        setPos({ lat: -6.2382, lng: 106.9756 }); // pusat peta — WAJIB digeser user
+      }
     });
   }, []);
 
@@ -100,16 +108,28 @@ export default function ReportForm() {
       setError("Judul dan deskripsi wajib diisi.");
       return;
     }
+    if (!pos) {
+      setError("Lokasi belum terdeteksi — tunggu GPS atau tandai lokasi di peta.");
+      return;
+    }
+    if (gpsFailed && posSource !== "peta") {
+      // mustahil lewat UI (label sudah "peta" saat gagal), tapi jaga-jaga
+      setError("GPS tidak tersedia — tandai lokasi kejadian di peta dulu.");
+      return;
+    }
+    if (gpsFailed && !pinMoved) {
+      setError("Tandai lokasi kejadian di peta dulu — pin masih di posisi awal.");
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
-      const finalPos = pos ?? (await getPos());
       await addDoc(collection(db, "reports"), {
         type,
         title: title.trim(),
         description: description.trim(),
-        lat: finalPos.lat,
-        lng: finalPos.lng,
+        lat: pos.lat,
+        lng: pos.lng,
         photoURL: photo,
         status: "pending",
         reporterUid: user.uid,
@@ -125,6 +145,8 @@ export default function ReportForm() {
       setDescription("");
       setPhoto(null);
       setPosSource("gps");
+      setGpsFailed(false);
+      setPinMoved(false);
     } catch {
       setError("Gagal mengirim laporan. Periksa koneksi lalu coba lagi.");
     } finally {
@@ -247,10 +269,15 @@ export default function ReportForm() {
       <label className="mt-4 block text-sm font-bold text-slate-800">
         5. Lokasi kejadian
       </label>
-      <p className="mt-1 text-xs font-semibold text-slate-600">
-        {posSource === "gps"
-          ? "📍 Menggunakan posisi GPS Anda — bisa diganti dengan menandai peta."
-          : "📌 Menggunakan penanda yang Anda pilih di peta."}
+      <p
+        className={`mt-1 text-xs font-semibold ${gpsFailed ? "text-sos" : "text-slate-600"}`}
+        role={gpsFailed ? "alert" : undefined}
+      >
+        {gpsFailed
+          ? "⚠️ GPS tidak terdeteksi — geser pin 📌 di peta ke lokasi kejadian (wajib sebelum kirim)."
+          : posSource === "gps"
+            ? "📍 Menggunakan posisi GPS Anda — bisa diganti dengan menandai peta."
+            : "📌 Menggunakan penanda yang Anda pilih di peta."}
       </p>
       {pos && (
         <div className="mt-2">
@@ -259,6 +286,7 @@ export default function ReportForm() {
             onChange={(v) => {
               setPos(v);
               setPosSource("peta");
+              setPinMoved(true);
             }}
           />
         </div>

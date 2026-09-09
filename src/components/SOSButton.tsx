@@ -7,11 +7,11 @@ import { usePresenceCtx } from "@/components/PresenceContext";
 import { computeAndSetRoute, useRouteCtx } from "@/components/RouteContext";
 import { useLiveLocationCtx } from "@/components/LiveLocationContext";
 import { db } from "@/lib/firebase";
+import { fetchAllReports } from "@/lib/reports";
 import type {
   EmergencyType,
   NearestHelp,
   PlaceData,
-  ReportData,
 } from "@/lib/types";
 import { haversineM, isOpenNow, walkMinutes, formatDistance } from "@/lib/geo";
 
@@ -143,13 +143,7 @@ export default function SOSButton() {
     if (!help || !myPos) return;
     setRouting(true);
     try {
-      let reports: ReportData[] = [];
-      try {
-        const snap = await getDocs(collection(db, "reports"));
-        reports = snap.docs.map((d) => d.data() as ReportData);
-      } catch {
-        reports = [];
-      }
+      const reports = await fetchAllReports();
       await computeAndSetRoute(
         myPos,
         { lat: help.lat, lng: help.lng },

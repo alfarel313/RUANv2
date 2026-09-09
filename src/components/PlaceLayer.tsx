@@ -5,8 +5,9 @@ import { collection, getDocs } from "firebase/firestore";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { db } from "@/lib/firebase";
-import type { PlaceData, ReportData } from "@/lib/types";
+import type { PlaceData } from "@/lib/types";
 import { isOpenNow } from "@/lib/geo";
+import { fetchAllReports } from "@/lib/reports";
 import { computeAndSetRoute, useRouteCtx } from "@/components/RouteContext";
 import { useLiveLocationCtx } from "@/components/LiveLocationContext";
 
@@ -48,17 +49,6 @@ function placeIcon(p: PlaceData, open: boolean): L.DivIcon {
   });
 }
 
-async function fetchVerifiedReports(): Promise<ReportData[]> {
-  try {
-    const snap = await getDocs(collection(db, "reports"));
-    const list: ReportData[] = [];
-    snap.forEach((d) => list.push(d.data() as ReportData));
-    return list;
-  } catch {
-    return []; // Firestore error → treat 0 insiden, tidak crash
-  }
-}
-
 export default function PlaceLayer() {
   const [places, setPlaces] = useState<PlaceData[] | null>(null);
   const [now, setNow] = useState(() => new Date());
@@ -89,7 +79,7 @@ export default function PlaceLayer() {
     setNoLocation(false);
     setRoutingFor(p.name);
     try {
-      const reports = await fetchVerifiedReports();
+      const reports = await fetchAllReports();
       await computeAndSetRoute(
         pos,
         { lat: p.lat, lng: p.lng },
