@@ -312,7 +312,12 @@ async function seed() {
       if (d.data().seeded === true) batch.delete(d.ref);
     });
   }
-  PLACES.forEach((p) => {
+  // 20 tempat kurasi + 121 POI OSM (fetch-places-osm.js) — digabung, seeded:true
+  const osmPlaces = fs.existsSync(path.join(__dirname, "places-osm.json"))
+    ? JSON.parse(fs.readFileSync(path.join(__dirname, "places-osm.json"), "utf8"))
+    : [];
+  const allPlaces = [...PLACES, ...osmPlaces];
+  allPlaces.forEach((p) => {
     batch.set(placesCol.doc(), { ...p, seeded: true });
   });
 
@@ -343,7 +348,7 @@ async function seed() {
 
   await batch.commit();
   console.log(
-    `✅ Seed selesai: ${PLACES.length} places, ${GUIDES.length} guides, ${REPORTS.length} reports`
+    `✅ Seed selesai: ${allPlaces.length} places (20 kurasi + ${osmPlaces.length} OSM), ${GUIDES.length} guides, ${REPORTS.length} reports`
   );
 
   // naikkan role admin berdasarkan email whitelist

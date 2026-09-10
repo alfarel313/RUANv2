@@ -41,3 +41,18 @@
  GET / 200 in 41ms (next.js: 11ms, application-code: 30ms)
 ✓ Compiled in 354ms
 ✓ Compiled in 144ms
+ GET / 200 in 118ms (next.js: 19ms, application-code: 99ms)
+ GET /lapor 200 in 172ms (next.js: 16ms, application-code: 156ms)
+ GET / 200 in 121ms (next.js: 50ms, application-code: 71ms)
+ GET / 200 in 87ms (next.js: 13ms, application-code: 74ms)
+ GET /panduan 200 in 166ms (next.js: 22ms, application-code: 144ms)
+ GET / 200 in 107ms (next.js: 12ms, application-code: 94ms)
+ GET / 200 in 100ms (next.js: 16ms, application-code: 83ms)
+ GET / 200 in 83ms (next.js: 10ms, application-code: 73ms)
+ GET /admin 200 in 144ms (next.js: 54ms, application-code: 90ms)
+ GET /akun 200 in 98ms (next.js: 38ms, application-code: 60ms)
+ GET /panduan 200 in 58ms (next.js: 14ms, application-code: 44ms)
+ GET /lapor 200 in 70ms (next.js: 38ms, application-code: 32ms)
+ GET /bahaya 200 in 91ms (next.js: 36ms, application-code: 55ms)
+ GET / 200 in 46ms (next.js: 11ms, application-code: 34ms)
+ GET / 200 in 101ms (next.js: 13ms, application-code: 88ms)

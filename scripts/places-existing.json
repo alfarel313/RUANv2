@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Polres Metro Bekasi Kota",
+    "lat": -6.2444689,
+    "lng": 106.9995275
+  },
+  {
+    "name": "Polsek Bekasi Selatan",
+    "lat": -6.267236,
+    "lng": 106.975337
+  },
+  {
+    "name": "Polsek Pondok Gede",
+    "lat": -6.283252,
+    "lng": 106.913626
+  },
+  {
+    "name": "RSUD dr. Chasbullah Abdul Majid",
+    "lat": -6.24216,
+    "lng": 107.001552
+  },
+  {
+    "name": "RS Bhakti Kartini",
+    "lat": -6.248082,
+    "lng": 107.001554
+  },
+  {
+    "name": "RS Siloam Bekasi",
+    "lat": -6.242597,
+    "lng": 107.026056
+  },
+  {
+    "name": "UPTD Puskesmas Pekayon Jaya",
+    "lat": -6.26689,
+    "lng": 106.974812
+  },
+  {
+    "name": "UPTD Puskesmas Sumur Batu",
+    "lat": -6.3438671,
+    "lng": 107.0048226
+  },
+  {
+    "name": "Summarecon Mall Bekasi",
+    "lat": -6.226043,
+    "lng": 107.000226
+  },
+  {
+    "name": "Grand Metropolitan",
+    "lat": -6.248762,
+    "lng": 106.984438
+  },
+  {
+    "name": "Stasiun Bekasi",
+    "lat": -6.236214,
+    "lng": 106.998744
+  },
+  {
+    "name": "Masjid Agung Al-Barkah",
+    "lat": -6.240768,
+    "lng": 106.999537
+  },
+  {
+    "name": "Masjid Jami Al-Azhar Jakapermai",
+    "lat": -6.248208,
+    "lng": 106.97284
+  },
+  {
+    "name": "Pos Keamanan Summarecon",
+    "lat": -6.2265,
+    "lng": 106.9998
+  },
+  {
+    "name": "Pos Keamanan Kemang Pratama",
+    "lat": -6.258,
+    "lng": 106.969
+  },
+  {
+    "name": "Indomaret Gabus",
+    "lat": -6.246825,
+    "lng": 106.98464
+  },
+  {
+    "name": "Alfamart",
+    "lat": -6.247028,
+    "lng": 106.984651
+  },
+  {
+    "name": "Stasiun Kranji",
+    "lat": -6.224513,
+    "lng": 106.979827
+  },
+  {
+    "name": "Terminal Damri Kayuringin",
+    "lat": -6.244333,
+    "lng": 106.990603
+  },
+  {
+    "name": "Transmart Juanda Bekasi",
+    "lat": -6.249203,
+    "lng": 107.016928
+  }
+]
