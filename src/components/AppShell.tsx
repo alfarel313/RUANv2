@@ -7,11 +7,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { logout } from "@/lib/firebase";
 
 const NAV = [
-  { href: "/", label: "Peta", icon: "🗺️" },
-  { href: "/bahaya", label: "Info Bahaya", icon: "⚠️" },
-  { href: "/lapor", label: "Lapor", icon: "📢" },
-  { href: "/panduan", label: "Panduan", icon: "🛡️" },
-  { href: "/akun", label: "Akun", icon: "👤" },
+  { href: "/", label: "Peta", short: "Peta", icon: "🗺️" },
+  { href: "/bahaya", label: "Info Bahaya", short: "Bahaya", icon: "⚠️" },
+  { href: "/lapor", label: "Lapor", short: "Lapor", icon: "📢" },
+  { href: "/panduan", label: "Panduan", short: "Panduan", icon: "🛡️" },
+  { href: "/akun", label: "Akun", short: "Akun", icon: "👤" },
 ];
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -120,7 +120,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         aria-label="Navigasi bawah"
         className="sticky bottom-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur md:hidden"
       >
-        <ul className="grid grid-cols-5">
+        <ul className={userData?.role === "admin" ? "grid grid-cols-6" : "grid grid-cols-5"}>
           {NAV.map((n) => (
             <li key={n.href}>
               <Link
@@ -133,10 +133,26 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 <span aria-hidden="true" className="text-lg leading-none">
                   {n.icon}
                 </span>
-                {n.label}
+                {n.short}
               </Link>
             </li>
           ))}
+          {userData?.role === "admin" && (
+            <li>
+              <Link
+                href="/admin"
+                aria-current={pathname === "/admin" ? "page" : undefined}
+                className={`flex min-h-[48px] flex-col items-center justify-center gap-0.5 px-1 py-1.5 text-[11px] font-semibold ${
+                  pathname === "/admin" ? "text-amber" : "text-amber hover:bg-amber/10"
+                }`}
+              >
+                <span aria-hidden="true" className="text-lg leading-none">
+                  🛠️
+                </span>
+                Admin
+              </Link>
+            </li>
+          )}
         </ul>
       </nav>
     </div>

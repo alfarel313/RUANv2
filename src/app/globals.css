@@ -36,6 +36,7 @@ html.ruan-dark {
   --sos: #ef4444;
   --sos-dark: #dc2626;
   --amber: #f59e0b;
+  color-scheme: dark; /* native input/select/time/scrollbar ikut gelap */
 }
 html.ruan-dark body {
   background: #0b1220;
@@ -46,14 +47,43 @@ html.ruan-dark button {
   outline-color: #14b8a6;
 }
 
-/* Kartu & panel utama flip gelap */
-html.ruan-dark .rounded-2xl.bg-white,
-html.ruan-dark .rounded-3xl.bg-white,
-html.ruan-dark .rounded-xl.bg-white {
+/* Kartu & panel utama flip gelap (2xl/3xl/xl + tanpa rounded sekalipun) */
+html.ruan-dark .bg-white,
+html.ruan-dark .bg-white\/95 {
   background: #101a2b;
   color: #e2e8f0;
   border-color: #1e293b;
 }
+html.ruan-dark .bg-white\/95 {
+  background: rgba(11, 18, 32, 0.95);
+}
+/* Pengecualian: knob sakelar filter tetap putih (kontras di atas track) */
+html.ruan-dark .rounded-full.bg-white {
+  background: #ffffff;
+  color: inherit;
+}
+
+/* Permukaan sekunder: empty-state, loading, toggle track */
+html.ruan-dark .bg-slate-50,
+html.ruan-dark .bg-slate-100 {
+  background: #151f31;
+  color: #cbd5e1;
+}
+html.ruan-dark .bg-slate-300 { /* sakelar OFF di MapFilterControl */
+  background: #334155;
+}
+
+/* Hover terang → hover gelap */
+html.ruan-dark .hover\:bg-slate-50:hover,
+html.ruan-dark .hover\:bg-slate-100:hover,
+html.ruan-dark .hover\:bg-slate-200:hover {
+  background: #1c2942;
+}
+html.ruan-dark .hover\:bg-slate-800:hover {
+  background: #0f1a2e;
+}
+
+/* Teks abu — naikkan terangannya agar kontras di latar gelap (WCAG AA) */
 html.ruan-dark .text-slate-900 {
   color: #f1f5f9;
 }
@@ -64,16 +94,68 @@ html.ruan-dark .text-slate-700 {
 html.ruan-dark .text-slate-600 {
   color: #94a3b8;
 }
+html.ruan-dark .text-slate-500 {
+  color: #8b9bb4;
+}
+html.ruan-dark .text-slate-400 {
+  color: #7c8ca6;
+}
+
+/* Border & outline form */
+html.ruan-dark .border-slate-200,
+html.ruan-dark .border-slate-300,
+html.ruan-dark .border-2.slate-200,
+html.ruan-dark .border-slate-400 {
+  border-color: #293548;
+}
+html.ruan-dark .border-slate-200:focus,
+html.ruan-dark .border-slate-300:focus {
+  border-color: #14b8a6;
+}
+
+/* Elemen form native: input/select/textarea ikut tema gelap */
+html.ruan-dark input,
+html.ruan-dark select,
+html.ruan-dark textarea {
+  background: #0d1626;
+  color: #e2e8f0;
+}
+html.ruan-dark input::placeholder,
+html.ruan-dark textarea::placeholder {
+  color: #64748b;
+}
+/* kalender/ikon time input sulit ditempa warna — pakai color-scheme: dark (di atas) */
+html.ruan-dark input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+}
+
+/* Popup Leaflet (marker peta) ikut gelap — teks di dalamnya tetap kontras */
+html.ruan-dark .leaflet-popup-content-wrapper,
+html.ruan-dark .leaflet-popup-tip {
+  background: #101a2b;
+  color: #e2e8f0;
+  border: 1px solid #293548;
+}
+html.ruan-dark .leaflet-popup-content-wrapper a {
+  color: #2dd4bf;
+}
+html.ruan-dark .leaflet-container a.leaflet-popup-close-button {
+  color: #94a3b8;
+}
+/* kontrol zoom peta */
+html.ruan-dark .leaflet-bar a {
+  background: #101a2b;
+  color: #e2e8f0;
+  border-color: #293548;
+}
+html.ruan-dark .leaflet-bar a:hover {
+  background: #1c2942;
+}
 
 /* Nav & header sticky ikut gelap */
 html.ruan-dark .bg-white\/95 {
   background: rgba(11, 18, 32, 0.95);
   border-color: #1e293b;
-}
-html.ruan-dark .border-slate-200,
-html.ruan-dark .border-slate-300,
-html.ruan-dark .border-2.slate-200 {
-  border-color: #293548;
 }
 
 body {
