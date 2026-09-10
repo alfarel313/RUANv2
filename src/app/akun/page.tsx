@@ -52,7 +52,12 @@ export default function AkunPage() {
     const next = { ...effective, [key]: value };
     setSettings(next);
     if (user) {
-      await updateDoc(doc(db, "users", user.uid), { settings: next });
+      try {
+        await updateDoc(doc(db, "users", user.uid), { settings: next });
+      } catch {
+        /* persist gagal (offline/permission) — setting lokal tetap efektif
+           untuk sesi ini; jangan crash atau bocorkan rejection */
+      }
     } else {
       try {
         localStorage.setItem("ruan-large-text", next.largeText ? "1" : "0");

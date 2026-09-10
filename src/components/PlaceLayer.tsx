@@ -1,38 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { db } from "@/lib/firebase";
 import type { PlaceData } from "@/lib/types";
 import { isOpenNow } from "@/lib/geo";
+import { PLACE_ICONS, PLACE_LABELS } from "@/lib/places";
 import { fetchAllReports } from "@/lib/reports";
 import { computeAndSetRoute, useRouteCtx } from "@/components/RouteContext";
 import { useLiveLocationCtx } from "@/components/LiveLocationContext";
 import { useMapFilters } from "@/components/MapFiltersContext";
-
-const ICONS: Record<string, string> = {
-  polisi: "👮",
-  puskesmas: "🩺",
-  rumah_sakit: "🏥",
-  masjid: "🕌",
-  toko: "🏪",
-  mall: "🏬",
-  stasiun: "🚉",
-  pos_keamanan: "🛟",
-};
-
-const LABELS: Record<string, string> = {
-  polisi: "Kantor Polisi",
-  puskesmas: "Puskesmas",
-  rumah_sakit: "Rumah Sakit",
-  masjid: "Masjid",
-  toko: "Minimarket",
-  mall: "Mal",
-  stasiun: "Stasiun/Transport",
-  pos_keamanan: "Pos Keamanan",
-};
 
 function placeIcon(p: PlaceData, open: boolean): L.DivIcon {
   // Root normal-flow selebar konten; iconAnchor [16,38] = ujung tail = titik koordinat.
@@ -42,7 +21,7 @@ function placeIcon(p: PlaceData, open: boolean): L.DivIcon {
     html: `
       <div style="display:flex;flex-direction:column;align-items:center;width:32px;">
         <div style="box-sizing:border-box;background:${open ? "#ffffff" : "#94a3b8"};border:2px solid ${open ? "#0f766e" : "#64748b"};border-radius:9999px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 2px 6px rgba(0,0,0,.25);${open ? "" : "filter:grayscale(.6);"}">
-          ${ICONS[p.type] ?? "📍"}
+          ${PLACE_ICONS[p.type] ?? "📍"}
         </div>
         <div style="width:2px;height:6px;background:${open ? "#0f766e" : "#64748b"};margin-top:-1px;"></div>
       </div>`,
@@ -53,7 +32,7 @@ function placeIcon(p: PlaceData, open: boolean): L.DivIcon {
 }
 
 export default function PlaceLayer() {
-  const [places, setPlaces] = useState<PlaceData[] | null>(null);
+  const [places, setPlaces] = useState<(PlaceData & { id: string })[] | null>(null);
   const [now, setNow] = useState(() => new Date());
   const [noLocation, setNoLocation] = useState(false);
   const { pos } = useLiveLocationCtx();
@@ -62,15 +41,26 @@ export default function PlaceLayer() {
   const [routingFor, setRoutingFor] = useState<string | null>(null);
 
   useEffect(() => {
-    getDocs(collection(db, "places"))
-      .then((snap) => {
-        const list: PlaceData[] = [];
-        snap.forEach((d) => list.push(d.data() as PlaceData));
+    // LIVE: tempat yang ditambah/diedit/dihapus admin langsung sinkron di semua
+    // tab terbuka (pola onSnapshot sama dengan laporan/`/bahaya`).
+    // Error → [] — anti gagal demo, peta tetap jalan.
+    const unsub = onSnapshot(
+      collection(db, "places"),
+      (snap) => {
+        const list: (PlaceData & { id: string })[] = [];
+        snap.forEach((d) => {
+          const p = d.data() as PlaceData;
+          if (p.city === "Bekasi") list.push({ ...p, id: d.id });
+        });
         setPlaces(list);
-      })
-      .catch(() => setPlaces([]));
+      },
+      () => setPlaces([])
+    );
     const t = setInterval(() => setNow(new Date()), 60_000); // refresh status buka tiap menit
-    return () => clearInterval(t);
+    return () => {
+      unsub();
+      clearInterval(t);
+    };
   }, []);
 
   if (!places) return null;
@@ -102,11 +92,11 @@ export default function PlaceLayer() {
 
   return (
     <>
-      {visiblePlaces.map((p, i) => {
+      {visiblePlaces.map((p) => {
         const open = isOpenNow(p.open, p.close, now);
         return (
           <Marker
-            key={i}
+            key={p.id}
             position={[p.lat, p.lng]}
             icon={placeIcon(p, open)}
             aria-label={`${p.name} — ${open ? "sedang buka" : "tutup"}`}
@@ -114,7 +104,7 @@ export default function PlaceLayer() {
             <Popup>
               <strong>{p.name}</strong>
               <br />
-              {LABELS[p.type] ?? "Tempat"} ·{" "}
+              {PLACE_LABELS[p.type] ?? "Tempat"} ·{" "}
               {p.open === p.close
                 ? "Buka 24 jam"
                 : `Jam ${p.open}–${p.close}`}

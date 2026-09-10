@@ -28,7 +28,13 @@ export function useAuth(): AuthState {
     const unsubAuth = onAuthStateChanged(auth, async (user) => {
       unsubDoc?.();
       if (user) {
-        await ensureUserDoc(user);
+        try {
+          await ensureUserDoc(user);
+        } catch (err) {
+          // create dokumen bisa ditolak rules (mis. offline/permission) —
+          // jangan biarkan rejection bocor; onSnapshot error-callback menangani sisanya
+          console.error("ensureUserDoc gagal:", err);
+        }
         unsubDoc = onSnapshot(
           doc(db, "users", user.uid),
           (snap) => {

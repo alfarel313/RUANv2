@@ -72,7 +72,7 @@ export default function BeaconLayer({
         const left = dissolveLeftText(b.lowSince);
         return (
           <Marker
-            key={`${b.lat.toFixed(5)},${b.lng.toFixed(5)}`}
+            key={b.id}
             position={[b.lat, b.lng]}
             icon={beaconIcon(b.count)}
             aria-label={`Keramaian ${b.count} orang aktif`}

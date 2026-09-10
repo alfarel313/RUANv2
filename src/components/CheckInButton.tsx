@@ -27,6 +27,8 @@ export default function CheckInButton() {
     try {
       if (active) await stop();
       else await start();
+    } catch {
+      /* start/stop sudah set error internal; jangan rejection bocor */
     } finally {
       setBusy(false);
     }

@@ -6,6 +6,7 @@ import { db } from "@/lib/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import type { ReportData } from "@/lib/types";
 import ReportCard from "@/components/ReportCard";
+import PlaceAdminSection from "@/components/PlaceAdminSection";
 import Link from "next/link";
 
 export default function AdminPage() {
@@ -64,11 +65,16 @@ export default function AdminPage() {
   const reviewed = reports.filter((r) => r.status !== "pending");
 
   const review = async (id: string, status: "verified" | "rejected") => {
-    await updateDoc(doc(db, "reports", id), {
-      status,
-      verifiedBy: user.uid,
-      verifiedAt: Date.now(),
-    });
+    try {
+      await updateDoc(doc(db, "reports", id), {
+        status,
+        verifiedBy: user.uid,
+        verifiedAt: Date.now(),
+      });
+    } catch (err) {
+      // verifikasi gagal (offline/permission) — jangan rejection bocor
+      console.error("Gagal memverifikasi laporan:", err);
+    }
   };
 
   return (
@@ -123,6 +129,8 @@ export default function AdminPage() {
           ))}
         </div>
       </section>
+
+      <PlaceAdminSection />
     </main>
   );
 }

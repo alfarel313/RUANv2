@@ -59,15 +59,17 @@ function ageText(createdAt: number, now: number): string {
  */
 export default function ReportLayer({ now }: { now: number }) {
   const { filters } = useMapFilters();
-  const [reports, setReports] = useState<ReportData[] | null>(null);
+  const [reports, setReports] = useState<(ReportData & { id: string })[] | null>(null);
 
   useEffect(() => {
     const q = query(collection(db, "reports"), where("status", "==", "verified"));
     const unsub = onSnapshot(
       q,
       (snap) => {
-        const list: ReportData[] = [];
-        snap.forEach((d) => list.push(d.data() as ReportData));
+        const list: (ReportData & { id: string })[] = [];
+        snap.forEach((d) =>
+          list.push({ ...(d.data() as ReportData), id: d.id })
+        );
         setReports(list);
       },
       () => setReports([])
@@ -93,7 +95,7 @@ export default function ReportLayer({ now }: { now: number }) {
     <>
       {visible.map((r) => (
         <Marker
-          key={`${r.lat.toFixed(5)},${r.lng.toFixed(5)},${r.createdAt}`}
+          key={r.id}
           position={[r.lat, r.lng]}
           icon={reportIcon(r.type)}
           aria-label={`Kejadian ${LABELS[r.type]}: ${r.title}`}

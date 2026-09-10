@@ -33,8 +33,9 @@ export interface UsePresenceResult {
   stop: () => void
 }
 
-/** Tipe render beacon — lowSince dipakai untuk countdown dissolve di UI */
+/** Tipe render beacon — lowSince dipakai untuk countdown dissolve di UI; id = id dokumen (key unik) */
 export interface BeaconView extends BeaconData {
+  id: string
   lowSince?: number | null
 }
 
@@ -175,6 +176,7 @@ export function usePresence(): UsePresenceResult {
         const b = d.data() as BeaconData & { lowSince?: number | null };
         // lowSince → UI countdown dissolve ("beacon hilang ±X mnt")
         list.push({
+          id: d.id,
           lat: b.lat,
           lng: b.lng,
           count: b.count,

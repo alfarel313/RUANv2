@@ -34,6 +34,7 @@ export default function SOSButton() {
   const [myPos, setMyPos] = useState<{ lat: number; lng: number } | null>(null);
   const [routing, setRouting] = useState(false);
   const [locError, setLocError] = useState(false);
+  const [pickError, setPickError] = useState<string | null>(null);
 
   if (!user) {
     return (
@@ -49,6 +50,7 @@ export default function SOSButton() {
 
   const pick = async (type: EmergencyType) => {
     setBusy(true);
+    setPickError(null);
     try {
       // 1. posisi — dari live watcher; bila belum ada, ambil sekali (TANPA fallback koordinat palsu)
       const pos =
@@ -117,9 +119,12 @@ export default function SOSButton() {
             }
           : null,
         status: "active",
-        createdAt: Date.now(),
+        createdAt: Date.now(), // eslint-disable-line react-hooks/purity -- event handler, bukan render
         resolvedAt: null,
       });
+    } catch {
+      // jujur: jangan biarkan rejection bocor ke window (unhandledRejection)
+      setPickError("Gagal mencari bantuan — periksa koneksi lalu coba lagi.");
     } finally {
       setBusy(false);
     }
@@ -135,7 +140,11 @@ export default function SOSButton() {
         /* dibatalkan pengguna */
       }
     } else {
-      await navigator.clipboard?.writeText(text);
+      try {
+        await navigator.clipboard?.writeText(text);
+      } catch {
+        /* clipboard bisa ditolak izin — jangan crash */
+      }
     }
   };
 
@@ -164,6 +173,7 @@ export default function SOSButton() {
     setHelp(null);
     setMyPos(null);
     setLocError(false);
+    setPickError(null);
   };
 
   return (
@@ -216,6 +226,14 @@ export default function SOSButton() {
                     ⚠️ Lokasi Anda tidak terdeteksi. Izinkan akses lokasi di
                     browser (ikon 🔒 di address bar) lalu coba lagi — bantuan
                     terdekat dihitung dari posisi Anda.
+                  </p>
+                )}
+                {pickError && (
+                  <p
+                    role="alert"
+                    className="mt-3 rounded-xl bg-sos/10 px-3 py-2 text-sm font-bold text-sos"
+                  >
+                    ⚠️ {pickError}
                   </p>
                 )}
                 <button

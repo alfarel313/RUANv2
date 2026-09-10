@@ -75,10 +75,36 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // places & guides: read semua yang login, tulis hanya via Admin SDK (seed)
+    // places: read semua yang login; tulis (tambah/edit/hapus) HANYA admin —
+    // validasi field ketat; update jaga city tetap 'Bekasi'. Flag opsional `seeded`
+    // menandai dokumen hasil seed (re-seed hanya mengganti dokumen ber-flag).
     match /places/{id} {
       allow read: if isSignedIn();
-      allow write: if false;
+      allow create: if isAdmin()
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.type in ['polisi','rumah_sakit','puskesmas','masjid','toko','mall','stasiun','pos_keamanan']
+        && request.resource.data.lat is number
+        && request.resource.data.lng is number
+        && request.resource.data.city == 'Bekasi'
+        && request.resource.data.open is string
+        && request.resource.data.close is string
+        && request.resource.data.address is string
+        && request.resource.data.phone is string;
+      allow update: if isAdmin()
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.type in ['polisi','rumah_sakit','puskesmas','masjid','toko','mall','stasiun','pos_keamanan']
+        && request.resource.data.lat is number
+        && request.resource.data.lng is number
+        && request.resource.data.city == 'Bekasi'
+        && request.resource.data.open is string
+        && request.resource.data.close is string
+        && request.resource.data.address is string
+        && request.resource.data.phone is string;
+      allow delete: if isAdmin();
     }
     match /guides/{id} {
       allow read: if true; // panduan publik, konten aman

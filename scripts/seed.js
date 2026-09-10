@@ -301,14 +301,19 @@ const REPORTS = [
 async function seed() {
   const batch = db.batch();
 
-  // places
+  // places — hanya hapus dokumen ber-flag seeded (dokumen hasil kelola admin SELAMAT
+  // dari re-seed; admin edit menghapus flag sehingga dokumen jadi milik admin).
+  // CATATAN: dokumen seeded yang SUDAH diedit admin kehilangan flag → saat re-seed
+  // versi aslinya di-tambah ulang sebagai dokumen seeded baru; itu perilaku yang benar.
   const placesCol = db.collection("places");
   const placesSnap = await placesCol.get();
   if (!placesSnap.empty) {
-    placesSnap.forEach((d) => batch.delete(d.ref));
+    placesSnap.forEach((d) => {
+      if (d.data().seeded === true) batch.delete(d.ref);
+    });
   }
   PLACES.forEach((p) => {
-    batch.set(placesCol.doc(), { ...p });
+    batch.set(placesCol.doc(), { ...p, seeded: true });
   });
 
   // guides
