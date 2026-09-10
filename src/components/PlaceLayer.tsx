@@ -10,6 +10,7 @@ import { isOpenNow } from "@/lib/geo";
 import { fetchAllReports } from "@/lib/reports";
 import { computeAndSetRoute, useRouteCtx } from "@/components/RouteContext";
 import { useLiveLocationCtx } from "@/components/LiveLocationContext";
+import { useMapFilters } from "@/components/MapFiltersContext";
 
 const ICONS: Record<string, string> = {
   polisi: "👮",
@@ -55,6 +56,7 @@ export default function PlaceLayer() {
   const [noLocation, setNoLocation] = useState(false);
   const { pos } = useLiveLocationCtx();
   const { setRoute, setLoading } = useRouteCtx();
+  const { filters } = useMapFilters();
   const [routingFor, setRoutingFor] = useState<string | null>(null);
 
   useEffect(() => {
@@ -70,6 +72,9 @@ export default function PlaceLayer() {
   }, []);
 
   if (!places) return null;
+
+  // filter murni visual — tempat tersembunyi TETAP jadi kandidat bantuan SOS
+  const visiblePlaces = places.filter((p) => filters.places[p.type]);
 
   const routeTo = async (p: PlaceData) => {
     if (!pos) {
@@ -95,7 +100,7 @@ export default function PlaceLayer() {
 
   return (
     <>
-      {places.map((p, i) => {
+      {visiblePlaces.map((p, i) => {
         const open = isOpenNow(p.open, p.close, now);
         return (
           <Marker

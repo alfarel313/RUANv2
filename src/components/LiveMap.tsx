@@ -1,22 +1,30 @@
 "use client";
 
+import { useState } from "react";
 import MapShell from "@/components/MapShell";
 import BeaconLayer from "@/components/BeaconLayer";
 import PlaceLayer from "@/components/PlaceLayer";
 import RouteLayer from "@/components/RouteLayer";
+import ReportLayer from "@/components/ReportLayer";
 import UserLocationLayer from "@/components/UserLocationLayer";
+import MapFilterControl from "@/components/MapFilterControl";
 import { usePresenceCtx } from "@/components/PresenceContext";
 import { useRouteCtx } from "@/components/RouteContext";
+import { useMapFilters } from "@/components/MapFiltersContext";
 import { formatDistance } from "@/lib/geo";
 
-/** Kartu ringkas rute aktif — mengambang di atas peta */
-function RouteCard() {
+/** Kartu ringkas rute aktif — mengambang di atas peta (turun bila filter aktif) */
+function RouteCard({ pushedDown }: { pushedDown: boolean }) {
   const { route, toggleCompare, clearRoute } = useRouteCtx();
   if (!route) return null;
   const { result, destName } = route;
   const faster = result.chosen !== result.fastest;
   return (
-    <div className="pointer-events-auto absolute inset-x-3 top-3 z-[500] mx-auto max-w-md rounded-2xl border-2 border-brand bg-white/97 p-3 shadow-xl backdrop-blur">
+    <div
+      className={`pointer-events-auto absolute inset-x-3 z-[500] mx-auto max-w-md rounded-2xl border-2 border-brand bg-white/97 p-3 shadow-xl backdrop-blur transition-top duration-200 ${
+        pushedDown ? "top-16" : "top-3"
+      }`}
+    >
       <p className="text-xs font-bold uppercase tracking-wide text-brand">
         🧭 Rute Aman ke {destName}
       </p>
@@ -49,13 +57,22 @@ function RouteCard() {
 
 export default function LiveMap() {
   const { beacons } = usePresenceCtx();
+  const { filters } = useMapFilters();
+  const { route } = useRouteCtx();
+  const [now] = useState(() => Date.now());
+
+  // RouteCard turun bila kartu rute & kontrol filter sama-sama menempati atas peta
+  const pushedDown = route != null;
+
   return (
     <MapShell>
+      {filters.showBeacons && <BeaconLayer beacons={beacons} />}
       <PlaceLayer />
-      <BeaconLayer beacons={beacons} />
+      <ReportLayer now={now} />
       <RouteLayer />
       <UserLocationLayer />
-      <RouteCard />
+      <MapFilterControl />
+      <RouteCard pushedDown={pushedDown} />
     </MapShell>
   );
 }

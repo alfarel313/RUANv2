@@ -6,6 +6,7 @@ import { usePresence } from "@/hooks/usePresence";
 import { PresenceContext } from "@/components/PresenceContext";
 import { RouteProvider } from "@/components/RouteContext";
 import { LiveLocationProvider } from "@/components/LiveLocationContext";
+import { MapFiltersProvider } from "@/components/MapFiltersContext";
 import CheckInButton from "@/components/CheckInButton";
 import SOSButton from "@/components/SOSButton";
 import LoginGate from "@/components/LoginGate";
@@ -28,11 +29,12 @@ export default function Home() {
   return (
     <PresenceContext.Provider value={presence}>
       <LiveLocationProvider>
-        <RouteProvider>
-          <main className="relative">
-          <div className="h-[72dvh] md:h-[78dvh]">
-            <LiveMap />
-          </div>
+        <MapFiltersProvider>
+          <RouteProvider>
+            <main className="relative">
+            <div className="h-[72dvh] md:h-[78dvh]">
+              <LiveMap />
+            </div>
 
           {/* Hero singkat di atas peta untuk konteks juri/guest */}
           {!user && !loading && (
@@ -51,19 +53,18 @@ export default function Home() {
             </section>
           )}
 
-          {/* Lapisan aksi mengambang */}
+          {/* Bar aksi di bawah peta (ruang kosong) — bukan overlay di atas peta */}
           {user ? (
-            <div className="absolute inset-x-0 bottom-24 z-20 flex flex-col items-center gap-3 px-4">
-              <div className="flex w-full max-w-md items-center justify-between gap-3">
-                <CheckInButton />
-                <SOSButton />
-              </div>
+            <div className="flex w-full max-w-md items-center justify-between gap-3 px-4 py-3 mx-auto">
+              <CheckInButton />
+              <SOSButton />
             </div>
           ) : null}
 
           {!user && !loading && <LoginGate />}
           </main>
         </RouteProvider>
+        </MapFiltersProvider>
       </LiveLocationProvider>
     </PresenceContext.Provider>
   );

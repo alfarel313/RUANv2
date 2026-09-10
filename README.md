@@ -12,6 +12,8 @@ RUAN membantu warga bergerak aman: melihat keramaian (crowd beacon) secara live,
 ### 🗺️ Peta Live (halaman utama)
 - Peta Kota Bekasi dengan mask gelap di luar batas kota (fokus visual)
 - **20 tempat aman nyata** (polisi, RS, puskesmas, masjid, mal, minimarket, stasiun, pos keamanan) — koordinat terverifikasi OSM, status buka/tutup real-time per jam operasional
+- **Laporan bahaya terverifikasi tampil di peta** (marker amber per jenis) — live: admin verifikasi → marker langsung muncul
+- **Filter kategori peta** — 2 dropdown di kanan-atas: "📍 Tempat Aman" (8 kategori + beacon) dan "⚠️ Kejadian" (6 jenis + insiden rute); murni visual, tidak memengaruhi kandidat SOS/rute
 - **Titik biru posisi Anda** (live via GPS) + lingkaran akurasi + auto-follow pintar (follow mati otomatis saat Anda menggeser peta)
 - **Crowd beacon**: check-in → kehadiran Anda terdeteksi warga lain di sekitar (mode demo: 1 orang cukup membentuk beacon; produksi: ≥4 orang ≤15 m)
 

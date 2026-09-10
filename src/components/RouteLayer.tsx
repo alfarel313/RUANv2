@@ -5,6 +5,7 @@ import { useMap } from "react-leaflet";
 import L from "leaflet";
 import { Polyline, CircleMarker, Popup } from "react-leaflet";
 import { useRouteCtx } from "@/components/RouteContext";
+import { useMapFilters } from "@/components/MapFiltersContext";
 import { REPORT_LABELS } from "@/lib/routing";
 
 /**
@@ -27,12 +28,15 @@ function FlyToRoute() {
 
 export default function RouteLayer() {
   const { route } = useRouteCtx();
+  const { filters } = useMapFilters();
   if (!route) return null;
 
   const { result, showCompare } = route;
   const chosen = result.chosen;
   const showFastestGhost =
     showCompare && result.fastest !== chosen;
+  // insiden rute opsional (toggle visual); polyline rute selalu tampil
+  const showIncidents = filters.showRouteIncidents;
 
   return (
     <>
@@ -60,7 +64,7 @@ export default function RouteLayer() {
         />
       )}
       {/* Insiden yang dihindari rute tercepat — merah, bisa diketuk */}
-      {result.avoidedIncidents.map((inc, i) => (
+      {showIncidents && result.avoidedIncidents.map((inc, i) => (
         <CircleMarker
           key={`avoid-${i}`}
           center={[inc.report.lat, inc.report.lng]}
@@ -81,7 +85,7 @@ export default function RouteLayer() {
         </CircleMarker>
       ))}
       {/* Insiden yang tetap di jalur terpilih — amber */}
-      {result.chosenIncidents.map((inc, i) => (
+      {showIncidents && result.chosenIncidents.map((inc, i) => (
         <CircleMarker
           key={`onroute-${i}`}
           center={[inc.report.lat, inc.report.lng]}

@@ -1,0 +1,113 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import { db } from "@/lib/firebase";
+import type { ReportData, ReportType } from "@/lib/types";
+import { INCIDENT_RULES } from "@/lib/routing";
+import { useMapFilters } from "@/components/MapFiltersContext";
+
+const ICONS: Record<ReportType, string> = {
+  banjir: "🌊",
+  kebakaran: "🔥",
+  kejahatan: "🚨",
+  jalan_rusak: "🕳️",
+  kehilangan: "❓",
+  lainnya: "📋",
+};
+
+const LABELS: Record<ReportType, string> = {
+  banjir: "Banjir",
+  kebakaran: "Kebakaran",
+  kejahatan: "Kejahatan",
+  jalan_rusak: "Jalan Rusak",
+  kehilangan: "Kehilangan",
+  lainnya: "Lainnya",
+};
+
+/** Marker kejadian: lingkaran amber + ikon jenis (beda bentuk dari pin tempat) */
+function reportIcon(type: ReportType): L.DivIcon {
+  return L.divIcon({
+    className: "",
+    html: `
+      <div style="position:relative;width:36px;height:36px;">
+        <div style="position:absolute;inset:0;border-radius:9999px;background:#d97706;border:3px solid #ffffff;box-shadow:0 2px 8px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:17px;">
+          ${ICONS[type]}
+        </div>
+      </div>`,
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+    popupAnchor: [0, -18],
+  });
+}
+
+function ageText(createdAt: number, now: number): string {
+  const h = Math.floor((now - createdAt) / 3600_000);
+  if (h < 1) return "baru saja";
+  if (h < 24) return `${h} jam lalu`;
+  const d = Math.floor(h / 24);
+  return `${d} hari lalu`;
+}
+
+/**
+ * Laporan verified di peta utama — sisi "bahaya yang dihindari" dari cerita
+ * keselamatan peta. Live via onSnapshot: admin verifikasi → marker muncul.
+ * Window umur sama dengan engine Rute Aman (konsisten), kota Bekasi.
+ */
+export default function ReportLayer({ now }: { now: number }) {
+  const { filters } = useMapFilters();
+  const [reports, setReports] = useState<ReportData[] | null>(null);
+
+  useEffect(() => {
+    const q = query(collection(db, "reports"), where("status", "==", "verified"));
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        const list: ReportData[] = [];
+        snap.forEach((d) => list.push(d.data() as ReportData));
+        setReports(list);
+      },
+      () => setReports([])
+    );
+    return () => unsub();
+  }, []);
+
+  const visible = useMemo(
+    () =>
+      (reports ?? []).filter((r) => {
+        if (r.city && r.city !== "Bekasi") return false;
+        const rule = INCIDENT_RULES[r.type];
+        if (!rule) return false;
+        const age = now - r.createdAt;
+        return age >= 0 && age <= rule.windowMs && filters.reports[r.type];
+      }),
+    [reports, now, filters.reports]
+  );
+
+  if (!reports) return null;
+
+  return (
+    <>
+      {visible.map((r) => (
+        <Marker
+          key={`${r.lat.toFixed(5)},${r.lng.toFixed(5)},${r.createdAt}`}
+          position={[r.lat, r.lng]}
+          icon={reportIcon(r.type)}
+          aria-label={`Kejadian ${LABELS[r.type]}: ${r.title}`}
+        >
+          <Popup>
+            <strong>{ICONS[r.type]} {r.title}</strong>
+            <br />
+            {LABELS[r.type]} · {ageText(r.createdAt, now)}
+            <br />
+            <span style={{ color: "#b45309", fontWeight: 700 }}>
+              ⚠️ Terverifikasi admin — hindari area ini
+            </span>
+          </Popup>
+        </Marker>
+      ))}
+    </>
+  );
+}
