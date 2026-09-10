@@ -8,6 +8,7 @@ import RouteLayer from "@/components/RouteLayer";
 import ReportLayer from "@/components/ReportLayer";
 import UserLocationLayer from "@/components/UserLocationLayer";
 import MapFilterControl from "@/components/MapFilterControl";
+import FocusLocationButton from "@/components/FocusLocationButton";
 import { usePresenceCtx } from "@/components/PresenceContext";
 import { useRouteCtx } from "@/components/RouteContext";
 import { useMapFilters } from "@/components/MapFiltersContext";
@@ -60,6 +61,7 @@ export default function LiveMap() {
   const { filters } = useMapFilters();
   const { route } = useRouteCtx();
   const [now] = useState(() => Date.now());
+  const [follow, setFollow] = useState(true); // dimatikan otomatis saat user geser peta
 
   // RouteCard turun bila kartu rute & kontrol filter sama-sama menempati atas peta
   const pushedDown = route != null;
@@ -70,8 +72,9 @@ export default function LiveMap() {
       <PlaceLayer />
       <ReportLayer now={now} />
       <RouteLayer />
-      <UserLocationLayer />
+      <UserLocationLayer follow={follow} onFollow={setFollow} />
       <MapFilterControl />
+      <FocusLocationButton follow={follow} onFollow={setFollow} />
       <RouteCard pushedDown={pushedDown} />
     </MapShell>
   );

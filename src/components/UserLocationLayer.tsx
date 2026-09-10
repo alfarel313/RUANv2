@@ -1,15 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { CircleMarker, Circle, useMap } from "react-leaflet";
 import { useLiveLocationCtx } from "@/components/LiveLocationContext";
 
 /**
  * Follow pintar: pan mengikuti HANYA bila peta sedang idle (tidak digeser/diketuk user).
- * Interaksi user apa pun (dragstart/click) mematikan follow otomatis —
+ * Interaksi user apa pun (dragstart/zoomstart) mematikan follow otomatis —
  * mencegah peta "melompat balik ke titik saya" saat user menekan tombol/marker.
+ * Satu-satunya cara menyalakan follow lagi: tombol 🎯 (FocusLocationButton).
  */
-function FollowUser({ pos, follow, onUserInteract }: { pos: { lat: number; lng: number } | null; follow: boolean; onUserInteract: () => void }) {
+export function FollowUser({
+  pos,
+  follow,
+  onUserInteract,
+}: {
+  pos: { lat: number; lng: number } | null;
+  follow: boolean;
+  onUserInteract: () => void;
+}) {
   const map = useMap();
   const idleRef = useRef(true);
 
@@ -36,11 +45,16 @@ function FollowUser({ pos, follow, onUserInteract }: { pos: { lat: number; lng: 
 
 /**
  * Marker posisi pengguna: titik biru + lingkaran akurasi.
- * Hook aktif otomatis di-mount; auto-stop 30 menit dari hook (hemat baterai).
+ * Watcher dikelola LiveLocationProvider (satu untuk seluruh app).
  */
-export default function UserLocationLayer() {
+export default function UserLocationLayer({
+  follow,
+  onFollow,
+}: {
+  follow: boolean;
+  onFollow: (v: boolean) => void;
+}) {
   const { pos, accuracy, active, error } = useLiveLocationCtx();
-  const [follow, setFollow] = useState(true);
 
   if (error && !pos) return null;
   if (!pos || !active) return null;
@@ -75,7 +89,7 @@ export default function UserLocationLayer() {
       <FollowUser
         pos={pos}
         follow={follow}
-        onUserInteract={() => setFollow(false)}
+        onUserInteract={() => onFollow(false)}
       />
     </>
   );
