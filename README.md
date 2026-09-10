@@ -46,7 +46,7 @@ Feed laporan terverifikasi terbaru, real-time (Firestore onSnapshot).
 7 panduan siap baca: banjir, kebakaran, aman di jalan, anak-anak, lansia, penyandang disabilitas, gempa.
 
 ### ♿ Aksesibilitas
-- **Teks Besar** & **Kontras Tinggi** — toggle di halaman Akun, langsung efek di seluruh app, persist (Firestore untuk login / localStorage untuk guest)
+- **Teks Besar** & **Mode Malam** — toggle di halaman Akun, langsung efek di seluruh app, persist (Firestore untuk login / localStorage untuk guest)
 - Semua tombol: ikon + teks, target sentuh ≥48px (tombol SOS ≥72px), Bahasa Indonesia sederhana
 
 ### 🛡️ Admin
@@ -153,7 +153,7 @@ Email admin di-whitelist di dua tempat (harus sama):
 4. **Cari Rute Aman** — ketuk tempat → "🧭 Rute Aman ke sini" → rute digambar + alasan ("Menghindari 2 titik bahaya, hanya +4 menit"). Tekan "Bandingkan rute" untuk melihat rute tercepat (garis pudar)
 5. **Lapor bahaya** — menu Lapor → pilih jenis → isi judul/deskripsi → geser pin di peta → (opsional foto) → kirim. Laporan tampil setelah admin verifikasi
 6. **SOS** — tombol merah 🆘 → pilih jenis darurat → bantuan terdekat + rute aman + panggil 112
-7. **Aksesibilitas** — Akun → aktifkan Teks Besar / Kontras Tinggi
+7. **Aksesibilitas** — Akun → aktifkan Teks Besar / Mode Malam
 
 ---
 

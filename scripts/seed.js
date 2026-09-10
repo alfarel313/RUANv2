@@ -148,7 +148,7 @@ const GUIDES = [
     order: 5,
     content: [
       "## Sebelum keluar rumah",
-      "- Nyalakan **Mode Teks Besar** dan **Kontras Tinggi** di RUAN (Akun > Pengaturan) agar mudah dibaca",
+      "- Nyalakan **Mode Teks Besar** dan **Mode Malam** di RUAN (Akun > Pengaturan) agar mudah dibaca",
       "- Bawa HP dengan daya cukup dan nomor keluarga yang mudah dihubungi",
       "## Berjalan outdoor",
       "- Gunakan rute **beacon ramai** — banyak orang, lebih mudah minta tolong",
@@ -169,7 +169,7 @@ const GUIDES = [
     order: 6,
     content: [
       "## RUAN untuk Anda",
-      "- **Mode Kontras Tinggi & Teks Besar**: Akun > Pengaturan",
+      "- **Mode Malam & Teks Besar**: Akun > Pengaturan",
       "- Tombol besar dengan **ikon + teks** — tidak ada ikon tanpa label",
       "- Seluruh tombol dapat diakses keyboard dan pembaca layar (screen reader)",
       "## Penyandang gangguan penglihatan",

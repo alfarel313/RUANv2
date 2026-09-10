@@ -27,7 +27,7 @@ function Toggle({
       </span>
       <input
         type="checkbox"
-        checked={checked}
+        checked={checked ?? false}
         onChange={(e) => onChange(e.target.checked)}
         className="h-7 w-7 accent-teal-700"
       />
@@ -43,7 +43,7 @@ export default function AkunPage() {
     settings ??
     userData?.settings ?? {
       largeText: false,
-      highContrast: false,
+      darkMode: false,
       audioAlert: true,
       notifications: true,
     };
@@ -56,12 +56,12 @@ export default function AkunPage() {
     } else {
       try {
         localStorage.setItem("ruan-large-text", next.largeText ? "1" : "0");
-        localStorage.setItem("ruan-high-contrast", next.highContrast ? "1" : "0");
+        localStorage.setItem("ruan-dark", next.darkMode ? "1" : "0");
       } catch {
         /* ignore */
       }
       document.documentElement.classList.toggle("ruan-large-text", next.largeText);
-      document.documentElement.classList.toggle("ruan-high-contrast", next.highContrast);
+      document.documentElement.classList.toggle("ruan-dark", next.darkMode);
     }
   };
 
@@ -125,10 +125,10 @@ export default function AkunPage() {
           onChange={(v) => change("largeText", v)}
         />
         <Toggle
-          label="Kontras Tinggi"
-          desc="Hitam-putih tegas untuk keterbacaan maksimal"
-          checked={effective.highContrast}
-          onChange={(v) => change("highContrast", v)}
+          label="Mode Malam"
+          desc="Tampilan gelap nyaman di mata — cocok saat jalan malam"
+          checked={effective.darkMode}
+          onChange={(v) => change("darkMode", v)}
         />
         <Toggle
           label="Suara Peringatan"

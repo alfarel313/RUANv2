@@ -26,7 +26,7 @@ export type PlaceType =
 
 export interface UserSettings {
   largeText: boolean
-  highContrast: boolean
+  darkMode: boolean
   audioAlert: boolean
   notifications: boolean
 }

@@ -6,7 +6,7 @@ import type { UserSettings, UserData } from "@/lib/types";
 export const ADMIN_EMAILS = ["alfarel3134@gmail.com"];
 
 export function DEFAULT_SETTINGS(): UserSettings {
-  return { largeText: false, highContrast: false, audioAlert: true, notifications: true };
+  return { largeText: false, darkMode: false, audioAlert: true, notifications: true };
 }
 
 export function DEFAULT_USER_DATA(user: FirebaseUser): UserData {

@@ -8,7 +8,7 @@ import {
 import { doc, onSnapshot } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import type { UserData } from "@/lib/types";
-import { DEFAULT_USER_DATA, ensureUserDoc } from "@/lib/user";
+import { DEFAULT_SETTINGS, DEFAULT_USER_DATA, ensureUserDoc } from "@/lib/user";
 
 interface AuthState {
   user: FirebaseUser | null;
@@ -34,8 +34,13 @@ export function useAuth(): AuthState {
           (snap) => {
             setState({
               user,
+              // normalisasi: dokumen lama mungkin punya field setting hilang/bentuk lama
+              // (mis. highContrast era sebelumnya) — merge default agar selalu boolean
               userData: snap.exists()
-                ? (snap.data() as UserData)
+                ? {
+                    ...(snap.data() as UserData),
+                    settings: { ...DEFAULT_SETTINGS(), ...(snap.data() as UserData).settings },
+                  }
                 : DEFAULT_USER_DATA(user),
               loading: false,
             });

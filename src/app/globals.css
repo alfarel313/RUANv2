@@ -28,20 +28,52 @@ html.ruan-large-text {
   font-size: 20px;
 }
 
-/* Mode Kontras Tinggi (akasesibilitas low-vision) */
-html.ruan-high-contrast {
-  --brand: #ffffff;
-  --brand-dark: #ffffff;
-  --brand-light: #ffffff;
-  filter: contrast(1.15);
+/* Mode Malam — latar gelap nyaman mata (kartu/nav/halaman);
+   tiles peta & marker tetap terang (dibutuhkan untuk keterbacaan jalan) */
+html.ruan-dark {
+  --brand: #14b8a6;
+  --brand-dark: #0d9488;
+  --sos: #ef4444;
+  --sos-dark: #dc2626;
+  --amber: #f59e0b;
 }
-html.ruan-high-contrast body {
-  background: #000000;
-  color: #ffffff;
+html.ruan-dark body {
+  background: #0b1220;
+  color: #e2e8f0;
 }
-html.ruan-high-contrast a,
-html.ruan-high-contrast button {
-  outline-width: 2px;
+html.ruan-dark a,
+html.ruan-dark button {
+  outline-color: #14b8a6;
+}
+
+/* Kartu & panel utama flip gelap */
+html.ruan-dark .rounded-2xl.bg-white,
+html.ruan-dark .rounded-3xl.bg-white,
+html.ruan-dark .rounded-xl.bg-white {
+  background: #101a2b;
+  color: #e2e8f0;
+  border-color: #1e293b;
+}
+html.ruan-dark .text-slate-900 {
+  color: #f1f5f9;
+}
+html.ruan-dark .text-slate-800,
+html.ruan-dark .text-slate-700 {
+  color: #cbd5e1;
+}
+html.ruan-dark .text-slate-600 {
+  color: #94a3b8;
+}
+
+/* Nav & header sticky ikut gelap */
+html.ruan-dark .bg-white\/95 {
+  background: rgba(11, 18, 32, 0.95);
+  border-color: #1e293b;
+}
+html.ruan-dark .border-slate-200,
+html.ruan-dark .border-slate-300,
+html.ruan-dark .border-2.slate-200 {
+  border-color: #293548;
 }
 
 body {

@@ -21,18 +21,18 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   // Terapkan preferensi aksesibilitas ke <html>
   useEffect(() => {
     const root = document.documentElement;
-    const apply = (large: boolean, contrast: boolean) => {
+    const apply = (large: boolean, dark: boolean) => {
       root.classList.toggle("ruan-large-text", large);
-      root.classList.toggle("ruan-high-contrast", contrast);
+      root.classList.toggle("ruan-dark", dark);
     };
     if (userData) {
-      apply(userData.settings.largeText, userData.settings.highContrast);
+      apply(userData.settings.largeText, userData.settings.darkMode);
     } else {
       // guest: localStorage
       try {
         apply(
           localStorage.getItem("ruan-large-text") === "1",
-          localStorage.getItem("ruan-high-contrast") === "1"
+          localStorage.getItem("ruan-dark") === "1"
         );
       } catch {
         /* ignore */
