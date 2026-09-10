@@ -21,7 +21,7 @@ RUAN membantu warga bergerak aman: melihat keramaian (crowd beacon) secara live,
 Klik tempat mana pun → **"🧭 Rute Aman ke sini"** → sistem menghitung seperti ini:
 
 1. Ambil hingga **3 kandidat rute jalan kaki** dari OSRM (OpenStreetMap routing — gratis, tanpa API key)
-2. Untuk tiap kandidat, deteksi **laporan bahaya terverifikasi** yang menempel di jalur (≤25 m dari geometri rute dan masih dalam masa relevan)
+2. Untuk tiap kandidat, deteksi **laporan bahaya terverifikasi dalam buffer 75 m di sekitar rute** (bukan hanya yang tepat di jalur — kejadian terdekat ikut dihukum) dan masih dalam masa relevan
 3. Skor rute = `durasi jalan + Σ penalti bahaya` → **pilih skor terkecil**
 
 | Jenis bahaya | Penalti | Masa relevan |

@@ -1,7 +1,8 @@
 // Rute Aman engine — murni & teruji tanpa Firebase/DOM (pola src/lib/geo.ts)
 // Kontrak (docs/SPEC-live-nav.md, parameter KONFIRMASI USER):
-// insiden dihitung bila ≤25 m dari geometri rute; penalti per tipe × window umur;
-// skor = durasi jalan kaki (detik) + 60 × Σ penalti menit → pilih skor minimal.
+// insiden dihitung bila berada dalam BUFFER 75 m di sekitar geometri rute
+// (bukan hanya tepat di jalur) — kejadian terdekat ikut menimbulkan penalti;
+// penalti per tipe × window umur; skor = durasi + 60×penalti → pilih minimal.
 
 import type { ReportData, ReportType } from "@/lib/types";
 import { haversineM } from "@/lib/geo";
@@ -11,7 +12,7 @@ export interface LatLng {
   lng: number;
 }
 
-export const INCIDENT_RADIUS_M = 25;
+export const INCIDENT_RADIUS_M = 75; // buffer 75 m di sekitar rute — kejadian terdekat ikut dihukum (KONFIRMASI USER)
 export const WALK_M_PER_MIN = 80;
 
 /** Penalti (menit) & window umur laporan per tipe — KONFIRMASI USER */
@@ -101,8 +102,8 @@ export function pointToRouteM(
 ): number {
   if (coords.length === 0) return Infinity;
   if (coords.length === 1) return haversineM(lat, lng, coords[0][0], coords[0][1]);
-  const D_LAT = 0.0005; // ~±55 m — margin aman di atas INCIDENT_RADIUS_M
-  const D_LNG = 0.0006;
+  const D_LAT = 0.0012; // ~±133 m — margin aman di atas buffer INCIDENT_RADIUS_M (75 m)
+  const D_LNG = 0.0014;
   let min = Infinity;
   for (let i = 0; i < coords.length - 1; i++) {
     const [aLat, aLng] = coords[i];
@@ -132,7 +133,7 @@ function activeReports(reports: ReportData[], now: number): ReportData[] {
   });
 }
 
-/** Insiden laporan verified (dalam window umur) yang menempel rute ≤ INCIDENT_RADIUS_M */
+/** Insiden laporan verified (dalam window umur) dalam buffer INCIDENT_RADIUS_M di sekitar rute */
 export function routeIncidents(
   coords: [number, number][],
   reports: ReportData[],

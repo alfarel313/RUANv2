@@ -1,8 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import type { BeaconData } from "@/lib/types";
+import { computeAndSetRoute, useRouteCtx } from "@/components/RouteContext";
+import { useLiveLocationCtx } from "@/components/LiveLocationContext";
+import { fetchAllReports } from "@/lib/reports";
 
 function beaconIcon(count: number): L.DivIcon {
   return L.divIcon({
@@ -25,6 +29,33 @@ export default function BeaconLayer({
 }: {
   beacons: BeaconData[];
 }) {
+  const { pos } = useLiveLocationCtx();
+  const { setRoute, setLoading } = useRouteCtx();
+  const [routing, setRouting] = useState(false);
+  const [noLocation, setNoLocation] = useState(false);
+
+  const routeTo = async (b: BeaconData) => {
+    if (!pos) {
+      setNoLocation(true); // jujur: tanpa titik awal, jangan karang rute
+      return;
+    }
+    setNoLocation(false);
+    setRouting(true);
+    try {
+      const reports = await fetchAllReports();
+      await computeAndSetRoute(
+        pos,
+        { lat: b.lat, lng: b.lng },
+        `Keramaian ${b.count} orang`,
+        reports,
+        setRoute,
+        setLoading
+      );
+    } finally {
+      setRouting(false);
+    }
+  };
+
   return (
     <>
       {beacons.map((b) => (
@@ -39,6 +70,40 @@ export default function BeaconLayer({
             <br />
             Keramaian terkonfirmasi warga (crowd beacon). Area ramai
             cenderung lebih aman.
+            <br />
+            {noLocation && (
+              <span
+                role="alert"
+                style={{
+                  display: "block",
+                  marginTop: 6,
+                  color: "#b91c1c",
+                  fontWeight: 700,
+                  fontSize: 12,
+                }}
+              >
+                ⚠️ Lokasi Anda belum terdeteksi — izinkan akses lokasi lalu
+                coba lagi.
+              </span>
+            )}
+            <button
+              onClick={() => routeTo(b)}
+              disabled={routing}
+              style={{
+                marginTop: 6,
+                minHeight: 40,
+                width: "100%",
+                borderRadius: 10,
+                border: "2px solid #0f766e",
+                background: routing ? "#e6f2f1" : "#0f766e",
+                color: routing ? "#0f766e" : "#ffffff",
+                fontWeight: 700,
+                cursor: routing ? "wait" : "pointer",
+                fontSize: 13,
+              }}
+            >
+              {routing ? "Menghitung rute…" : "🧭 Rute Aman ke sini"}
+            </button>
           </Popup>
         </Marker>
       ))}

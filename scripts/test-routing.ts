@@ -115,7 +115,29 @@ console.log(`   reason: ${res3?.reasonText}`);
 
 console.log("8) pointToRouteM dasar");
 check("titik di jalur → ~0 m", pointToRouteM(-6.2318, 106.976, A.coords) < 8);
-check("radius konstanta = 25", INCIDENT_RADIUS_M === 25);
+check("radius buffer = 75 m", INCIDENT_RADIUS_M === 75);
+
+console.log("9) BUFFER 75 m: insiden 60 m dari jalur ikut terdeteksi");
+// titik ~60 m tegak-lurus dari segmen tengah rute A (0.00054° lat ≈ 60 m)
+const nearBuffer = mkReport(-6.2318 + 0.00054, 106.9760, "kejahatan", 5);
+const inc60 = routeIncidents(A.coords, [nearBuffer], now);
+check("insiden 60 m → terdeteksi (dalam buffer 75 m)", inc60.length === 1);
+const res60 = pickSafeRoute([A, B], [nearBuffer], now);
+check("rute A kena penalti 15 mnt → B menang", res60?.chosen === B);
+console.log(`   reason: ${res60?.reasonText}`);
+
+console.log("10) BUFFER: insiden 100 m dari jalur TIDAK terdeteksi");
+// 0.0009° lat ≈ 100 m — di luar buffer
+const outsideBuffer = mkReport(-6.2318 + 0.0009, 106.9760, "kejahatan", 5);
+check("insiden 100 m → 0 (di luar buffer)", routeIncidents(A.coords, [outsideBuffer], now).length === 0);
+const res100 = pickSafeRoute([A, B], [outsideBuffer], now);
+check("tanpa penalti → rute tercepat A menang", res100?.chosen === A);
+
+console.log("11) Sisi buffer: insiden dekat rute B juga menghukum B");
+const nearB = mkReport(-6.2280, 106.9760, "banjir", 12); // ~40 m dari jalur B (banjir 20 mnt)
+const resB = pickSafeRoute([A, B], [nearB], now);
+check("B kena penalti banjir 20 mnt → A (bersih) menang", resB?.chosen === A);
+console.log(`   reason: ${resB?.reasonText}`);
 
 console.log(`\n${fail === 0 ? "SEMUA LULUS" : "ADA GAGAL"}: ${pass} pass, ${fail} fail`);
 process.exit(fail === 0 ? 0 : 1);
