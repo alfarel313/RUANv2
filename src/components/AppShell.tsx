@@ -49,12 +49,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             className="flex items-center gap-2 rounded-lg py-1"
             aria-label="RUAN Rute Aman — kembali ke peta"
           >
-            <span
-              aria-hidden="true"
-              className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand text-lg font-bold text-white"
-            >
-              R
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo-96.png"
+              alt="Logo RUAN Rute Aman"
+              className="h-9 w-9 rounded-xl object-cover"
+            />
             <span className="flex flex-col leading-none">
               <span className="text-lg font-extrabold tracking-tight text-slate-900">
                 RUAN
