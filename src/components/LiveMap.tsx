@@ -12,6 +12,7 @@ import FocusLocationButton from "@/components/FocusLocationButton";
 import { usePresenceCtx } from "@/components/PresenceContext";
 import { useRouteCtx } from "@/components/RouteContext";
 import { useMapFilters } from "@/components/MapFiltersContext";
+import InfoDot from "@/components/InfoDot";
 import { formatDistance } from "@/lib/geo";
 
 /** Kartu ringkas rute aktif — mengambang di atas peta (turun bila filter aktif) */
@@ -27,7 +28,8 @@ function RouteCard({ pushedDown }: { pushedDown: boolean }) {
       }`}
     >
       <p className="text-xs font-bold uppercase tracking-wide text-brand">
-        🧭 Rute Aman ke {destName}
+        🧭 Rute Aman ke {destName}{" "}
+        <InfoDot text="Dari beberapa kandidat rute tercepat, sistem memilih rute yang menjauh dari laporan bahaya terverifikasi dalam radius 75 m dari jalur. Biayanya: sedikit lebih lama (dihitung dalam menit) demi keamanan." />
       </p>
       <p className="mt-0.5 text-lg font-extrabold leading-tight text-slate-900">
         {formatDistance(result.chosen.distanceM)}

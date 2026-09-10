@@ -14,6 +14,7 @@ import type {
   PlaceData,
 } from "@/lib/types";
 import { haversineM, isOpenNow, walkMinutes, formatDistance } from "@/lib/geo";
+import InfoDot from "@/components/InfoDot";
 
 const TYPES: { value: EmergencyType; label: string; icon: string }[] = [
   { value: "medis", label: "Medis", icon: "🏥" },
@@ -227,7 +228,8 @@ export default function SOSButton() {
             ) : (
               <>
                 <h2 className="text-xl font-extrabold text-slate-900">
-                  🧭 Bantuan Terdekat
+                  🧭 Bantuan Terdekat{" "}
+                  <InfoDot text="Kandidat bantuan = keramaian warga aktif (beacon) + tempat aman yang sedang BUKA menurut jam operasionalnya. Sistem memilih yang terdekat dari posisi Anda, lalu menghitung Rute Aman ke sana." />
                 </h2>
                 <div className="mt-3 rounded-2xl border-2 border-brand bg-brand/5 p-4">
                   <p className="text-lg font-extrabold text-brand">

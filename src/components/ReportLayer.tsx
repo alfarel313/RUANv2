@@ -8,6 +8,7 @@ import { db } from "@/lib/firebase";
 import type { ReportData, ReportType } from "@/lib/types";
 import { INCIDENT_RULES } from "@/lib/routing";
 import { useMapFilters } from "@/components/MapFiltersContext";
+import InfoDot from "@/components/InfoDot";
 
 const ICONS: Record<ReportType, string> = {
   banjir: "🌊",
@@ -98,7 +99,8 @@ export default function ReportLayer({ now }: { now: number }) {
           aria-label={`Kejadian ${LABELS[r.type]}: ${r.title}`}
         >
           <Popup>
-            <strong>{ICONS[r.type]} {r.title}</strong>
+            <strong>{ICONS[r.type]} {r.title}</strong>{" "}
+            <InfoDot text="Laporan warga yang sudah diverifikasi admin Kota Bekasi. Marker otomatis hilang saat laporan tidak lagi relevan (kejahatan 7 hari, banjir 2 hari, lainnya 7 hari) — dan tetap dihitung sebagai bahaya oleh Rute Aman selama masih relevan." />
             <br />
             {LABELS[r.type]} · {ageText(r.createdAt, now)}
             <br />

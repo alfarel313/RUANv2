@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useMapFilters, PLACE_KEYS, REPORT_KEYS } from "@/components/MapFiltersContext";
+import InfoDot from "@/components/InfoDot";
 import type { PlaceType, ReportType } from "@/lib/types";
 
 const PLACE_META: Record<PlaceType, { label: string; icon: string }> = {
@@ -157,6 +158,12 @@ export default function MapFilterControl() {
           open={placeOpen}
           onOpenChange={setPlaceOpen}
         >
+          <div className="flex items-center justify-between px-2.5 pb-1.5 pt-1">
+            <span className="text-[11px] font-bold text-slate-500">
+              Tampilkan/hide pin per kategori
+            </span>
+            <InfoDot text="Filter ini hanya menyembunyikan pin di peta — tempatnya tetap dihitung sebagai kandidat bantuan SOS dan Rute Aman. Pilihan kembali normal saat halaman dibuka ulang." />
+          </div>
           <div className="max-h-[46dvh] space-y-0.5 overflow-y-auto">
             {PLACE_KEYS.map((k) => (
               <FilterRow
@@ -190,6 +197,12 @@ export default function MapFilterControl() {
           open={reportOpen}
           onOpenChange={setReportOpen}
         >
+          <div className="flex items-center justify-between px-2.5 pb-1.5 pt-1">
+            <span className="text-[11px] font-bold text-slate-500">
+              Marker laporan terverifikasi admin
+            </span>
+            <InfoDot text="Laporan warga yang sudah diverifikasi admin. Marker hilang otomatis saat laporan tidak lagi relevan: kejahatan 7 hari, banjir 2 hari, lainnya 7 hari." />
+          </div>
           <div className="max-h-[46dvh] space-y-0.5 overflow-y-auto">
             {REPORT_KEYS.map((k) => (
               <FilterRow

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePresenceCtx } from "@/components/PresenceContext";
 import { loginGoogle } from "@/lib/firebase";
+import InfoDot from "@/components/InfoDot";
 
 export default function CheckInButton() {
   const { user } = useAuth();
@@ -47,12 +48,13 @@ export default function CheckInButton() {
       </button>
       {active && (
         <p
-          className="mt-1.5 text-center text-xs font-semibold text-white drop-shadow"
+          className="mt-1.5 text-center text-xs font-semibold text-slate-800"
           role="status"
         >
           {activeCount >= 1
             ? `🟢 Beacon aktif — ${activeCount} orang di area Anda`
-            : `Menanti ${1 - activeCount} orang lagi untuk membentuk beacon…`}
+            : `Menanti ${1 - activeCount} orang lagi untuk membentuk beacon…`}{" "}
+          <InfoDot text="Saat check-in, posisi Anda dikirim setiap 10 detik. Warga lain di radius ±15 m melihat Anda sebagai bagian keramaian (beacon). Saat Anda berhenti check-in, kehadiran Anda dihapus dan beacon hilang maksimal 2 menit kemudian." />
         </p>
       )}
       {error && (

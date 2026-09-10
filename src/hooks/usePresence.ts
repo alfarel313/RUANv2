@@ -27,10 +27,15 @@ const BEACON_SWEEP_MS = 5_000;
 export interface UsePresenceResult {
   active: boolean
   activeCount: number // jumlah orang dalam klaster pengguna (termasuk diri)
-  beacons: BeaconData[]
+  beacons: BeaconView[]
   error: string | null
   start: () => Promise<void>
   stop: () => void
+}
+
+/** Tipe render beacon — lowSince dipakai untuk countdown dissolve di UI */
+export interface BeaconView extends BeaconData {
+  lowSince?: number | null
 }
 
 async function getPosition(): Promise<{ lat: number; lng: number } | null> {
@@ -60,7 +65,7 @@ export function usePresence(): UsePresenceResult {
   const { user } = useAuth();
   const [active, setActive] = useState(false);
   const [activeCount, setActiveCount] = useState(0);
-  const [beacons, setBeacons] = useState<BeaconData[]>([]);
+  const [beacons, setBeacons] = useState<BeaconView[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const beatRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -165,16 +170,17 @@ export function usePresence(): UsePresenceResult {
     if (!user) return;
     const unsub = onSnapshot(collection(db, "beacons"), (snap) => {
       const now = Date.now();
-      const list: BeaconData[] = [];
+      const list: BeaconView[] = [];
       snap.forEach((d) => {
         const b = d.data() as BeaconData & { lowSince?: number | null };
-        // tampilkan hanya bila belum melewati dissolve saat dokumen masih ada
+        // lowSince → UI countdown dissolve ("beacon hilang ±X mnt")
         list.push({
           lat: b.lat,
           lng: b.lng,
           count: b.count,
           city: b.city,
           updatedAt: b.updatedAt ?? now,
+          lowSince: b.lowSince ?? null,
         });
       });
       setBeacons(list);
