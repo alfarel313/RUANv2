@@ -35,18 +35,20 @@ const LABELS: Record<string, string> = {
 };
 
 function placeIcon(p: PlaceData, open: boolean): L.DivIcon {
+  // Root normal-flow selebar konten; iconAnchor [16,38] = ujung tail = titik koordinat.
+  // TANPA inner absolute/translate — offset ganda membuat pin melenceng saat zoom.
   return L.divIcon({
     className: "",
     html: `
-      <div style="position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;pointer-events:auto;">
-        <div style="background:${open ? "#ffffff" : "#94a3b8"};border:2px solid ${open ? "#0f766e" : "#64748b"};border-radius:9999px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 2px 6px rgba(0,0,0,.25);${open ? "" : "filter:grayscale(.6);"}">
+      <div style="display:flex;flex-direction:column;align-items:center;width:32px;">
+        <div style="box-sizing:border-box;background:${open ? "#ffffff" : "#94a3b8"};border:2px solid ${open ? "#0f766e" : "#64748b"};border-radius:9999px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 2px 6px rgba(0,0,0,.25);${open ? "" : "filter:grayscale(.6);"}">
           ${ICONS[p.type] ?? "📍"}
         </div>
-        <div style="width:2px;height:6px;background:${open ? "#0f766e" : "#64748b"};"></div>
+        <div style="width:2px;height:6px;background:${open ? "#0f766e" : "#64748b"};margin-top:-1px;"></div>
       </div>`,
-    iconSize: [32, 44],
-    iconAnchor: [16, 44],
-    popupAnchor: [0, -40],
+    iconSize: [32, 38],
+    iconAnchor: [16, 38],
+    popupAnchor: [0, -32],
   });
 }
 

@@ -20,17 +20,20 @@ const WORLD: [number, number][] = [
 ];
 
 function pinIcon(): L.DivIcon {
+  // Root persis selebar konten; iconAnchor [17,42] = ujung tail = titik koordinat.
+  // TANPA inner absolute/translate — offset ganda membuat pin melenceng saat zoom.
   return L.divIcon({
     className: "",
     html: `
-      <div style="position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;pointer-events:auto;">
-        <div style="background:#ffffff;border:3px solid #d97706;border-radius:9999px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 2px 8px rgba(0,0,0,.3);">
+      <div style="display:flex;flex-direction:column;align-items:center;width:34px;">
+        <div style="box-sizing:border-box;background:#ffffff;border:3px solid #d97706;border-radius:9999px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 2px 8px rgba(0,0,0,.3);">
           📌
         </div>
-        <div style="width:2px;height:8px;background:#d97706;"></div>
+        <div style="width:3px;height:8px;background:#d97706;margin-top:-1px;"></div>
       </div>`,
-    iconSize: [34, 48],
-    iconAnchor: [17, 48],
+    iconSize: [34, 42],
+    iconAnchor: [17, 42],
+    popupAnchor: [0, -36],
   });
 }
 
