@@ -27,22 +27,24 @@ function RouteCard({ pushedDown }: { pushedDown: boolean }) {
         pushedDown ? "top-16" : "top-3"
       }`}
     >
-      <p className="text-xs font-bold uppercase tracking-wide text-brand">
+      {/* Kartu rute SENGAJA tetap putih di Mode Malam (di atas peta terang);
+          teks dipaksa gelap (!important) agar mengalahkan override global text-slate-* */}
+      <p className="text-xs font-bold uppercase tracking-wide text-brand!">
         🧭 Rute Aman ke {destName}{" "}
         <InfoDot text="Dari beberapa kandidat rute tercepat, sistem memilih rute yang menjauh dari laporan bahaya terverifikasi dalam radius 75 m dari jalur. Biayanya: sedikit lebih lama (dihitung dalam menit) demi keamanan." />
       </p>
-      <p className="mt-0.5 text-lg font-extrabold leading-tight text-slate-900">
+      <p className="mt-0.5 text-lg font-extrabold leading-tight text-slate-900!">
         {formatDistance(result.chosen.distanceM)}
-        <span className="ml-2 text-sm font-semibold text-slate-600">
+        <span className="ml-2 text-sm font-semibold text-slate-600!">
           ± {Math.max(1, Math.round(result.chosen.durationS / 60))} menit jalan kaki
         </span>
       </p>
-      <p className="mt-1 text-sm font-medium text-slate-700">{result.reasonText}</p>
+      <p className="mt-1 text-sm font-medium text-slate-700!">{result.reasonText}</p>
       <div className="mt-2 flex gap-2">
         {faster && (
           <button
             onClick={toggleCompare}
-            className="min-h-[44px] flex-1 rounded-xl border-2 border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50"
+            className="min-h-[44px] flex-1 rounded-xl border-2 border-slate-200! text-xs font-bold text-slate-700! hover:bg-slate-50!"
           >
             {route.showCompare ? "Sembunyikan perbandingan" : "Bandingkan rute"}
           </button>

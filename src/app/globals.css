@@ -62,6 +62,12 @@ html.ruan-dark .rounded-full.bg-white {
   background: #ffffff;
   color: inherit;
 }
+/* Pengecualian: kartu Rute (RouteCard) tetap PUTIH di Mode Malam — berada di atas
+   peta terang; teksnya dipaksa gelap via kelas !important di komponen.
+   Selector !bg tidak ada — pakai !text-* saja; latar dikunci putih: */
+html.ruan-dark .bg-white\/97 {
+  background: rgba(255, 255, 255, 0.97);
+}
 
 /* Permukaan sekunder: empty-state, loading, toggle track */
 html.ruan-dark .bg-slate-50,

@@ -296,6 +296,153 @@ const REPORTS = [
     reporterName: "Warga Kranji", city: "Bekasi",
     ageHours: 30,
   },
+  // ─── 15 LAPORAN SEBARAN KOTA (verified, tersebar 12 kecamatan, koordinat
+  //     menempel jalan utama asli via Overpass scripts/_roads.js — JAUH dari
+  //     koridor demo Metro→Transmart agar algoritma demo tak terganggu;
+  //     Pekayon (rute alternatif demo) SENGAJA TIDAK diberi insiden) ───
+  {
+    type: "jalan_rusak",
+    title: "Aspal rusak berlubang di Jalan Caman Raya",
+    description:
+      "Bekas galian pipa belum diratakan, lubang memanjang 5 meter di lajur kiri. Motor tergelincir saat hujan — kurangi kecepatan.",
+    lat: -6.256381, lng: 106.951186, status: "verified",
+    reporterName: "Warga Caman", city: "Bekasi",
+    ageHours: 20,
+  },
+  {
+    type: "kejahatan",
+    title: "HP dirampas dua motor di Boulevard Raya Barat",
+    description:
+      "Dua pelaku motor menutup lajur dan merampas HP pejalan kaki malam hari (21:00-23:00). Hindari trotoar sepi, pilih jalur dekat minimarket.",
+    lat: -6.277288, lng: 106.974349, status: "verified",
+    reporterName: "Warga Bekasi Selatan", city: "Bekasi",
+    ageHours: 18,
+  },
+  {
+    type: "banjir",
+    title: "Genangan pinggir jalan Jatibening",
+    description:
+      "Drainase tersumbat sampah, genangan 20 cm memutup bahu jalan sejak sore. Motor disarankan jalur tengah, waspada mobil cipratan.",
+    lat: -6.249895, lng: 106.943883, status: "verified",
+    reporterName: "Warga Jatibening", city: "Bekasi",
+    ageHours: 5,
+  },
+  {
+    type: "kehilangan",
+    title: "Dompet hilang di sekitar Jalan RA. Kartini",
+    description:
+      "Dompet berisi KTP dan kartu bank hilang di area pertokoan, kemungkinan jatuh atau dicopet saat ramai. Pemilik berharap dikembalikan via warga sekitar.",
+    lat: -6.249415, lng: 107.000467, status: "verified",
+    reporterName: "Warga Kayuringin", city: "Bekasi",
+    ageHours: 10,
+  },  {
+    type: "jalan_rusak",
+    title: "Marka pudar + aspal bergelombang di Jenderal Sudirman",
+    description:
+      "Permukaan bergelombang dan marka memudar di beberapa titik terang. Rawan kecelakaan saat sore matahari condong — nyalakan lampu lebih awal.",
+    lat: -6.224503, lng: 106.978172, status: "verified",
+    reporterName: "Warga Bekasi Barat", city: "Bekasi",
+    ageHours: 40,
+  },
+  {
+    type: "kejahatan",
+    title: "Begal motor di Jalan Nusantara sepulang kerja",
+    description:
+      "Pelaku tunggal motor mengejar pejalan kaki dan merampas tas pukul 22:00 di depan ruko sepi. Koridor ini gelap setelah toko tutup — pilih jalur Ahmad Yani.",
+    lat: -6.244725, lng: 107.040345, status: "verified",
+    reporterName: "Warga Bekasi Timur", city: "Bekasi",
+    ageHours: 14,
+  },
+  {
+    type: "lainnya",
+    title: "Lampu jalan mati beramai-ramai Grand Lake Boulevard",
+    description:
+      "Lima tiang lampu jalan mati berurutan membuat koridor gelap total setelah pukul 19:00. Warga malam dianjurkan lewat jalur utama yang terang.",
+    lat: -6.299526, lng: 107.063491, status: "verified",
+    reporterName: "Warga Galaxy", city: "Bekasi",
+    ageHours: 26,
+  },
+  {
+    type: "kejahatan",
+    title: "Pencurian motor di parkiran Jalan Pahlawan",
+    description:
+      "Dua motor hilang dalam seminggu dari parkiran liar tanpa penjaga (22:00-04:00). Gunakan parkiran berjaga atau area dekat pos keamanan.",
+    lat: -6.236625, lng: 107.027406, status: "verified",
+    reporterName: "Warga Duren Jaya", city: "Bekasi",
+    ageHours: 22,
+  },
+  {
+    type: "banjir",
+    title: "Air meluap ke jalan di Jatibening 2",
+    description:
+      "Luapan kali kecil menutup satu lajur setelah hujan 2 jam. Kedalaman memutih di tikungan — motor disarankan berbalik arah via Jatibening Raya.",
+    lat: -6.257934, lng: 106.942055, status: "verified",
+    reporterName: "Warga Jatibening", city: "Bekasi",
+    ageHours: 3,
+  },
+  {
+    type: "kebakaran",
+    title: "Kebakaran kecil kios terjaga di Celebration Boulevard",
+    description:
+      "Kios kelontong terbakar akibat konslet listrik, padam dalam 15 menit. Asap sempat menutup jalan — hindari area saat evakuasi berlangsung.",
+    lat: -6.291403, lng: 107.045045, status: "verified",
+    reporterName: "Warga Bekasi Selatan", city: "Bekasi",
+    ageHours: 28,
+  },
+  {
+    type: "jalan_rusak",
+    title: "Trotoar retak & ambles di West Gateway Boulevard",
+    description:
+      "Trotoar ambles di dua titik bekas saluran air, berbahaya untuk kursi roda dan lansia. Penyandang disabilitas disarankan jalur dalam ruko.",
+    lat: -6.278285, lng: 107.047664, status: "verified",
+    reporterName: "Warga Mustika Jaya", city: "Bekasi",
+    ageHours: 35,
+  },
+  {
+    type: "kejahatan",
+    title: "Terkutilat tipu pinjam HP di Boulevard Hijau Raya",
+    description:
+      "Modus pinjam HP 'telepon darurat' lalu kabur — dua korban dalam sepekan di sekitar kompleks. Tolak permintaan barang dari orang asing.",
+    lat: -6.186343, lng: 106.980614, status: "verified",
+    reporterName: "Warga Harapan Jaya", city: "Bekasi",
+    ageHours: 44,
+  },
+  {
+    type: "kehilangan",
+    title: "Motor hilang dari garasi dekat Caman Raya",
+    description:
+      "Beberapa warga melaporkan sepeda motor hilang dari garasi terbuka malam hari di lingkungan padat. Kunci ganda dan parkir dalam.",
+    lat: -6.259900, lng: 106.954800, status: "verified",
+    reporterName: "Warga Caman", city: "Bekasi",
+    ageHours: 50,
+  },
+  {
+    type: "lainnya",
+    title: "Kerumunan preman di ujung Jalan Jatibening",
+    description:
+      "Kelompok preman meminta uang 'parkir paksa' di ujung jalan menuju pasar sore hari. Hindari konflik, lewat jalur alternatif atau minta bantuan pos keamanan.",
+    lat: -6.260944, lng: 106.944378, status: "verified",
+    reporterName: "Warga Jatibening", city: "Bekasi",
+    ageHours: 12,
+  },
+  {
+    type: "banjir",
+    title: "Genangan tinggi flyover Pekayon Raya utara",
+    description:
+      "Depresi flyover tergenang 30 cm setiap hujan deras, air mengalir deras melintang. Pejalan kaki dan lansia dianjurkan menyeberang lebih awal.",
+    lat: -6.252600, lng: 106.995900, status: "verified",
+    reporterName: "Warga Pekayon", city: "Bekasi",
+    ageHours: 7,
+  },
+  {
+    type: "kejahatan",
+    title: "Sander tipu jual elektronik di sudut Kartini",
+    description:
+      "Penipuan jual HP 'bensin habis' dengan barang palsu menargetkan pejalan kaki. Jangan berhenti bila diberi tanda untuk menawar.",
+    lat: -6.254100, lng: 107.000900, status: "verified",
+    reporterName: "Warga Bekasi Kota", city: "Bekasi",
+    ageHours: 16,
+  },
 ];
 
 async function seed() {
