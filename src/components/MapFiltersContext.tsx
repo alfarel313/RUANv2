@@ -70,6 +70,8 @@ export interface MapFiltersContextValue {
   toggleRouteIncidents: () => void;
   allPlacesOn: () => void;
   allReportsOn: () => void;
+  allPlacesOff: () => void;
+  allReportsOff: () => void;
 }
 
 const MapFiltersContext = createContext<MapFiltersContextValue | null>(null);
@@ -113,6 +115,27 @@ export function MapFiltersProvider({ children }: { children: React.ReactNode }) 
     }));
   }, []);
 
+  // "Sembunyikan semua" — satu ketuk kosongkan peta (murni visual, invarian tetap)
+  const allPlacesOff = useCallback(() => {
+    setFilters((f) => ({
+      ...f,
+      places: PLACE_KEYS.reduce<Record<PlaceType, boolean>>(
+        (acc, k) => ({ ...acc, [k]: false }),
+        {} as Record<PlaceType, boolean>
+      ),
+    }));
+  }, []);
+
+  const allReportsOff = useCallback(() => {
+    setFilters((f) => ({
+      ...f,
+      reports: REPORT_KEYS.reduce<Record<ReportType, boolean>>(
+        (acc, k) => ({ ...acc, [k]: false }),
+        {} as Record<ReportType, boolean>
+      ),
+    }));
+  }, []);
+
   return (
     <MapFiltersContext.Provider
       value={{
@@ -123,6 +146,8 @@ export function MapFiltersProvider({ children }: { children: React.ReactNode }) 
         toggleRouteIncidents,
         allPlacesOn,
         allReportsOn,
+        allPlacesOff,
+        allReportsOff,
       }}
     >
       {children}

@@ -25,6 +25,7 @@ function mkReport(
     description: "test",
     lat,
     lng,
+    photos: [],
     photoURL: null,
     status,
     reporterUid: "t",

@@ -34,7 +34,7 @@ export interface UserSettings {
 export interface UserData {
   displayName: string
   email: string
-  photoURL: string
+  photoURL: string | null
   role: Role
   city: string
   settings: UserSettings
@@ -61,6 +61,9 @@ export interface ReportData {
   description: string
   lat: number
   lng: number
+  /** Maks 3 foto base64 (jpeg terkompresi). Foto tunggal lama tetap terbaca. */
+  photos: string[] | null
+  /** LEGACY (pra-multi-foto): dipertahankan agar dokumen lama tetap terbaca */
   photoURL: string | null
   status: ReportStatus
   reporterUid: string
@@ -69,6 +72,13 @@ export interface ReportData {
   createdAt: number // epoch ms
   verifiedBy: string | null
   verifiedAt: number | null
+}
+
+/** Helper baca foto laporan — dukung format baru (photos[]) & lama (photoURL) */
+export function reportPhotos(r: Pick<ReportData, "photos" | "photoURL">): string[] {
+  if (r.photos && r.photos.length > 0) return r.photos
+  if (r.photoURL) return [r.photoURL]
+  return []
 }
 
 export interface PlaceData {

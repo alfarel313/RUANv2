@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReportData } from "@/lib/types";
+import { reportPhotos } from "@/lib/types";
 
 export const TYPE_META: Record<string, { label: string; icon: string }> = {
   banjir: { label: "Banjir", icon: "🌊" },
@@ -30,6 +31,7 @@ export default function ReportCard({
   showStatus?: boolean;
 }) {
   const meta = TYPE_META[report.type] ?? TYPE_META.lainnya;
+  const pics = reportPhotos(report);
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3">
@@ -69,13 +71,24 @@ export default function ReportCard({
         )}
       </div>
       <p className="mt-2 text-sm text-slate-700">{report.description}</p>
-      {report.photoURL && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={report.photoURL}
-          alt={`Foto laporan: ${report.title}`}
-          className="mt-2 max-h-48 w-full rounded-xl border border-slate-200 object-cover"
-        />
+      {pics.length > 0 && (
+        <div
+          className={`mt-2 grid gap-2 ${
+            pics.length > 1 ? "grid-cols-3" : "grid-cols-1"
+          }`}
+        >
+          {pics.map((p, i) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={i}
+              src={p}
+              alt={`Foto laporan ${i + 1}: ${report.title}`}
+              className={`rounded-xl border border-slate-200 object-cover ${
+                pics.length > 1 ? "h-24 w-full" : "max-h-48 w-full"
+              }`}
+            />
+          ))}
+        </div>
       )}
     </article>
   );

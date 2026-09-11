@@ -48,7 +48,7 @@ export default function ReportForm() {
   const [type, setType] = useState<ReportType>("banjir");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [photo, setPhoto] = useState<string | null>(null);
+  const [photos, setPhotos] = useState<string[]>([]); // maks 3 foto terkompresi
   const [pos, setPos] = useState<{ lat: number; lng: number } | null>(null);
   const [posSource, setPosSource] = useState<"gps" | "peta">("gps");
   const [gpsFailed, setGpsFailed] = useState(false);
@@ -82,25 +82,41 @@ export default function ReportForm() {
     );
   }
 
-  const onPhoto = (f: File | null) => {
-    if (!f) return setPhoto(null);
-    // kompres kecil → base64 (Firestore doc-friendly)
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        const MAX = 640;
-        const scale = Math.min(1, MAX / Math.max(img.width, img.height));
-        const canvas = document.createElement("canvas");
-        canvas.width = Math.round(img.width * scale);
-        canvas.height = Math.round(img.height * scale);
-        canvas.getContext("2d")!.drawImage(img, 0, 0, canvas.width, canvas.height);
-        setPhoto(canvas.toDataURL("image/jpeg", 0.7));
+  const onPhotos = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const room = 3 - photos.length; // slot tersisa
+    if (room <= 0) {
+      setError("Maksimal 3 foto per laporan.");
+      return;
+    }
+    const list = Array.from(files).slice(0, room);
+    setError(null);
+    // kompres tiap foto kecil → base64 (Firestore doc-friendly)
+    list.forEach((f) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const MAX = 640;
+          const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          canvas
+            .getContext("2d")!
+            .drawImage(img, 0, 0, canvas.width, canvas.height);
+          const b64 = canvas.toDataURL("image/jpeg", 0.7);
+          setPhotos((cur) => (cur.length >= 3 ? cur : [...cur, b64]));
+        };
+        img.onerror = () => setError("Ada foto tidak terbaca — coba file lain.");
+        img.src = String(reader.result);
       };
-      img.src = String(reader.result);
-    };
-    reader.readAsDataURL(f);
+      reader.readAsDataURL(f);
+    });
   };
+
+  const removePhoto = (i: number) =>
+    setPhotos((cur) => cur.filter((_, idx) => idx !== i));
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -130,7 +146,8 @@ export default function ReportForm() {
         description: description.trim(),
         lat: pos.lat,
         lng: pos.lng,
-        photoURL: photo,
+        photos,
+        photoURL: null, // legacy — format baru pakai photos[]
         status: "pending",
         reporterUid: user.uid,
         reporterName: userData?.displayName ?? "Warga",
@@ -143,7 +160,7 @@ export default function ReportForm() {
       setDone(true);
       setTitle("");
       setDescription("");
-      setPhoto(null);
+      setPhotos([]);
       setPosSource("gps");
       setGpsFailed(false);
       setPinMoved(false);
@@ -246,24 +263,46 @@ export default function ReportForm() {
         className="mt-4 block text-sm font-bold text-slate-800"
         htmlFor="foto"
       >
-        4. Foto (opsional)
+        4. Foto (opsional, maks 3)
       </label>
       <input
         id="foto"
         type="file"
         accept="image/*"
-        onChange={(e) => onPhoto(e.target.files?.[0] ?? null)}
-        className="mt-1 w-full rounded-xl border-2 border-dashed border-slate-300 px-3 py-3 text-sm"
+        multiple
+        onChange={(e) => {
+          onPhotos(e.target.files);
+          e.target.value = ""; // biar file sama bisa dipilih ulang
+        }}
+        disabled={photos.length >= 3}
+        className="mt-1 w-full rounded-xl border-2 border-dashed border-slate-300 px-3 py-3 text-sm disabled:opacity-50"
       />
-      {photo && (
-        <div className="mt-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={photo}
-            alt="Pratinjau foto laporan"
-            className="max-h-40 rounded-xl border border-slate-200"
-          />
+      {photos.length > 0 && (
+        <div className="mt-2 grid grid-cols-3 gap-2">
+          {photos.map((p, i) => (
+            <div key={i} className="relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={p}
+                alt={`Pratinjau foto ${i + 1}`}
+                className="h-24 w-full rounded-xl border border-slate-200 object-cover"
+              />
+              <button
+                type="button"
+                onClick={() => removePhoto(i)}
+                aria-label={`Hapus foto ${i + 1}`}
+                className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-sos text-xs font-bold text-white shadow"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
         </div>
+      )}
+      {photos.length >= 3 && (
+        <p className="mt-1 text-xs font-semibold text-slate-500">
+          Maksimal 3 foto — hapus salah satu untuk mengganti.
+        </p>
       )}
 
       <label className="mt-4 block text-sm font-bold text-slate-800">

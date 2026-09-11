@@ -22,7 +22,8 @@ service cloud.firestore {
       return isSignedIn(); // last-writer-win, skala demo
     }
 
-    // users: profil sendiri; role & city TIDAK bisa ditulis klien (kecuali admin seed via Admin SDK)
+    // users: profil sendiri; role & city TIDAK bisa ditulis klien (kecuali admin seed via Admin SDK);
+    // displayName & photoURL boleh diedit pemilik (fitur edit profil) — role/city tetap terkunci
     match /users/{uid} {
       allow read: if isSignedIn();
       allow create: if isSelf(uid)
@@ -33,7 +34,13 @@ service cloud.firestore {
         && request.resource.data.city == 'Bekasi';
       allow update: if isSelf(uid)
         && request.resource.data.role == resource.data.role
-        && request.resource.data.city == resource.data.city;
+        && request.resource.data.city == resource.data.city
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() > 0
+        && request.resource.data.displayName.size() <= 60
+        && (request.resource.data.photoURL == null
+            || (request.resource.data.photoURL is string
+                && request.resource.data.photoURL.size() <= 300000));
       allow delete: if false;
     }
 
@@ -68,7 +75,17 @@ service cloud.firestore {
         && request.resource.data.title.size() <= 120
         && request.resource.data.description is string
         && request.resource.data.description.size() > 0
-        && request.resource.data.description.size() <= 2000;
+        && request.resource.data.description.size() <= 2000
+        // multi-foto: array string base64 (maks 3 × ~300 KB) ATAU kosong/null
+        && (
+          (
+            !('photos' in request.resource.data)
+            || request.resource.data.photos == null
+            || (request.resource.data.photos is list
+                && request.resource.data.photos.size() <= 3
+                && request.resource.data.photos.size() >= 0)
+          )
+        );
       allow update: if isAdmin()
         || (resource.data.reporterUid == request.auth.uid
             && request.resource.data.status == resource.data.status);

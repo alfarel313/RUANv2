@@ -145,9 +145,14 @@ export default function MapFilterControl() {
     toggleRouteIncidents,
     allPlacesOn,
     allReportsOn,
+    allPlacesOff,
+    allReportsOff,
   } = useMapFilters();
   const [placeOpen, setPlaceOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
+
+  const allPlacesHidden = PLACE_KEYS.every((k) => !filters.places[k]);
+  const allReportsHidden = REPORT_KEYS.every((k) => !filters.reports[k]);
 
   return (
     <div className="pointer-events-auto absolute right-3 top-3 z-[500] flex flex-col items-end gap-1.5">
@@ -182,13 +187,26 @@ export default function MapFilterControl() {
               onChange={toggleBeacons}
             />
           </div>
-          <button
-            type="button"
-            onClick={allPlacesOn}
-            className="mt-1 min-h-[44px] w-full rounded-xl bg-brand/10 text-xs font-extrabold text-brand hover:bg-brand/20"
-          >
-            ✔ Semua Tempat Tampil
-          </button>
+          <div className="mt-1 grid grid-cols-2 gap-1.5">
+            <button
+              type="button"
+              onClick={allPlacesHidden ? allPlacesOn : allPlacesOff}
+              className={`min-h-[44px] rounded-xl text-xs font-extrabold ${
+                allPlacesHidden
+                  ? "bg-brand/10 text-brand hover:bg-brand/20"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              }`}
+            >
+              {allPlacesHidden ? "👁 Tampilkan Semua" : "🙈 Sembunyikan Semua"}
+            </button>
+            <button
+              type="button"
+              onClick={allPlacesOn}
+              className="min-h-[44px] rounded-xl bg-brand/10 text-xs font-extrabold text-brand hover:bg-brand/20"
+            >
+              ✔ Semua Tampil
+            </button>
+          </div>
         </DropdownShell>
 
         <DropdownShell
@@ -221,13 +239,26 @@ export default function MapFilterControl() {
               onChange={toggleRouteIncidents}
             />
           </div>
-          <button
-            type="button"
-            onClick={allReportsOn}
-            className="mt-1 min-h-[44px] w-full rounded-xl bg-amber/10 text-xs font-extrabold text-amber hover:bg-amber/20"
-          >
-            ✔ Semua Kejadian Tampil
-          </button>
+          <div className="mt-1 grid grid-cols-2 gap-1.5">
+            <button
+              type="button"
+              onClick={allReportsHidden ? allReportsOn : allReportsOff}
+              className={`min-h-[44px] rounded-xl text-xs font-extrabold ${
+                allReportsHidden
+                  ? "bg-amber/10 text-amber hover:bg-amber/20"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              }`}
+            >
+              {allReportsHidden ? "👁 Tampilkan Semua" : "🙈 Sembunyikan Semua"}
+            </button>
+            <button
+              type="button"
+              onClick={allReportsOn}
+              className="min-h-[44px] rounded-xl bg-amber/10 text-xs font-extrabold text-amber hover:bg-amber/20"
+            >
+              ✔ Semua Tampil
+            </button>
+          </div>
         </DropdownShell>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { db } from "@/lib/firebase";
 import type { ReportData, ReportType } from "@/lib/types";
+import { reportPhotos } from "@/lib/types";
 import { INCIDENT_RULES } from "@/lib/routing";
 import { useMapFilters } from "@/components/MapFiltersContext";
 import InfoDot from "@/components/InfoDot";
@@ -109,6 +110,33 @@ export default function ReportLayer({ now }: { now: number }) {
             <span style={{ color: "#b45309", fontWeight: 700 }}>
               ⚠️ Terverifikasi admin — hindari area ini
             </span>
+            {reportPhotos(r).length > 0 && (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    reportPhotos(r).length > 1 ? "1fr 1fr" : "1fr",
+                  gap: 4,
+                  marginTop: 6,
+                }}
+              >
+                {reportPhotos(r).map((p, i) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={i}
+                    src={p}
+                    alt={`Foto kejadian ${i + 1}`}
+                    style={{
+                      width: "100%",
+                      height: 64,
+                      objectFit: "cover",
+                      borderRadius: 8,
+                      border: "1px solid #e2e8f0",
+                    }}
+                  />
+                ))}
+              </div>
+            )}
           </Popup>
         </Marker>
       ))}

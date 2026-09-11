@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
@@ -17,6 +17,7 @@ const NAV = [
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const { user, userData } = useAuth();
   const pathname = usePathname();
+  const [confirmLogout, setConfirmLogout] = useState(false);
 
   // Terapkan preferensi aksesibilitas ke <html>
   useEffect(() => {
@@ -101,14 +102,37 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </nav>
 
           <div className="flex items-center gap-2">
-            {user ? (
+            {user && !confirmLogout && (
               <button
-                onClick={() => logout()}
+                onClick={() => setConfirmLogout(true)}
                 className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
               >
                 Keluar
               </button>
-            ) : null}
+            )}
+            {user && confirmLogout && (
+              <span
+                role="alertdialog"
+                aria-label="Konfirmasi keluar akun"
+                className="flex items-center gap-1.5"
+              >
+                <span className="hidden text-xs font-bold text-slate-600 sm:inline">
+                  Keluar?
+                </span>
+                <button
+                  onClick={() => logout()}
+                  className="rounded-lg bg-sos px-3 py-2 text-xs font-bold text-white hover:bg-sos-dark"
+                >
+                  Ya
+                </button>
+                <button
+                  onClick={() => setConfirmLogout(false)}
+                  className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100"
+                >
+                  Batal
+                </button>
+              </span>
+            )}
           </div>
         </div>
       </header>

@@ -485,6 +485,7 @@ async function seed() {
     const { ageHours, ...rest } = r;
     batch.set(reportsCol.doc(), {
       ...rest,
+      photos: [],
       photoURL: null,
       reporterUid: "seed",
       createdAt: Date.now() - ageHours * 3600 * 1000,

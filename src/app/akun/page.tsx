@@ -5,6 +5,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { useAuth } from "@/hooks/useAuth";
 import { db, loginGoogle, logout } from "@/lib/firebase";
 import type { UserSettings } from "@/lib/types";
+import ProfileEditor from "@/components/ProfileEditor";
 
 function Toggle({
   label,
@@ -38,6 +39,7 @@ function Toggle({
 export default function AkunPage() {
   const { user, userData, loading } = useAuth();
   const [settings, setSettings] = useState<UserSettings | null>(null);
+  const [confirmLogout, setConfirmLogout] = useState(false); // 2-langkah: klik Keluar → konfirmasi
 
   const effective: UserSettings =
     settings ??
@@ -149,13 +151,43 @@ export default function AkunPage() {
         />
       </section>
 
-      {user && (
+      {user && userData && (
+        <ProfileEditor key={`${userData.displayName}|${userData.photoURL ?? ""}`} />
+      )}
+
+      {user && !confirmLogout && (
         <button
-          onClick={() => logout()}
+          onClick={() => setConfirmLogout(true)}
           className="mt-6 min-h-[52px] w-full rounded-xl border-2 border-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-50"
         >
           Keluar dari Akun
         </button>
+      )}
+      {user && confirmLogout && (
+        <div
+          role="alertdialog"
+          aria-label="Konfirmasi keluar akun"
+          className="mt-6 rounded-2xl border-2 border-sos bg-sos/5 p-4 text-center"
+        >
+          <p className="text-sm font-bold text-slate-800">
+            Yakin keluar dari akun? Check-in aktif akan berhenti dan Anda
+            perlu login lagi untuk melapor, check-in, atau tombol DARURAT.
+          </p>
+          <div className="mt-3 flex gap-2">
+            <button
+              onClick={() => logout()}
+              className="min-h-[48px] flex-1 rounded-xl bg-sos text-sm font-bold text-white hover:bg-sos-dark"
+            >
+              Ya, Keluar
+            </button>
+            <button
+              onClick={() => setConfirmLogout(false)}
+              className="min-h-[48px] flex-1 rounded-xl border-2 border-slate-300 bg-white text-sm font-bold text-slate-700 hover:bg-slate-100"
+            >
+              Batal
+            </button>
+          </div>
+        </div>
       )}
     </main>
   );
