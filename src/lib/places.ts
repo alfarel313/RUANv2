@@ -13,6 +13,8 @@ import {
   Stethoscope,
   TrainFront,
 } from "lucide-react";
+// re-export agar konsumen places.ts satu pintu (pola komponen layer/admin)
+export { PLACE_COLORS } from "@/lib/IconMap";
 
 export interface PlaceCategory {
   value: PlaceType;

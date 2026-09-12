@@ -33,7 +33,7 @@ import { __iconData as circleHelpData } from "lucide-react/dist/esm/icons/circle
 import { __iconData as fileTextData } from "lucide-react/dist/esm/icons/file-text.mjs";
 import { __iconData as mapPinData } from "lucide-react/dist/esm/icons/map-pin.mjs";
 import { __iconData as usersData } from "lucide-react/dist/esm/icons/users.mjs";
-import type { PlaceType, ReportType } from "@/lib/types";
+import type { PlaceType, ReportType } from "./types";
 
 /**
  * SATU SUMBER KEBENARAN ikon Lucide — dipakai nav, filter, kartu, form, peta.
@@ -66,6 +66,23 @@ export const PLACE_ICON_DATA: Record<PlaceType, LucideIconData> = {
   mall: packageData,
   stasiun: trainFrontData,
   pos_keamanan: shieldCheckData,
+};
+
+/**
+ * Warna marker per kategori tempat — SATU WARNA = SATU KATEGORI (mudah dibedakan
+ * di peta). Dipakai: border+ekor marker PlaceLayer, ikon di dropdown filter
+ * (legenda), dan teks ikon di PlaceAdminSection. Warna gelap agar kontras
+ * dengan lingkaran putih marker & tetap terbaca di atas tiles terang.
+ */
+export const PLACE_COLORS: Record<PlaceType, string> = {
+  polisi: "#1d4ed8", // biru — kantor polisi
+  rumah_sakit: "#dc2626", // merah — rumah sakit (darurat medis)
+  puskesmas: "#db2777", // pink — puskesmas
+  masjid: "#16a34a", // hijau — masjid
+  toko: "#ea580c", // oranye — minimarket
+  mall: "#7c3aed", // ungu — mal
+  stasiun: "#0e7490", // teal gelap — stasiun/transport
+  pos_keamanan: "#4d7c0f", // zaitun — pos keamanan
 };
 
 export const REPORT_LUCIDE: Record<ReportType, LucideIcon> = {

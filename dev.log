@@ -9,3 +9,19 @@
 ✓ Ready in 1349ms
 ✓ Running next.config.ts took 64ms
 
+○ Compiling /panduan/[slug] ...
+ GET /panduan/saat-banjir-langkah-pertama-yang-aman 200 in 6.9s (next.js: 6.2s, application-code: 770ms)
+ GET /panduan/saat-banjir-langkah-pertama-yang-aman 200 in 138ms (next.js: 29ms, application-code: 109ms)
+ GET /llms.txt 404 in 1079ms (next.js: 917ms, application-code: 161ms)
+ GET /robots.txt 404 in 151ms (next.js: 31ms, application-code: 120ms)
+ GET /bahaya 200 in 942ms (next.js: 871ms, application-code: 70ms)
+ GET /bahaya 200 in 122ms (next.js: 13ms, application-code: 109ms)
+ GET / 200 in 1264ms (next.js: 1187ms, application-code: 77ms)
+ GET / 200 in 83ms (next.js: 25ms, application-code: 58ms)
+✓ Compiled in 264ms
+ GET / 200 in 164ms (next.js: 20ms, application-code: 143ms)
+ GET / 200 in 115ms (next.js: 16ms, application-code: 99ms)
+ GET / 200 in 114ms (next.js: 18ms, application-code: 96ms)
+ GET / 200 in 121ms (next.js: 35ms, application-code: 87ms)
+ GET / 200 in 98ms (next.js: 12ms, application-code: 87ms)
+✓ Compiled in 164ms

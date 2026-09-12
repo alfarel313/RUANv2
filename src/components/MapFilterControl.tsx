@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useMapFilters, PLACE_KEYS, REPORT_KEYS } from "@/components/MapFiltersContext";
 import InfoDot from "@/components/InfoDot";
-import { PLACE_LUCIDE, REPORT_LUCIDE } from "@/lib/IconMap";
+import { PLACE_LUCIDE, REPORT_LUCIDE, PLACE_COLORS } from "@/lib/IconMap";
 import { PLACE_LABELS } from "@/lib/places";
 import type { ReportType } from "@/lib/types";
 
@@ -31,11 +31,14 @@ function FilterRow({
   label,
   checked,
   onChange,
+  color,
 }: {
   Icon: LucideIcon;
   label: string;
   checked: boolean;
   onChange: () => void;
+  /** Warna kategori — legenda konsisten dengan warna marker di peta */
+  color?: string;
 }) {
   return (
     <button
@@ -46,7 +49,12 @@ function FilterRow({
       className="flex min-h-[48px] w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-left hover:bg-slate-100"
     >
       <span className="flex items-center gap-2 text-sm font-bold text-slate-800">
-        <Icon aria-hidden="true" className="h-4 w-4 shrink-0" /> {label}
+        <Icon
+          aria-hidden="true"
+          className="h-4 w-4 shrink-0"
+          style={color ? { color } : undefined}
+        />{" "}
+        {label}
       </span>
       {/* sakelar visual + status teks (bukan hanya warna â€” a11y lansia) */}
       <span className="flex items-center gap-1.5">
@@ -185,6 +193,7 @@ export default function MapFilterControl() {
                 label={PLACE_LABELS[k]}
                 checked={filters.places[k]}
                 onChange={() => togglePlace(k)}
+                color={PLACE_COLORS[k]}
               />
             ))}
             <div className="my-1 border-t border-slate-200" />

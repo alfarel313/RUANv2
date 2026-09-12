@@ -8,7 +8,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { PLACE_CATEGORIES, PLACE_ICONS, PLACE_LABELS, type PlaceDraft } from "@/lib/places";
+import { PLACE_CATEGORIES, PLACE_ICONS, PLACE_LABELS, PLACE_COLORS, type PlaceDraft } from "@/lib/places";
 import type { PlaceData } from "@/lib/types";
 import PlaceForm from "@/components/PlaceForm";
 import { SkeletonList } from "@/components/Skeleton";
@@ -200,7 +200,13 @@ export default function PlaceAdminSection() {
                 <p className="flex items-center gap-1.5 truncate text-sm font-extrabold text-slate-800">
                   {(() => {
                     const PIcon = PLACE_ICONS[p.type];
-                    return <PIcon aria-hidden="true" className="h-4 w-4 shrink-0 text-brand" />;
+                    return (
+                      <PIcon
+                        aria-hidden="true"
+                        className="h-4 w-4 shrink-0"
+                        style={{ color: PLACE_COLORS[p.type] }}
+                      />
+                    );
                   })()}
                   {p.name}
                 </p>
