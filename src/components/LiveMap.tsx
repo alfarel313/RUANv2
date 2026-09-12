@@ -14,6 +14,7 @@ import { useRouteCtx } from "@/components/RouteContext";
 import { useMapFilters } from "@/components/MapFiltersContext";
 import InfoDot from "@/components/InfoDot";
 import { formatDistance } from "@/lib/geo";
+import { Navigation, X } from "lucide-react";
 
 /** Kartu ringkas rute aktif — mengambang di atas peta (turun bila filter aktif) */
 function RouteCard({ pushedDown }: { pushedDown: boolean }) {
@@ -29,8 +30,9 @@ function RouteCard({ pushedDown }: { pushedDown: boolean }) {
     >
       {/* Kartu rute SENGAJA tetap putih di Mode Malam (di atas peta terang);
           teks dipaksa gelap (!important) agar mengalahkan override global text-slate-* */}
-      <p className="text-xs font-bold uppercase tracking-wide text-brand!">
-        🧭 Rute Aman ke {destName}{" "}
+      <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-brand!">
+        <Navigation aria-hidden="true" className="h-4 w-4" />
+        Rute Aman ke {destName}{" "}
         <InfoDot text="Dari beberapa kandidat rute tercepat, sistem memilih rute yang menjauh dari laporan bahaya terverifikasi dalam radius 75 m dari jalur. Biayanya: sedikit lebih lama (dihitung dalam menit) demi keamanan." />
       </p>
       <p className="mt-0.5 text-lg font-extrabold leading-tight text-slate-900!">
@@ -51,9 +53,9 @@ function RouteCard({ pushedDown }: { pushedDown: boolean }) {
         )}
         <button
           onClick={clearRoute}
-          className="min-h-[44px] flex-1 rounded-xl bg-brand text-xs font-bold text-white hover:bg-brand-dark"
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand text-xs font-bold text-white hover:bg-brand-dark"
         >
-          Tutup rute
+          <X aria-hidden="true" className="h-4 w-4" /> Tutup rute
         </button>
       </div>
     </div>

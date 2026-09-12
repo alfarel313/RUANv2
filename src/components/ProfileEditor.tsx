@@ -4,6 +4,13 @@ import { useRef, useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { useAuth } from "@/hooks/useAuth";
 import { db } from "@/lib/firebase";
+import {
+  Camera,
+  Check,
+  Pencil,
+  Save,
+  Trash2,
+} from "lucide-react";
 
 /** Kompres gambar profil → base64 kecil (256px, jpeg 80%) — hemat dokumen Firestore */
 function compressAvatar(file: File): Promise<string | null> {
@@ -85,8 +92,8 @@ export default function ProfileEditor() {
       aria-label="Edit profil"
       className="mt-5 rounded-2xl border-2 border-slate-200 bg-white p-4"
     >
-      <h2 className="text-base font-extrabold text-slate-800">
-        ✏️ Edit Profil
+      <h2 className="flex items-center gap-2 text-base font-extrabold text-slate-800">
+        <Pencil aria-hidden="true" className="h-5 w-5" /> Edit Profil
       </h2>
       <p className="mt-0.5 text-xs font-semibold text-slate-500">
         Nama & foto dipakai di laporan, check-in, dan identitas Anda di RUAN.
@@ -103,17 +110,17 @@ export default function ProfileEditor() {
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="min-h-[44px] rounded-xl border-2 border-brand px-4 text-xs font-bold text-brand hover:bg-brand/10"
+            className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border-2 border-brand px-4 text-xs font-bold text-brand hover:bg-brand/10"
           >
-            📷 Pilih Foto
+            <Camera aria-hidden="true" className="h-4 w-4" /> Pilih Foto
           </button>
           {avatar && (
             <button
               type="button"
               onClick={() => setAvatar(null)}
-              className="min-h-[44px] rounded-xl border-2 border-slate-300 px-4 text-xs font-bold text-slate-600 hover:bg-slate-100"
+              className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border-2 border-slate-300 px-4 text-xs font-bold text-slate-600 hover:bg-slate-100"
             >
-              🗑️ Hapus Foto
+              <Trash2 aria-hidden="true" className="h-4 w-4" /> Hapus Foto
             </button>
           )}
           <input
@@ -155,12 +162,12 @@ export default function ProfileEditor() {
 
       {error && (
         <p role="alert" className="mt-2 text-sm font-bold text-sos">
-          ⚠️ {error}
+          {error}
         </p>
       )}
       {saved && (
-        <p role="status" className="mt-2 text-sm font-bold text-brand">
-          ✅ Profil tersimpan.
+        <p role="status" className="mt-2 flex items-center gap-1 text-sm font-bold text-brand">
+          <Check aria-hidden="true" className="h-4 w-4" /> Profil tersimpan.
         </p>
       )}
 
@@ -168,9 +175,10 @@ export default function ProfileEditor() {
         type="button"
         onClick={save}
         disabled={busy || !dirty}
-        className="mt-3 min-h-[48px] w-full rounded-xl bg-brand text-sm font-bold text-white hover:bg-brand-dark disabled:opacity-50"
+        className="mt-3 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-brand text-sm font-bold text-white hover:bg-brand-dark disabled:opacity-50"
       >
-        {busy ? "Menyimpan…" : "💾 Simpan Profil"}
+        <Save aria-hidden="true" className="h-4 w-4" />
+        {busy ? "Menyimpan…" : "Simpan Profil"}
       </button>
     </section>
   );

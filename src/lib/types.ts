@@ -83,7 +83,7 @@ export function reportPhotos(r: Pick<ReportData, "photos" | "photoURL">): string
   return []
 }
 
-/** Ekstrak domain dari sourceURL untuk tampilan warga ("📰 detik.com").
+/** Ekstrak domain dari sourceURL untuk tampilan warga ("detik.com" dengan ikon berita).
  *  Murni client-side — tanpa fetch, aman CORS. Return null bila URL tak sehat. */
 export function sourceDomain(r: Pick<ReportData, "sourceURL">): string | null {
   const url = r.sourceURL

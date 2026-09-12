@@ -1,6 +1,7 @@
 "use client";
 
 import { useMap } from "react-leaflet";
+import { LocateFixed } from "lucide-react";
 import { useLiveLocationCtx } from "@/components/LiveLocationContext";
 
 /**
@@ -38,13 +39,13 @@ export default function FocusLocationButton({
       aria-label="Fokus ke lokasi saya"
       aria-pressed={follow}
       title="Fokus ke lokasi saya"
-      className={`pointer-events-auto absolute bottom-3 left-3 z-[500] flex h-12 w-12 items-center justify-center rounded-full border-2 text-xl shadow-lg transition-colors ${
+      className={`pointer-events-auto absolute bottom-3 left-3 z-[500] flex h-12 w-12 items-center justify-center rounded-full border-2 shadow-lg transition-colors ${
         follow
           ? "border-brand bg-brand text-white"
           : "border-slate-200 bg-white text-brand hover:bg-brand/5"
       }`}
     >
-      <span aria-hidden="true">🎯</span>
+      <LocateFixed aria-hidden="true" className="h-5 w-5" />
     </button>
   );
 }

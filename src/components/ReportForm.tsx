@@ -7,6 +7,20 @@ import { db } from "@/lib/firebase";
 import type { ReportType } from "@/lib/types";
 import { loginGoogle } from "@/lib/firebase";
 import dynamicImport from "next/dynamic";
+import {
+  Construction,
+  CircleHelp,
+  FileText,
+  Flame,
+  LogIn,
+  MapPin,
+  Megaphone,
+  ShieldCheck,
+  Siren,
+  Waves,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 
 // Peta (leaflet) WAJIB client-only — ssr:false seperti LiveMap
 const LocationPicker = dynamicImport(
@@ -27,13 +41,13 @@ const LocationPicker = dynamicImport(
   }
 );
 
-const TYPES: { value: ReportType; label: string; icon: string }[] = [
-  { value: "banjir", label: "Banjir", icon: "🌊" },
-  { value: "kebakaran", label: "Kebakaran", icon: "🔥" },
-  { value: "kejahatan", label: "Kejahatan", icon: "🚨" },
-  { value: "jalan_rusak", label: "Jalan Rusak", icon: "🕳️" },
-  { value: "kehilangan", label: "Kehilangan", icon: "❓" },
-  { value: "lainnya", label: "Lainnya", icon: "📋" },
+const TYPES: { value: ReportType; label: string; Icon: LucideIcon }[] = [
+  { value: "banjir", label: "Banjir", Icon: Waves },
+  { value: "kebakaran", label: "Kebakaran", Icon: Flame },
+  { value: "kejahatan", label: "Kejahatan", Icon: Siren },
+  { value: "jalan_rusak", label: "Jalan Rusak", Icon: Construction },
+  { value: "kehilangan", label: "Kehilangan", Icon: CircleHelp },
+  { value: "lainnya", label: "Lainnya", Icon: FileText },
 ];
 
 async function getPos(): Promise<{ lat: number; lng: number } | null> {
@@ -81,7 +95,8 @@ export default function ReportForm() {
         onClick={() => loginGoogle()}
         className="mx-auto flex min-h-[56px] items-center justify-center gap-2 rounded-xl bg-brand px-6 text-base font-bold text-white hover:bg-brand-dark"
       >
-        🔐 Masuk dengan Google untuk Melapor
+        <LogIn aria-hidden="true" className="h-5 w-5" /> Masuk dengan Google
+        untuk Melapor
       </button>
     );
   }
@@ -181,9 +196,7 @@ export default function ReportForm() {
         className="rounded-2xl border-2 border-brand bg-white p-6 text-center shadow"
         role="status"
       >
-        <p className="text-3xl" aria-hidden="true">
-          ✅
-        </p>
+        <ShieldCheck aria-hidden="true" className="mx-auto h-12 w-12 text-brand" />
         <h2 className="mt-2 text-lg font-extrabold text-slate-900">
           Laporan Terkirim
         </h2>
@@ -224,9 +237,7 @@ export default function ReportForm() {
                   : "border-slate-200 bg-white text-slate-700 hover:border-brand/50"
               }`}
             >
-              <span aria-hidden="true" className="text-2xl">
-                {t.icon}
-              </span>
+              <t.Icon aria-hidden="true" className="h-6 w-6" />
               {t.label}
             </button>
           ))}
@@ -295,9 +306,9 @@ export default function ReportForm() {
                 type="button"
                 onClick={() => removePhoto(i)}
                 aria-label={`Hapus foto ${i + 1}`}
-                className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-sos text-xs font-bold text-white shadow"
+                className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-sos text-white shadow"
               >
-                ✕
+                <X aria-hidden="true" className="h-4 w-4" />
               </button>
             </div>
           ))}
@@ -313,14 +324,17 @@ export default function ReportForm() {
         5. Lokasi kejadian
       </label>
       <p
-        className={`mt-1 text-xs font-semibold ${gpsFailed ? "text-sos" : "text-slate-600"}`}
+        className={`mt-1 flex items-center gap-1.5 text-xs font-semibold ${gpsFailed ? "text-sos" : "text-slate-600"}`}
         role={gpsFailed ? "alert" : undefined}
       >
         {gpsFailed
-          ? "⚠️ GPS tidak terdeteksi — geser pin 📌 di peta ke lokasi kejadian (wajib sebelum kirim)."
+          ? "GPS tidak terdeteksi — geser pin di peta ke lokasi kejadian (wajib sebelum kirim)."
           : posSource === "gps"
-            ? "📍 Menggunakan posisi GPS Anda — bisa diganti dengan menandai peta."
-            : "📌 Menggunakan penanda yang Anda pilih di peta."}
+            ? "Menggunakan posisi GPS Anda — bisa diganti dengan menandai peta."
+            : "Menggunakan penanda yang Anda pilih di peta."}
+        {posSource === "gps" && !gpsFailed && (
+          <MapPin aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+        )}
       </p>
       {pos && (
         <div className="mt-2">
@@ -344,9 +358,10 @@ export default function ReportForm() {
       <button
         type="submit"
         disabled={busy}
-        className="mt-5 min-h-[56px] w-full rounded-xl bg-brand text-base font-bold text-white hover:bg-brand-dark disabled:opacity-60"
+        className="mt-5 flex min-h-[56px] w-full items-center justify-center gap-2 rounded-xl bg-brand text-base font-bold text-white hover:bg-brand-dark disabled:opacity-60"
       >
-        {busy ? "Mengirim…" : "📢 Kirim Laporan"}
+        <Megaphone aria-hidden="true" className="h-5 w-5" />
+        {busy ? "Mengirim…" : "Kirim Laporan"}
       </button>
       <p className="mt-2 text-center text-xs text-slate-500">
         Laporan tampil publik setelah diverifikasi admin — menjaga info

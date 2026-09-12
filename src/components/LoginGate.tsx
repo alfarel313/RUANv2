@@ -1,6 +1,7 @@
 "use client";
 
 import { loginGoogle } from "@/lib/firebase";
+import { LogIn } from "lucide-react";
 
 export default function LoginGate() {
   return (
@@ -17,9 +18,7 @@ export default function LoginGate() {
           onClick={() => loginGoogle()}
           className="mx-auto mt-4 flex min-h-[56px] w-full max-w-xs items-center justify-center gap-3 rounded-xl bg-brand px-6 text-base font-bold text-white transition-colors hover:bg-brand-dark"
         >
-          <span aria-hidden="true" className="text-xl">
-            🔐
-          </span>
+          <LogIn aria-hidden="true" className="h-5 w-5" />
           Masuk dengan Google
         </button>
         <p className="mt-3 text-xs text-slate-500">

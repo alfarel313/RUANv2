@@ -10,15 +10,7 @@ import { reportPhotos, sourceDomain } from "@/lib/types";
 import { INCIDENT_RULES } from "@/lib/routing";
 import { useMapFilters } from "@/components/MapFiltersContext";
 import InfoDot from "@/components/InfoDot";
-
-const ICONS: Record<ReportType, string> = {
-  banjir: "🌊",
-  kebakaran: "🔥",
-  kejahatan: "🚨",
-  jalan_rusak: "🕳️",
-  kehilangan: "❓",
-  lainnya: "📋",
-};
+import { REPORT_ICON_DATA, iconSvg } from "@/lib/IconMap";
 
 const LABELS: Record<ReportType, string> = {
   banjir: "Banjir",
@@ -31,12 +23,13 @@ const LABELS: Record<ReportType, string> = {
 
 /** Marker kejadian: lingkaran amber + ikon jenis (beda bentuk dari pin tempat) */
 function reportIcon(type: ReportType): L.DivIcon {
+  const icon = iconSvg(REPORT_ICON_DATA[type] ?? REPORT_ICON_DATA.lainnya, 16, "#ffffff");
   return L.divIcon({
     className: "",
     html: `
       <div style="position:relative;width:36px;height:36px;">
-        <div style="position:absolute;inset:0;border-radius:9999px;background:#d97706;border:3px solid #ffffff;box-shadow:0 2px 8px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:17px;">
-          ${ICONS[type]}
+        <div style="position:absolute;inset:0;border-radius:9999px;background:#d97706;border:3px solid #ffffff;box-shadow:0 2px 8px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;">
+          ${icon}
         </div>
       </div>`,
     iconSize: [36, 36],
@@ -103,13 +96,13 @@ export default function ReportLayer({ now }: { now: number }) {
           aria-label={`Kejadian ${LABELS[r.type]}: ${r.title}`}
         >
           <Popup>
-            <strong>{ICONS[r.type]} {r.title}</strong>{" "}
+            <strong>{r.title}</strong>{" "}
             <InfoDot text="Laporan warga yang sudah diverifikasi admin Kota Bekasi. Marker otomatis hilang saat laporan tidak lagi relevan (kejahatan 7 hari, banjir 2 hari, lainnya 7 hari) — dan tetap dihitung sebagai bahaya oleh Rute Aman selama masih relevan." />
             <br />
             {LABELS[r.type]} · {ageText(r.createdAt, now)}
             <br />
             <span style={{ color: "#b45309", fontWeight: 700 }}>
-              ⚠️ Terverifikasi admin — hindari area ini
+              Terverifikasi admin — hindari area ini
             </span>
             {sourceDomain(r) && (
               <>
@@ -120,7 +113,7 @@ export default function ReportLayer({ now }: { now: number }) {
                   rel="noopener noreferrer"
                   style={{ color: "#0f766e", fontWeight: 700, fontSize: 12 }}
                 >
-                  📰 Sumber: {sourceDomain(r)}
+                  Sumber: {sourceDomain(r)}
                 </a>
               </>
             )}

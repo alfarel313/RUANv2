@@ -16,12 +16,24 @@ import type {
 import { haversineM, isOpenNow, walkMinutes, formatDistance } from "@/lib/geo";
 import InfoDot from "@/components/InfoDot";
 import Modal from "@/components/Modal";
+import {
+  HeartPulse,
+  Map as MapIcon,
+  Navigation,
+  Phone,
+  Siren,
+  Share2,
+  ShieldCheck,
+  CarFront,
+  Flame,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-const TYPES: { value: EmergencyType; label: string; icon: string }[] = [
-  { value: "medis", label: "Medis", icon: "🏥" },
-  { value: "kejahatan", label: "Kejahatan", icon: "🚨" },
-  { value: "kecelakaan", label: "Kecelakaan", icon: "💥" },
-  { value: "kebakaran", label: "Kebakaran", icon: "🔥" },
+const TYPES: { value: EmergencyType; label: string; Icon: LucideIcon }[] = [
+  { value: "medis", label: "Medis", Icon: HeartPulse },
+  { value: "kejahatan", label: "Kejahatan", Icon: Siren },
+  { value: "kecelakaan", label: "Kecelakaan", Icon: CarFront },
+  { value: "kebakaran", label: "Kebakaran", Icon: Flame },
 ];
 
 export default function SOSButton() {
@@ -41,10 +53,10 @@ export default function SOSButton() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="min-h-[64px] flex-1 rounded-2xl bg-sos px-4 text-base font-bold text-white shadow-md hover:bg-sos-dark"
+        className="flex min-h-[64px] flex-1 items-center justify-center gap-2 rounded-2xl bg-sos px-4 text-base font-bold text-white shadow-md hover:bg-sos-dark"
         aria-label="Darurat — buka bantuan"
       >
-        🆘 DARURAT
+        <Siren aria-hidden="true" className="h-6 w-6" /> DARURAT
       </button>
     );
   }
@@ -133,7 +145,7 @@ export default function SOSButton() {
 
   const share = async () => {
     if (!myPos) return;
-    const text = `🆘 BUTUH BANTUAN! Lokasi saya: https://maps.google.com/?q=${myPos.lat},${myPos.lng}`;
+    const text = `SOS! BUTUH BANTUAN! Lokasi saya: https://maps.google.com/?q=${myPos.lat},${myPos.lng}`;
     if (navigator.share) {
       try {
         await navigator.share({ title: "SOS RUAN", text });
@@ -181,10 +193,10 @@ export default function SOSButton() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="min-h-[64px] flex-1 rounded-2xl bg-sos px-4 text-base font-bold text-white shadow-md transition-colors hover:bg-sos-dark"
+        className="flex min-h-[64px] flex-1 items-center justify-center gap-2 rounded-2xl bg-sos px-4 text-base font-bold text-white shadow-md transition-colors hover:bg-sos-dark"
         aria-label="Darurat — buka bantuan"
       >
-        🆘 DARURAT
+        <Siren aria-hidden="true" className="h-6 w-6" /> DARURAT
       </button>
 
       {open && (
@@ -192,8 +204,8 @@ export default function SOSButton() {
           <div className="w-full max-w-md">
             {!help ? (
               <>
-                <h2 className="text-xl font-extrabold text-sos">
-                  🆘 Apa daruratnya?
+                <h2 className="flex items-center gap-2 text-xl font-extrabold text-sos">
+                  <Siren aria-hidden="true" className="h-6 w-6" /> Apa daruratnya?
                 </h2>
                 <p className="mt-1 text-sm text-slate-600">
                   Pilih jenis darurat — sistem langsung mencari bantuan
@@ -207,9 +219,7 @@ export default function SOSButton() {
                       disabled={busy}
                       className="flex min-h-[72px] flex-col items-center justify-center gap-1 rounded-2xl border-2 border-slate-200 text-sm font-bold text-slate-800 hover:border-sos hover:bg-sos/5 disabled:opacity-50"
                     >
-                      <span aria-hidden="true" className="text-3xl">
-                        {t.icon}
-                      </span>
+                      <t.Icon aria-hidden="true" className="h-7 w-7" />
                       {busy ? "Mencari…" : t.label}
                     </button>
                   ))}
@@ -219,8 +229,8 @@ export default function SOSButton() {
                     role="alert"
                     className="mt-3 rounded-xl bg-sos/10 px-3 py-2 text-sm font-bold text-sos"
                   >
-                    ⚠️ Lokasi Anda tidak terdeteksi. Izinkan akses lokasi di
-                    browser (ikon 🔒 di address bar) lalu coba lagi — bantuan
+                    Lokasi Anda tidak terdeteksi. Izinkan akses lokasi di
+                    browser (ikon gembok di address bar) lalu coba lagi — bantuan
                     terdekat dihitung dari posisi Anda.
                   </p>
                 )}
@@ -229,7 +239,7 @@ export default function SOSButton() {
                     role="alert"
                     className="mt-3 rounded-xl bg-sos/10 px-3 py-2 text-sm font-bold text-sos"
                   >
-                    ⚠️ {pickError}
+                    {pickError}
                   </p>
                 )}
                 <button
@@ -241,8 +251,9 @@ export default function SOSButton() {
               </>
             ) : (
               <>
-                <h2 className="text-xl font-extrabold text-slate-900">
-                  🧭 Bantuan Terdekat{" "}
+                <h2 className="flex items-center gap-2 text-xl font-extrabold text-slate-900">
+                  <Navigation aria-hidden="true" className="h-5 w-5 text-brand" />
+                  Bantuan Terdekat{" "}
                   <InfoDot text="Kandidat bantuan = keramaian warga aktif (beacon) + tempat aman yang sedang BUKA menurut jam operasionalnya. Sistem memilih yang terdekat dari posisi Anda, lalu menghitung Rute Aman ke sana." />
                 </h2>
                 <div className="mt-3 rounded-2xl border-2 border-brand bg-brand/5 p-4">
@@ -265,9 +276,10 @@ export default function SOSButton() {
                   <button
                     onClick={showSafeRoute}
                     disabled={routing}
-                    className="mt-3 block min-h-[52px] w-full rounded-xl bg-slate-900 py-3 text-center text-sm font-bold text-white hover:bg-slate-800 disabled:opacity-50"
+                    className="mt-3 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-3 text-sm font-bold text-white hover:bg-slate-800 disabled:opacity-50"
                   >
-                    {routing ? "Menghitung rute…" : "🧭 Tampilkan Rute Aman di Peta"}
+                    <Navigation aria-hidden="true" className="h-4 w-4" />
+                    {routing ? "Menghitung rute…" : "Tampilkan Rute Aman di Peta"}
                   </button>
                 )}
                 {myPos && (
@@ -275,28 +287,29 @@ export default function SOSButton() {
                     href={`https://www.google.com/maps/dir/?api=1&origin=${myPos.lat},${myPos.lng}&destination=${help.lat},${help.lng}&travelmode=walking`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2 block min-h-[48px] rounded-xl border-2 border-slate-200 py-3 text-center text-xs font-bold text-slate-600 hover:bg-slate-50"
+                    className="mt-2 flex min-h-[48px] items-center justify-center gap-2 rounded-xl border-2 border-slate-200 py-3 text-center text-xs font-bold text-slate-600 hover:bg-slate-50"
                   >
-                    🗺️ Cadangan: buka di Google Maps
+                    <MapIcon aria-hidden="true" className="h-4 w-4" />
+                    Cadangan: buka di Google Maps
                   </a>
                 )}
                 <a
                   href="tel:112"
-                  className="mt-2 block min-h-[60px] rounded-2xl bg-sos py-4 text-center text-lg font-extrabold text-white hover:bg-sos-dark"
+                  className="mt-2 flex min-h-[60px] items-center justify-center gap-2 rounded-2xl bg-sos py-4 text-center text-lg font-extrabold text-white hover:bg-sos-dark"
                 >
-                  📞 PANGGIL 112
+                  <Phone aria-hidden="true" className="h-6 w-6" /> PANGGIL 112
                 </a>
                 <button
                   onClick={share}
-                  className="mt-2 block min-h-[52px] w-full rounded-xl border-2 border-slate-200 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                  className="mt-2 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl border-2 border-slate-200 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
                 >
-                  📤 Bagikan Lokasi Saya
+                  <Share2 aria-hidden="true" className="h-4 w-4" /> Bagikan Lokasi Saya
                 </button>
                 <button
                   onClick={close}
-                  className="mt-3 block min-h-[48px] w-full rounded-xl bg-brand py-3 text-sm font-bold text-white hover:bg-brand-dark"
+                  className="mt-3 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-brand py-3 text-sm font-bold text-white hover:bg-brand-dark"
                 >
-                  ✅ Saya Sudah Aman
+                  <ShieldCheck aria-hidden="true" className="h-4 w-4" /> Saya Sudah Aman
                 </button>
               </>
             )}

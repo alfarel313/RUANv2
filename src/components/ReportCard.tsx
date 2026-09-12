@@ -2,14 +2,16 @@
 
 import type { ReportData } from "@/lib/types";
 import { reportPhotos, sourceDomain } from "@/lib/types";
+import { REPORT_LUCIDE } from "@/lib/IconMap";
+import { Clock3, Newspaper, ShieldCheck, Trash2 } from "lucide-react";
 
-export const TYPE_META: Record<string, { label: string; icon: string }> = {
-  banjir: { label: "Banjir", icon: "🌊" },
-  kebakaran: { label: "Kebakaran", icon: "🔥" },
-  kejahatan: { label: "Kejahatan", icon: "🚨" },
-  jalan_rusak: { label: "Jalan Rusak", icon: "🕳️" },
-  kehilangan: { label: "Kehilangan", icon: "❓" },
-  lainnya: { label: "Lainnya", icon: "📋" },
+export const TYPE_LABELS: Record<string, string> = {
+  banjir: "Banjir",
+  kebakaran: "Kebakaran",
+  kejahatan: "Kejahatan",
+  jalan_rusak: "Jalan Rusak",
+  kehilangan: "Kehilangan",
+  lainnya: "Lainnya",
 };
 
 export function timeAgo(createdAt: number): string {
@@ -30,7 +32,8 @@ export default function ReportCard({
   report: ReportData;
   showStatus?: boolean;
 }) {
-  const meta = TYPE_META[report.type] ?? TYPE_META.lainnya;
+  const TypeIcon = REPORT_LUCIDE[report.type] ?? REPORT_LUCIDE.lainnya;
+  const typeLabel = TYPE_LABELS[report.type] ?? TYPE_LABELS.lainnya;
   const pics = reportPhotos(report);
   const domain = sourceDomain(report);
   return (
@@ -39,16 +42,17 @@ export default function ReportCard({
         <div className="flex items-center gap-2">
           <span
             aria-hidden="true"
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-xl"
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-700"
           >
-            {meta.icon}
+            <TypeIcon className="h-5 w-5" />
           </span>
           <div>
             <h3 className="text-base font-extrabold leading-tight text-slate-900">
               {report.title}
             </h3>
-            <p className="text-xs font-semibold text-slate-500">
-              {meta.label} · {timeAgo(report.createdAt)} · oleh{" "}
+            <p className="flex items-center gap-1 text-xs font-semibold text-slate-500">
+              <Clock3 aria-hidden="true" className="h-3 w-3" />
+              {typeLabel} · {timeAgo(report.createdAt)} · oleh{" "}
               {report.reporterName}
             </p>
             {domain && (
@@ -56,16 +60,16 @@ export default function ReportCard({
                 href={report.sourceURL ?? undefined}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[11px] font-bold text-brand underline decoration-dotted"
+                className="mt-0.5 flex items-center gap-1 text-[11px] font-bold text-brand underline decoration-dotted"
               >
-                📰 {domain}
+                <Newspaper aria-hidden="true" className="h-3 w-3" /> {domain}
               </a>
             )}
           </div>
         </div>
         {showStatus && (
           <span
-            className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${
+            className={`flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${
               report.status === "verified"
                 ? "bg-brand/10 text-brand"
                 : report.status === "pending"
@@ -73,11 +77,18 @@ export default function ReportCard({
                   : "bg-sos/10 text-sos"
             }`}
           >
+            {report.status === "verified" ? (
+              <ShieldCheck aria-hidden="true" className="h-3 w-3" />
+            ) : report.status === "pending" ? (
+              <Clock3 aria-hidden="true" className="h-3 w-3" />
+            ) : (
+              <Trash2 aria-hidden="true" className="h-3 w-3" />
+            )}
             {report.status === "verified"
-              ? "✅ Terverifikasi"
+              ? "Terverifikasi"
               : report.status === "pending"
-                ? "⏳ Menunggu"
-                : "❌ Ditolak"}
+                ? "Menunggu"
+                : "Ditolak"}
           </span>
         )}
       </div>

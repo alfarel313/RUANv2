@@ -8,7 +8,7 @@ import { useLiveLocationCtx } from "@/components/LiveLocationContext";
  * Follow pintar: pan mengikuti HANYA bila peta sedang idle (tidak digeser/diketuk user).
  * Interaksi user apa pun (dragstart/zoomstart) mematikan follow otomatis —
  * mencegah peta "melompat balik ke titik saya" saat user menekan tombol/marker.
- * Satu-satunya cara menyalakan follow lagi: tombol 🎯 (FocusLocationButton).
+ * Satu-satunya cara menyalakan follow lagi: tombol fokus lokasi (FocusLocationButton).
  */
 export function FollowUser({
   pos,

@@ -10,6 +10,7 @@ import {
   type PlaceDraft,
 } from "@/lib/places";
 import { BEKASI_CENTER } from "@/lib/batas-bekasi";
+import { Pencil, Plus, Save } from "lucide-react";
 
 // Peta (leaflet) WAJIB client-only — ssr:false seperti LiveMap/ReportForm
 const LocationPicker = dynamicImport(
@@ -73,7 +74,7 @@ export default function PlaceForm({
       return;
     }
     if (!pinMoved) {
-      setError("Tandai lokasi di peta dulu — ketuk peta atau geser pin 📌.");
+      setError("Tandai lokasi di peta dulu — ketuk peta atau geser pin.");
       return;
     }
     setBusy(true);
@@ -112,8 +113,16 @@ export default function PlaceForm({
       onSubmit={submit}
       className="mt-3 space-y-3 rounded-2xl border-2 border-slate-200 bg-white p-4 shadow"
     >
-      <h3 className="text-base font-extrabold text-slate-800">
-        {isEdit ? "✏️ Edit Tempat Aman" : "➕ Tambah Tempat Aman"}
+      <h3 className="flex items-center gap-2 text-base font-extrabold text-slate-800">
+        {isEdit ? (
+          <>
+            <Pencil aria-hidden="true" className="h-5 w-5" /> Edit Tempat Aman
+          </>
+        ) : (
+          <>
+            <Plus aria-hidden="true" className="h-5 w-5" /> Tambah Tempat Aman
+          </>
+        )}
       </h3>
 
       <div>
@@ -149,7 +158,7 @@ export default function PlaceForm({
         >
           {PLACE_CATEGORIES.map((c) => (
             <option key={c.value} value={c.value}>
-              {c.icon} {c.label}
+              {c.label}
             </option>
           ))}
         </select>
@@ -245,7 +254,7 @@ export default function PlaceForm({
 
       {error && (
         <p role="alert" className="text-sm font-bold text-sos">
-          ⚠️ {error}
+          {error}
         </p>
       )}
 
@@ -253,13 +262,14 @@ export default function PlaceForm({
         <button
           type="submit"
           disabled={busy}
-          className="min-h-[48px] flex-1 rounded-xl bg-brand text-sm font-bold text-white hover:bg-brand-dark disabled:opacity-60"
+          className="flex min-h-[48px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand text-sm font-bold text-white hover:bg-brand-dark disabled:opacity-60"
         >
+          <Save aria-hidden="true" className="h-4 w-4" />
           {busy
             ? "Menyimpan…"
             : isEdit
-              ? "💾 Simpan Perubahan"
-              : "➕ Tambah Tempat"}
+              ? "Simpan Perubahan"
+              : "Tambah Tempat"}
         </button>
         <button
           type="button"

@@ -3,15 +3,16 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Map as MapIcon, Megaphone, ShieldAlert, ShieldCheck, UserRound, Wrench } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { logout } from "@/lib/firebase";
 
 const NAV = [
-  { href: "/", label: "Peta", short: "Peta", icon: "🗺️" },
-  { href: "/bahaya", label: "Info Bahaya", short: "Bahaya", icon: "⚠️" },
-  { href: "/lapor", label: "Lapor", short: "Lapor", icon: "📢" },
-  { href: "/panduan", label: "Panduan", short: "Panduan", icon: "🛡️" },
-  { href: "/akun", label: "Akun", short: "Akun", icon: "👤" },
+  { href: "/", label: "Peta", short: "Peta", Icon: MapIcon },
+  { href: "/bahaya", label: "Info Bahaya", short: "Bahaya", Icon: ShieldAlert },
+  { href: "/lapor", label: "Lapor", short: "Lapor", Icon: Megaphone },
+  { href: "/panduan", label: "Panduan", short: "Panduan", Icon: ShieldCheck },
+  { href: "/akun", label: "Akun", short: "Akun", Icon: UserRound },
 ];
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -81,7 +82,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                         : "text-slate-700 hover:bg-slate-100"
                     }`}
                   >
-                    <span aria-hidden="true">{n.icon}</span> {n.label}
+                    <n.Icon aria-hidden="true" className="h-4 w-4" /> {n.label}
                   </Link>
                 </li>
               ))}
@@ -96,7 +97,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                         : "text-amber hover:bg-amber/10"
                     }`}
                   >
-                    <span aria-hidden="true">🛠️</span> Admin
+                    <Wrench aria-hidden="true" className="h-4 w-4" /> Admin
                   </Link>
                 </li>
               )}
@@ -160,9 +161,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   pathname === n.href ? "text-brand" : "text-slate-600"
                 }`}
               >
-                <span aria-hidden="true" className="text-lg leading-none">
-                  {n.icon}
-                </span>
+                <n.Icon aria-hidden="true" className="h-5 w-5" />
                 {n.short}
               </Link>
             </li>
@@ -176,9 +175,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   pathname === "/admin" ? "text-amber" : "text-amber hover:bg-amber/10"
                 }`}
               >
-                <span aria-hidden="true" className="text-lg leading-none">
-                  🛠️
-                </span>
+                <Wrench aria-hidden="true" className="h-5 w-5" />
                 Admin
               </Link>
             </li>

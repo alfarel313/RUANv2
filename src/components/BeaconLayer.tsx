@@ -8,6 +8,7 @@ import { computeAndSetRoute, useRouteCtx } from "@/components/RouteContext";
 import { useLiveLocationCtx } from "@/components/LiveLocationContext";
 import { fetchAllReports } from "@/lib/reports";
 import InfoDot from "@/components/InfoDot";
+import { Navigation, Users } from "lucide-react";
 
 /** Sisa menit sebelum beacon dissolve (hitungan 2 menit sejak lowSince) */
 function dissolveLeftText(lowSince: number | null | undefined): string | null {
@@ -79,7 +80,9 @@ export default function BeaconLayer({
             aria-label={`Keramaian ${b.count} orang aktif`}
           >
             <Popup>
-              <strong>👥 {b.count} orang aktif</strong>{" "}
+              <strong style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                <Users aria-hidden="true" width={14} height={14} /> {b.count} orang aktif
+              </strong>{" "}
               <InfoDot text="Crowd beacon: keramaian warga yang sedang check-in di radius ±15 m. Terbentuk otomatis dari check-in warga (mode demo: 1 orang cukup). Jika semua orang berhenti check-in, beacon hilang setelah 2 menit." />
               <br />
               Keramaian terkonfirmasi warga (crowd beacon). Area ramai
@@ -90,7 +93,7 @@ export default function BeaconLayer({
                   role="status"
                   style={{ color: "#b45309", fontWeight: 700, fontSize: 12 }}
                 >
-                  ⏳ Orang mulai berkurang — beacon hilang {left}
+                  Orang mulai berkurang — beacon hilang {left}
                 </span>
               ) : null}
               <br />
@@ -102,11 +105,11 @@ export default function BeaconLayer({
                     marginTop: 6,
                     color: "#b91c1c",
                     fontWeight: 700,
-                    fontSize: 12,
-                  }}
-                >
-                  ⚠️ Lokasi Anda belum terdeteksi — izinkan akses lokasi lalu
-                  coba lagi.
+                  fontSize: 12,
+                }}
+              >
+                Lokasi Anda belum terdeteksi — izinkan akses lokasi lalu
+                coba lagi.
                 </span>
               )}
               <button
@@ -123,9 +126,14 @@ export default function BeaconLayer({
                   fontWeight: 700,
                   cursor: routing ? "wait" : "pointer",
                   fontSize: 13,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
                 }}
               >
-                {routing ? "Menghitung rute…" : "🧭 Rute Aman ke sini"}
+                <Navigation aria-hidden="true" width={15} height={15} />
+                {routing ? "Menghitung rute…" : "Rute Aman ke sini"}
               </button>
             </Popup>
           </Marker>

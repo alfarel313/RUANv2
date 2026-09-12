@@ -12,6 +12,7 @@ import { PLACE_CATEGORIES, PLACE_ICONS, PLACE_LABELS, type PlaceDraft } from "@/
 import type { PlaceData } from "@/lib/types";
 import PlaceForm from "@/components/PlaceForm";
 import { SkeletonList } from "@/components/Skeleton";
+import { MapPin, Pencil, Plus, Trash2 } from "lucide-react";
 
 /** Tempat + id dokumen (untuk edit/hapus) */
 export type PlaceWithId = PlaceData & { id: string; seeded?: boolean };
@@ -43,9 +44,10 @@ function DeleteConfirm({
           type="button"
           onClick={onConfirm}
           disabled={busy}
-          className="min-h-[44px] flex-1 rounded-xl bg-sos text-sm font-bold text-white hover:bg-sos/90 disabled:opacity-60"
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-sos text-sm font-bold text-white hover:bg-sos/90 disabled:opacity-60"
         >
-          {busy ? "Menghapus…" : "🗑️ Hapus"}
+          <Trash2 aria-hidden="true" className="h-4 w-4" />
+          {busy ? "Menghapus…" : "Hapus"}
         </button>
         <button
           type="button"
@@ -113,10 +115,10 @@ export default function PlaceAdminSection() {
     try {
       await deleteDoc(doc(db, "places", id));
       setDeletingId(null);
-      setNotice(`🗑️ "${name}" dihapus dari peta.`);
+      setNotice(`"${name}" dihapus dari peta.`);
     } catch (err) {
       console.error(err);
-      setNotice("⚠️ Gagal menghapus — periksa koneksi lalu coba lagi.");
+      setNotice("Gagal menghapus — periksa koneksi lalu coba lagi.");
     } finally {
       setDeleteBusy(false);
     }
@@ -137,8 +139,9 @@ export default function PlaceAdminSection() {
 
   return (
     <section aria-label="Kelola tempat aman" className="mt-8">
-      <h2 className="text-base font-extrabold text-slate-700">
-        📍 Kelola Tempat Aman ({places?.length ?? "…"})
+      <h2 className="flex items-center gap-2 text-base font-extrabold text-slate-700">
+        <MapPin aria-hidden="true" className="h-5 w-5" /> Kelola Tempat Aman
+        ({places?.length ?? "…"})
       </h2>
       <p className="mt-1 text-xs font-semibold text-slate-500">
         Tambah, perbaiki koordinat, atau hapus titik lokasi aman. Perubahan
@@ -155,9 +158,9 @@ export default function PlaceAdminSection() {
         <button
           type="button"
           onClick={openAdd}
-          className="mt-2 min-h-[48px] w-full rounded-xl bg-brand text-sm font-bold text-white hover:bg-brand-dark"
+          className="mt-2 flex min-h-[48px] w-full items-center justify-center gap-1.5 rounded-xl bg-brand text-sm font-bold text-white hover:bg-brand-dark"
         >
-          ➕ Tambah Tempat Aman
+          <Plus aria-hidden="true" className="h-4 w-4" /> Tambah Tempat Aman
         </button>
       )}
 
@@ -170,8 +173,8 @@ export default function PlaceAdminSection() {
             closeForm();
             setNotice(
               editing
-                ? `💾 "${editing.name}" tersimpan — perubahan tampil di peta.`
-                : "➕ Tempat baru tersimpan — marker tampil di peta."
+                ? `"${editing.name}" tersimpan — perubahan tampil di peta.`
+                : "Tempat baru tersimpan — marker tampil di peta."
             );
           }}
           onCancel={closeForm}
@@ -194,8 +197,11 @@ export default function PlaceAdminSection() {
           >
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <p className="truncate text-sm font-extrabold text-slate-800">
-                  <span aria-hidden="true">{PLACE_ICONS[p.type]}</span>{" "}
+                <p className="flex items-center gap-1.5 truncate text-sm font-extrabold text-slate-800">
+                  {(() => {
+                    const PIcon = PLACE_ICONS[p.type];
+                    return <PIcon aria-hidden="true" className="h-4 w-4 shrink-0 text-brand" />;
+                  })()}
                   {p.name}
                 </p>
                 <p className="text-xs font-semibold text-slate-500">
@@ -213,17 +219,17 @@ export default function PlaceAdminSection() {
                   type="button"
                   onClick={() => openEdit(p)}
                   aria-label={`Edit ${p.name}`}
-                  className="min-h-[44px] min-w-[44px] rounded-xl border-2 border-brand bg-white text-sm font-bold text-brand hover:bg-brand/10"
+                  className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border-2 border-brand bg-white text-brand hover:bg-brand/10"
                 >
-                  ✏️
+                  <Pencil aria-hidden="true" className="h-4 w-4" />
                 </button>
                 <button
                   type="button"
                   onClick={() => setDeletingId(deletingId === p.id ? null : p.id)}
                   aria-label={`Hapus ${p.name}`}
-                  className="min-h-[44px] min-w-[44px] rounded-xl border-2 border-sos bg-white text-sm font-bold text-sos hover:bg-sos/10"
+                  className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border-2 border-sos bg-white text-sos hover:bg-sos/10"
                 >
-                  🗑️
+                  <Trash2 aria-hidden="true" className="h-4 w-4" />
                 </button>
               </div>
             </div>

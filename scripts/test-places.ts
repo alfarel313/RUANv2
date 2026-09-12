@@ -47,8 +47,10 @@ check(
     )
 );
 check(
-  "tiap kategori punya label & ikon non-kosong",
-  PLACE_CATEGORIES.every((c) => c.label.trim().length > 0 && c.icon.trim().length > 0)
+  "tiap kategori punya label & ikon (komponen Lucide valid)",
+  PLACE_CATEGORIES.every(
+    (c) => c.label.trim().length > 0 && typeof c.icon !== "undefined" && c.icon !== null && "render" in c.icon
+  )
 );
 
 console.log("== validatePlaceDraft: kasus VALID ==");

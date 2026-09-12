@@ -7,6 +7,7 @@ import { db, loginGoogle, logout } from "@/lib/firebase";
 import type { UserSettings } from "@/lib/types";
 import ProfileEditor from "@/components/ProfileEditor";
 import { SkeletonList } from "@/components/Skeleton";
+import { Accessibility, LogIn, LogOut, UserRound } from "lucide-react";
 
 function Toggle({
   label,
@@ -75,8 +76,8 @@ export default function AkunPage() {
 
   return (
     <main className="mx-auto max-w-lg px-4 py-6">
-      <h1 className="text-2xl font-extrabold text-slate-900">
-        👤 Akun & Pengaturan
+      <h1 className="flex items-center gap-2 text-2xl font-extrabold text-slate-900">
+        <UserRound aria-hidden="true" className="h-7 w-7" /> Akun & Pengaturan
       </h1>
 
       {loading && (
@@ -88,9 +89,9 @@ export default function AkunPage() {
       {!user && !loading && (
         <button
           onClick={() => loginGoogle()}
-          className="mt-4 min-h-[56px] w-full rounded-xl bg-brand text-base font-bold text-white hover:bg-brand-dark"
+          className="mt-4 flex min-h-[56px] w-full items-center justify-center gap-2 rounded-xl bg-brand text-base font-bold text-white hover:bg-brand-dark"
         >
-          🔐 Masuk dengan Google
+          <LogIn aria-hidden="true" className="h-5 w-5" /> Masuk dengan Google
         </button>
       )}
 
@@ -115,7 +116,7 @@ export default function AkunPage() {
               }`}
             >
               {userData?.role === "admin"
-                ? "🛠️ Admin Kota Bekasi"
+                ? "Admin Kota Bekasi"
                 : "Warga Bekasi"}
             </span>
           </div>
@@ -123,8 +124,9 @@ export default function AkunPage() {
       )}
 
       <section aria-label="Preferensi aksesibilitas" className="mt-5 space-y-2">
-        <h2 className="text-base font-extrabold text-slate-800">
-          ♿ Aksesibilitas & Kenyamanan
+        <h2 className="flex items-center gap-2 text-base font-extrabold text-slate-800">
+          <Accessibility aria-hidden="true" className="h-5 w-5" /> Aksesibilitas
+          & Kenyamanan
         </h2>
         <Toggle
           label="Mode Teks Besar"
@@ -159,9 +161,9 @@ export default function AkunPage() {
       {user && !confirmLogout && (
         <button
           onClick={() => setConfirmLogout(true)}
-          className="mt-6 min-h-[52px] w-full rounded-xl border-2 border-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-50"
+          className="mt-6 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl border-2 border-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-50"
         >
-          Keluar dari Akun
+          <LogOut aria-hidden="true" className="h-4 w-4" /> Keluar dari Akun
         </button>
       )}
       {user && confirmLogout && (

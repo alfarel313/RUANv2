@@ -7,21 +7,24 @@ import L from "leaflet";
 import { db } from "@/lib/firebase";
 import type { PlaceData } from "@/lib/types";
 import { isOpenNow } from "@/lib/geo";
-import { PLACE_ICONS, PLACE_LABELS } from "@/lib/places";
+import { PLACE_ICON_DATA, iconSvg } from "@/lib/IconMap";
+import { PLACE_LABELS } from "@/lib/places";
 import { fetchAllReports } from "@/lib/reports";
 import { computeAndSetRoute, useRouteCtx } from "@/components/RouteContext";
 import { useLiveLocationCtx } from "@/components/LiveLocationContext";
 import { useMapFilters } from "@/components/MapFiltersContext";
+import { Navigation, Phone } from "lucide-react";
 
 function placeIcon(p: PlaceData, open: boolean): L.DivIcon {
   // Root normal-flow selebar konten; iconAnchor [16,38] = ujung tail = titik koordinat.
   // TANPA inner absolute/translate — offset ganda membuat pin melenceng saat zoom.
+  const icon = iconSvg(PLACE_ICON_DATA[p.type] ?? PLACE_ICON_DATA.pos_keamanan, 17, open ? "#0f766e" : "#475569");
   return L.divIcon({
     className: "",
     html: `
       <div style="display:flex;flex-direction:column;align-items:center;width:32px;">
-        <div style="box-sizing:border-box;background:${open ? "#ffffff" : "#94a3b8"};border:2px solid ${open ? "#0f766e" : "#64748b"};border-radius:9999px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 2px 6px rgba(0,0,0,.25);${open ? "" : "filter:grayscale(.6);"}">
-          ${PLACE_ICONS[p.type] ?? "📍"}
+        <div style="box-sizing:border-box;background:${open ? "#ffffff" : "#94a3b8"};border:2px solid ${open ? "#0f766e" : "#64748b"};border-radius:9999px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.25);${open ? "" : "filter:grayscale(.6);"}">
+          ${icon}
         </div>
         <div style="width:2px;height:6px;background:${open ? "#0f766e" : "#64748b"};margin-top:-1px;"></div>
       </div>`,
@@ -116,12 +119,14 @@ export default function PlaceLayer() {
                   fontWeight: 700,
                 }}
               >
-                {open ? "✅ Sedang buka" : "⛔ Sedang tutup"}
+                {open ? "Sedang buka" : "Sedang tutup"}
               </span>
               {p.phone && (
                 <>
                   <br />
-                  <a href={`tel:${p.phone}`}>📞 {p.phone}</a>
+                  <a href={`tel:${p.phone}`} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                    <Phone aria-hidden="true" width={14} height={14} /> {p.phone}
+                  </a>
                 </>
               )}
               <br />
@@ -130,14 +135,14 @@ export default function PlaceLayer() {
                   role="alert"
                   style={{
                     display: "block",
-                    marginTop: 6,
-                    color: "#b91c1c",
-                    fontWeight: 700,
-                    fontSize: 12,
-                  }}
-                >
-                  ⚠️ Lokasi Anda belum terdeteksi — izinkan akses lokasi lalu
-                  coba lagi.
+                  marginTop: 6,
+                  color: "#b91c1c",
+                  fontWeight: 700,
+                  fontSize: 12,
+                }}
+              >
+                Lokasi Anda belum terdeteksi — izinkan akses lokasi lalu
+                coba lagi.
                 </span>
               )}
               <button
@@ -154,9 +159,14 @@ export default function PlaceLayer() {
                   fontWeight: 700,
                   cursor: routingFor === p.name ? "wait" : "pointer",
                   fontSize: 13,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
                 }}
               >
-                {routingFor === p.name ? "Menghitung rute…" : "🧭 Rute Aman ke sini"}
+                <Navigation aria-hidden="true" width={15} height={15} />
+                {routingFor === p.name ? "Menghitung rute…" : "Rute Aman ke sini"}
               </button>
             </Popup>
           </Marker>

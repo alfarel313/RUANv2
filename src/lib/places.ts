@@ -2,23 +2,34 @@
 // Pola sama dengan src/lib/routing.ts: tanpa side effect, mudah diuji (scripts/test-places.ts).
 
 import type { PlaceData, PlaceType } from "@/lib/types";
+import type { LucideIcon } from "lucide-react";
+import {
+  Hospital,
+  Landmark,
+  Mosque,
+  Package,
+  ShieldCheck,
+  Store,
+  Stethoscope,
+  TrainFront,
+} from "lucide-react";
 
 export interface PlaceCategory {
   value: PlaceType;
   label: string;
-  icon: string;
+  icon: LucideIcon;
 }
 
 /** 8 kategori tempat aman — SATU SUMBER KEBENARAN (admin form, PlaceLayer, filter) */
 export const PLACE_CATEGORIES: PlaceCategory[] = [
-  { value: "polisi", label: "Kantor Polisi", icon: "👮" },
-  { value: "rumah_sakit", label: "Rumah Sakit", icon: "🏥" },
-  { value: "puskesmas", label: "Puskesmas", icon: "🩺" },
-  { value: "masjid", label: "Masjid", icon: "🕌" },
-  { value: "toko", label: "Minimarket", icon: "🏪" },
-  { value: "mall", label: "Mal", icon: "🏬" },
-  { value: "stasiun", label: "Stasiun/Transport", icon: "🚉" },
-  { value: "pos_keamanan", label: "Pos Keamanan", icon: "🛟" },
+  { value: "polisi", label: "Kantor Polisi", icon: Landmark },
+  { value: "rumah_sakit", label: "Rumah Sakit", icon: Hospital },
+  { value: "puskesmas", label: "Puskesmas", icon: Stethoscope },
+  { value: "masjid", label: "Masjid", icon: Mosque },
+  { value: "toko", label: "Minimarket", icon: Store },
+  { value: "mall", label: "Mal", icon: Package },
+  { value: "stasiun", label: "Stasiun/Transport", icon: TrainFront },
+  { value: "pos_keamanan", label: "Pos Keamanan", icon: ShieldCheck },
 ];
 
 export const PLACE_CATEGORY_VALUES: PlaceType[] = PLACE_CATEGORIES.map((c) => c.value);
@@ -27,9 +38,9 @@ export const PLACE_LABELS: Record<PlaceType, string> = Object.fromEntries(
   PLACE_CATEGORIES.map((c) => [c.value, c.label])
 ) as Record<PlaceType, string>;
 
-export const PLACE_ICONS: Record<PlaceType, string> = Object.fromEntries(
+export const PLACE_ICONS: Record<PlaceType, LucideIcon> = Object.fromEntries(
   PLACE_CATEGORIES.map((c) => [c.value, c.icon])
-) as Record<PlaceType, string>;
+) as Record<PlaceType, LucideIcon>;
 
 /** Draft tempat dari form admin — belum tentu valid (di-validasi validatePlaceDraft) */
 export type PlaceDraft = Omit<PlaceData, "city"> & { phone: string | null };

@@ -7,6 +7,7 @@ import { db } from "@/lib/firebase";
 import type { GuideData } from "@/lib/types";
 import Link from "next/link";
 import Skeleton from "@/components/Skeleton";
+import { BookOpen, ChevronLeft } from "lucide-react";
 
 /** Render markdown mini (##, ###, -, **bold**, paragraf) tanpa dependensi */
 function MiniMarkdown({ content }: { content: string }) {
@@ -99,16 +100,14 @@ export default function GuideDetailPage() {
   if (notFound) {
     return (
       <main className="mx-auto max-w-lg px-4 py-10 text-center">
-        <p className="text-4xl" aria-hidden="true">
-          📖
-        </p>
+        <BookOpen aria-hidden="true" className="mx-auto h-12 w-12 text-slate-400" />
         <h1 className="mt-2 text-xl font-extrabold text-slate-900">
           Panduan tidak ditemukan
         </h1>
         <Link href="/panduan"
-          className="mt-4 inline-flex min-h-[48px] items-center rounded-xl bg-brand px-5 text-sm font-bold text-white hover:bg-brand-dark"
+          className="mt-4 inline-flex min-h-[48px] items-center gap-1.5 rounded-xl bg-brand px-5 text-sm font-bold text-white hover:bg-brand-dark"
         >
-          ← Semua Panduan
+          <ChevronLeft aria-hidden="true" className="h-4 w-4" /> Semua Panduan
         </Link>
       </main>
     );
@@ -117,9 +116,9 @@ export default function GuideDetailPage() {
   return (
     <main className="mx-auto max-w-lg px-4 py-6">
       <Link href="/panduan"
-        className="text-sm font-bold text-brand hover:underline"
+        className="inline-flex items-center gap-1 text-sm font-bold text-brand hover:underline"
       >
-        ← Semua Panduan
+        <ChevronLeft aria-hidden="true" className="h-4 w-4" /> Semua Panduan
       </Link>
       {guide ? (
         <article className="mt-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">

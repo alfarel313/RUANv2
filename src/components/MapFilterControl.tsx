@@ -1,37 +1,38 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Compass,
+  Eye,
+  EyeOff,
+  Users,
+} from "lucide-react";
 import { useMapFilters, PLACE_KEYS, REPORT_KEYS } from "@/components/MapFiltersContext";
 import InfoDot from "@/components/InfoDot";
-import type { PlaceType, ReportType } from "@/lib/types";
+import { PLACE_LUCIDE, REPORT_LUCIDE } from "@/lib/IconMap";
+import { PLACE_LABELS } from "@/lib/places";
+import type { ReportType } from "@/lib/types";
 
-const PLACE_META: Record<PlaceType, { label: string; icon: string }> = {
-  polisi: { label: "Kantor Polisi", icon: "👮" },
-  rumah_sakit: { label: "Rumah Sakit", icon: "🏥" },
-  puskesmas: { label: "Puskesmas", icon: "🩺" },
-  masjid: { label: "Masjid", icon: "🕌" },
-  toko: { label: "Minimarket", icon: "🏪" },
-  mall: { label: "Mal", icon: "🏬" },
-  stasiun: { label: "Stasiun", icon: "🚉" },
-  pos_keamanan: { label: "Pos Keamanan", icon: "🛟" },
-};
-
-const REPORT_META: Record<ReportType, { label: string; icon: string }> = {
-  banjir: { label: "Banjir", icon: "🌊" },
-  kebakaran: { label: "Kebakaran", icon: "🔥" },
-  kejahatan: { label: "Kejahatan", icon: "🚨" },
-  jalan_rusak: { label: "Jalan Rusak", icon: "🕳️" },
-  kehilangan: { label: "Kehilangan", icon: "❓" },
-  lainnya: { label: "Lainnya", icon: "📋" },
+const REPORT_LABELS: Record<ReportType, string> = {
+  banjir: "Banjir",
+  kebakaran: "Kebakaran",
+  kejahatan: "Kejahatan",
+  jalan_rusak: "Jalan Rusak",
+  kehilangan: "Kehilangan",
+  lainnya: "Lainnya",
 };
 
 function FilterRow({
-  icon,
+  Icon,
   label,
   checked,
   onChange,
 }: {
-  icon: string;
+  Icon: LucideIcon;
   label: string;
   checked: boolean;
   onChange: () => void;
@@ -45,9 +46,9 @@ function FilterRow({
       className="flex min-h-[48px] w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-left hover:bg-slate-100"
     >
       <span className="flex items-center gap-2 text-sm font-bold text-slate-800">
-        <span aria-hidden="true">{icon}</span> {label}
+        <Icon aria-hidden="true" className="h-4 w-4 shrink-0" /> {label}
       </span>
-      {/* sakelar visual + status teks (bukan hanya warna — a11y lansia) */}
+      {/* sakelar visual + status teks (bukan hanya warna â€” a11y lansia) */}
       <span className="flex items-center gap-1.5">
         <span
           aria-hidden="true"
@@ -75,13 +76,13 @@ function FilterRow({
 
 function DropdownShell({
   label,
-  icon,
+  Icon,
   open,
   onOpenChange,
   children,
 }: {
   label: string;
-  icon: string;
+  Icon: LucideIcon;
   open: boolean;
   onOpenChange: (v: boolean) => void;
   children: React.ReactNode;
@@ -122,10 +123,12 @@ function DropdownShell({
             : "border-slate-200 bg-white/95 text-slate-700"
         }`}
       >
-        <span aria-hidden="true">{icon}</span> {label}
-        <span aria-hidden="true" className="text-[9px]">
-          {open ? "▲" : "▼"}
-        </span>
+        <Icon aria-hidden="true" className="h-4 w-4" /> {label}
+        {open ? (
+          <ChevronUp aria-hidden="true" className="h-3 w-3" />
+        ) : (
+          <ChevronDown aria-hidden="true" className="h-3 w-3" />
+        )}
       </button>
       {open && (
         <div
@@ -140,7 +143,7 @@ function DropdownShell({
   );
 }
 
-/** Dua dropdown filter peta — kanan atas; RouteCard bergeser turun bila keduanya tampil */
+/** Dua dropdown filter peta â€” kanan atas; RouteCard bergeser turun bila keduanya tampil */
 export default function MapFilterControl() {
   const {
     filters,
@@ -164,7 +167,7 @@ export default function MapFilterControl() {
       <div className="flex gap-1.5">
         <DropdownShell
           label="Tempat Aman"
-          icon="📍"
+          Icon={PLACE_LUCIDE.pos_keamanan}
           open={placeOpen}
           onOpenChange={setPlaceOpen}
         >
@@ -172,21 +175,21 @@ export default function MapFilterControl() {
             <span className="text-[11px] font-bold text-slate-500">
               Tampilkan/hide pin per kategori
             </span>
-            <InfoDot text="Filter ini hanya menyembunyikan pin di peta — tempatnya tetap dihitung sebagai kandidat bantuan SOS dan Rute Aman. Pilihan kembali normal saat halaman dibuka ulang." />
+            <InfoDot text="Filter ini hanya menyembunyikan pin di peta â€” tempatnya tetap dihitung sebagai kandidat bantuan SOS dan Rute Aman. Pilihan kembali normal saat halaman dibuka ulang." />
           </div>
           <div className="max-h-[46dvh] space-y-0.5 overflow-y-auto">
             {PLACE_KEYS.map((k) => (
               <FilterRow
                 key={k}
-                icon={PLACE_META[k].icon}
-                label={PLACE_META[k].label}
+                Icon={PLACE_LUCIDE[k]}
+                label={PLACE_LABELS[k]}
                 checked={filters.places[k]}
                 onChange={() => togglePlace(k)}
               />
             ))}
             <div className="my-1 border-t border-slate-200" />
             <FilterRow
-              icon="👥"
+              Icon={Users}
               label="Keramaian (Beacon)"
               checked={filters.showBeacons}
               onChange={toggleBeacons}
@@ -196,27 +199,32 @@ export default function MapFilterControl() {
             <button
               type="button"
               onClick={allPlacesHidden ? allPlacesOn : allPlacesOff}
-              className={`min-h-[44px] rounded-xl text-xs font-extrabold ${
+              className={`flex min-h-[44px] items-center justify-center gap-1 rounded-xl text-xs font-extrabold ${
                 allPlacesHidden
                   ? "bg-brand/10 text-brand hover:bg-brand/20"
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
-              {allPlacesHidden ? "👁 Tampilkan Semua" : "🙈 Sembunyikan Semua"}
+              {allPlacesHidden ? (
+                <Eye aria-hidden="true" className="h-3.5 w-3.5" />
+              ) : (
+                <EyeOff aria-hidden="true" className="h-3.5 w-3.5" />
+              )}
+              {allPlacesHidden ? "Tampilkan Semua" : "Sembunyikan Semua"}
             </button>
             <button
               type="button"
               onClick={allPlacesOn}
-              className="min-h-[44px] rounded-xl bg-brand/10 text-xs font-extrabold text-brand hover:bg-brand/20"
+              className="flex min-h-[44px] items-center justify-center gap-1 rounded-xl bg-brand/10 text-xs font-extrabold text-brand hover:bg-brand/20"
             >
-              ✔ Semua Tampil
+              <Check aria-hidden="true" className="h-3.5 w-3.5" /> Semua Tampil
             </button>
           </div>
         </DropdownShell>
 
         <DropdownShell
           label="Kejadian"
-          icon="⚠️"
+          Icon={REPORT_LUCIDE.kejahatan}
           open={reportOpen}
           onOpenChange={setReportOpen}
         >
@@ -230,15 +238,15 @@ export default function MapFilterControl() {
             {REPORT_KEYS.map((k) => (
               <FilterRow
                 key={k}
-                icon={REPORT_META[k].icon}
-                label={REPORT_META[k].label}
+                Icon={REPORT_LUCIDE[k]}
+                label={REPORT_LABELS[k]}
                 checked={filters.reports[k]}
                 onChange={() => toggleReport(k)}
               />
             ))}
             <div className="my-1 border-t border-slate-200" />
             <FilterRow
-              icon="🧭"
+              Icon={Compass}
               label="Insiden Rute Aktif"
               checked={filters.showRouteIncidents}
               onChange={toggleRouteIncidents}
@@ -248,20 +256,25 @@ export default function MapFilterControl() {
             <button
               type="button"
               onClick={allReportsHidden ? allReportsOn : allReportsOff}
-              className={`min-h-[44px] rounded-xl text-xs font-extrabold ${
+              className={`flex min-h-[44px] items-center justify-center gap-1 rounded-xl text-xs font-extrabold ${
                 allReportsHidden
                   ? "bg-amber/10 text-amber hover:bg-amber/20"
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
-              {allReportsHidden ? "👁 Tampilkan Semua" : "🙈 Sembunyikan Semua"}
+              {allReportsHidden ? (
+                <Eye aria-hidden="true" className="h-3.5 w-3.5" />
+              ) : (
+                <EyeOff aria-hidden="true" className="h-3.5 w-3.5" />
+              )}
+              {allReportsHidden ? "Tampilkan Semua" : "Sembunyikan Semua"}
             </button>
             <button
               type="button"
               onClick={allReportsOn}
-              className="min-h-[44px] rounded-xl bg-amber/10 text-xs font-extrabold text-amber hover:bg-amber/20"
+              className="flex min-h-[44px] items-center justify-center gap-1 rounded-xl bg-amber/10 text-xs font-extrabold text-amber hover:bg-amber/20"
             >
-              ✔ Semua Tampil
+              <Check aria-hidden="true" className="h-3.5 w-3.5" /> Semua Tampil
             </button>
           </div>
         </DropdownShell>

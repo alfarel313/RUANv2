@@ -11,6 +11,15 @@ import PlaceAdminSection from "@/components/PlaceAdminSection";
 import Modal from "@/components/Modal";
 import { SkeletonList } from "@/components/Skeleton";
 import Link from "next/link";
+import {
+  ChevronLeft,
+  Clock3,
+  Newspaper,
+  ShieldCheck,
+  Trash2,
+  Wrench,
+  X,
+} from "lucide-react";
 
 export default function AdminPage() {
   const { user, userData, loading } = useAuth();
@@ -43,8 +52,8 @@ export default function AdminPage() {
   if (loading) {
     return (
       <main className="mx-auto max-w-lg px-4 py-6">
-        <h1 className="text-2xl font-extrabold text-slate-900">
-          🛠️ Panel Admin
+        <h1 className="flex items-center gap-2 text-2xl font-extrabold text-slate-900">
+          <Wrench aria-hidden="true" className="h-7 w-7" /> Panel Admin
         </h1>
         <div className="mt-4">
           <SkeletonList label="Memuat panel admin" count={3} />
@@ -56,8 +65,8 @@ export default function AdminPage() {
   if (!user || !isAdmin) {
     return (
       <main className="mx-auto max-w-lg px-4 py-6">
-        <h1 className="text-2xl font-extrabold text-slate-900">
-          🛠️ Panel Admin
+        <h1 className="flex items-center gap-2 text-2xl font-extrabold text-slate-900">
+          <Wrench aria-hidden="true" className="h-7 w-7" /> Panel Admin
         </h1>
         <div className="mt-4 rounded-2xl border-2 border-amber bg-white p-6 text-center shadow">
           <p className="text-sm font-semibold text-slate-700">
@@ -66,9 +75,10 @@ export default function AdminPage() {
           </p>
           <Link
             href="/"
-            className="mt-4 inline-flex min-h-[48px] items-center rounded-xl bg-brand px-5 text-sm font-bold text-white hover:bg-brand-dark"
+            className="mt-4 inline-flex min-h-[48px] items-center gap-1.5 rounded-xl bg-brand px-5 text-sm font-bold text-white hover:bg-brand-dark"
           >
-            ← Kembali ke Peta
+            <ChevronLeft aria-hidden="true" className="h-4 w-4" /> Kembali ke
+            Peta
           </Link>
         </div>
       </main>
@@ -127,8 +137,9 @@ export default function AdminPage() {
 
   return (
     <main className="mx-auto max-w-lg px-4 py-6">
-      <h1 className="text-2xl font-extrabold text-slate-900">
-        🛠️ Panel Admin — Kota Bekasi
+      <h1 className="flex items-center gap-2 text-2xl font-extrabold text-slate-900">
+        <Wrench aria-hidden="true" className="h-7 w-7" /> Panel Admin — Kota
+        Bekasi
       </h1>
       <p className="mt-1 text-sm text-slate-600">
         Verifikasi laporan warga. Laporan terverifikasi otomatis tampil di
@@ -136,8 +147,9 @@ export default function AdminPage() {
       </p>
 
       <section aria-label="Menunggu verifikasi" className="mt-5">
-        <h2 className="text-base font-extrabold text-amber">
-          ⏳ Menunggu Verifikasi ({pending.length})
+        <h2 className="flex items-center gap-2 text-base font-extrabold text-amber">
+          <Clock3 aria-hidden="true" className="h-5 w-5" /> Menunggu Verifikasi
+          ({pending.length})
         </h2>
         <div className="mt-2 space-y-3">
           {pending.length === 0 && (
@@ -151,15 +163,15 @@ export default function AdminPage() {
               <div className="mt-2 flex gap-2">
                 <button
                   onClick={() => openVerify((r as ReportData & { id: string }).id)}
-                  className="min-h-[48px] flex-1 rounded-xl bg-brand text-sm font-bold text-white hover:bg-brand-dark"
+                  className="flex min-h-[48px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand text-sm font-bold text-white hover:bg-brand-dark"
                 >
-                  ✅ Verifikasi
+                  <ShieldCheck aria-hidden="true" className="h-4 w-4" /> Verifikasi
                 </button>
                 <button
                   onClick={() => review((r as ReportData & { id: string }).id, "rejected")}
-                  className="min-h-[48px] flex-1 rounded-xl border-2 border-sos text-sm font-bold text-sos hover:bg-sos/5"
+                  className="flex min-h-[48px] flex-1 items-center justify-center gap-1.5 rounded-xl border-2 border-sos text-sm font-bold text-sos hover:bg-sos/5"
                 >
-                  ❌ Tolak
+                  <Trash2 aria-hidden="true" className="h-4 w-4" /> Tolak
                 </button>
               </div>
             </div>
@@ -189,8 +201,9 @@ export default function AdminPage() {
           }}
         >
           <div>
-            <h2 className="text-lg font-extrabold text-slate-900">
-              ✅ Verifikasi Laporan
+            <h2 className="flex items-center gap-2 text-lg font-extrabold text-slate-900">
+              <ShieldCheck aria-hidden="true" className="h-6 w-6 text-brand" />{" "}
+              Verifikasi Laporan
             </h2>
             <p className="mt-1 truncate text-sm font-semibold text-slate-600">
               {verifyingReport.title}
@@ -213,29 +226,31 @@ export default function AdminPage() {
               placeholder="https://www.detik.com/…"
               className="mt-1 min-h-[48px] w-full rounded-xl border-2 border-slate-200 px-3 text-sm font-semibold text-slate-800 focus:border-brand focus:outline-none"
             />
-            <p className="mt-1 text-[11px] font-semibold text-slate-500">
-              Warga akan melihat sumber sebagai &quot;📰 nama-domain&quot; yang
+            <p className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-slate-500">
+              <Newspaper aria-hidden="true" className="h-3 w-3" />
+              Warga akan melihat sumber sebagai &quot;nama-domain&quot; yang
               bisa diklik. Wajib https:// bila diisi.
             </p>
             {linkError && (
               <p role="alert" className="mt-1 text-sm font-bold text-sos">
-                ⚠️ {linkError}
+                {linkError}
               </p>
             )}
             <div className="mt-4 flex gap-2">
               <button
                 onClick={confirmVerify}
                 disabled={busy}
-                className="min-h-[48px] flex-1 rounded-xl bg-brand text-sm font-bold text-white hover:bg-brand-dark disabled:opacity-60"
+                className="flex min-h-[48px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand text-sm font-bold text-white hover:bg-brand-dark disabled:opacity-60"
               >
-                {busy ? "Menyimpan…" : "✅ Verifikasi"}
+                <ShieldCheck aria-hidden="true" className="h-4 w-4" />
+                {busy ? "Menyimpan…" : "Verifikasi"}
               </button>
               <button
                 onClick={() => setVerifyId(null)}
                 disabled={busy}
-                className="min-h-[48px] flex-1 rounded-xl border-2 border-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-100 disabled:opacity-60"
+                className="flex min-h-[48px] flex-1 items-center justify-center gap-1.5 rounded-xl border-2 border-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-100 disabled:opacity-60"
               >
-                Batal
+                <X aria-hidden="true" className="h-4 w-4" /> Batal
               </button>
             </div>
           </div>

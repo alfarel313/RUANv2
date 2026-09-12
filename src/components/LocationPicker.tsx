@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, Marker, Polygon, useMapEvents } from "react-le
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { BATAS_BEKASI } from "@/lib/batas-bekasi";
+import { iconSvg, MAP_ICON_DATA } from "@/lib/IconMap";
 
 export interface LocationPickerValue {
   lat: number;
@@ -22,12 +23,13 @@ const WORLD: [number, number][] = [
 function pinIcon(): L.DivIcon {
   // Root persis selebar konten; iconAnchor [17,42] = ujung tail = titik koordinat.
   // TANPA inner absolute/translate — offset ganda membuat pin melenceng saat zoom.
+  const pin = iconSvg(MAP_ICON_DATA.pin, 18, "#d97706");
   return L.divIcon({
     className: "",
     html: `
       <div style="display:flex;flex-direction:column;align-items:center;width:34px;">
-        <div style="box-sizing:border-box;background:#ffffff;border:3px solid #d97706;border-radius:9999px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 2px 8px rgba(0,0,0,.3);">
-          📌
+        <div style="box-sizing:border-box;background:#ffffff;border:3px solid #d97706;border-radius:9999px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.3);">
+          ${pin}
         </div>
         <div style="width:3px;height:8px;background:#d97706;margin-top:-1px;"></div>
       </div>`,
@@ -101,8 +103,8 @@ export default function LocationPicker({
   };
 
   const note = rejected
-    ? "⚠️ Lokasi di luar Kota Bekasi — geser/ketuk di dalam area Bekasi."
-    : "Ketuk peta atau geser pin 📌 ke lokasi kejadian.";
+    ? "Lokasi di luar Kota Bekasi — geser/ketuk di dalam area Bekasi."
+    : "Ketuk peta atau geser pin ke lokasi kejadian.";
 
   return (
     <div>
@@ -145,7 +147,7 @@ export default function LocationPicker({
         </MapContainer>
       </div>
       <p className="mt-1.5 text-xs font-semibold text-slate-600">
-        {note ?? "Ketuk peta atau geser pin 📌 ke lokasi kejadian."}
+        {note ?? "Ketuk peta atau geser pin ke lokasi kejadian."}
       </p>
       <p className="mt-0.5 text-xs text-slate-500">
         Koordinat: {value.lat.toFixed(5)}, {value.lng.toFixed(5)}

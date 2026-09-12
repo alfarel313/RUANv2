@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePresenceCtx } from "@/components/PresenceContext";
 import { loginGoogle } from "@/lib/firebase";
 import InfoDot from "@/components/InfoDot";
+import { MapPin, ShieldCheck } from "lucide-react";
 
 export default function CheckInButton() {
   const { user } = useAuth();
@@ -15,9 +16,9 @@ export default function CheckInButton() {
     return (
       <button
         onClick={() => loginGoogle()}
-        className="min-h-[56px] flex-1 rounded-2xl border-2 border-brand bg-white px-4 text-sm font-bold text-brand shadow-md"
+        className="flex min-h-[56px] flex-1 items-center justify-center gap-2 rounded-2xl border-2 border-brand bg-white px-4 text-sm font-bold text-brand shadow-md"
       >
-        📍 Masuk & Check-In
+        <MapPin aria-hidden="true" className="h-5 w-5" /> Masuk & Check-In
       </button>
     );
   }
@@ -40,13 +41,21 @@ export default function CheckInButton() {
         onClick={handle}
         disabled={busy}
         aria-pressed={active}
-        className={`min-h-[64px] w-full rounded-2xl px-4 text-base font-bold shadow-md transition-colors ${
+        className={`flex min-h-[64px] w-full items-center justify-center gap-2 rounded-2xl px-4 text-base font-bold shadow-md transition-colors ${
           active
             ? "bg-brand text-white"
             : "border-2 border-brand bg-white text-brand hover:bg-brand/5"
         }`}
       >
-        {active ? "✅ Check-In Aktif" : "📍 Check-In di Sini"}
+        {active ? (
+          <>
+            <ShieldCheck aria-hidden="true" className="h-5 w-5" /> Check-In Aktif
+          </>
+        ) : (
+          <>
+            <MapPin aria-hidden="true" className="h-5 w-5" /> Check-In di Sini
+          </>
+        )}
       </button>
       {active && (
         <p
@@ -54,7 +63,7 @@ export default function CheckInButton() {
           role="status"
         >
           {activeCount >= 1
-            ? `🟢 Beacon aktif — ${activeCount} orang di area Anda`
+            ? `Beacon aktif — ${activeCount} orang di area Anda`
             : `Menanti ${1 - activeCount} orang lagi untuk membentuk beacon…`}{" "}
           <InfoDot text="Saat check-in, posisi Anda dikirim setiap 10 detik. Warga lain di radius ±15 m melihat Anda sebagai bagian keramaian (beacon). Saat Anda berhenti check-in, kehadiran Anda dihapus dan beacon hilang maksimal 2 menit kemudian." />
         </p>
