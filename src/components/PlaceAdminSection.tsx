@@ -11,6 +11,7 @@ import { db } from "@/lib/firebase";
 import { PLACE_CATEGORIES, PLACE_ICONS, PLACE_LABELS, type PlaceDraft } from "@/lib/places";
 import type { PlaceData } from "@/lib/types";
 import PlaceForm from "@/components/PlaceForm";
+import { SkeletonList } from "@/components/Skeleton";
 
 /** Tempat + id dokumen (untuk edit/hapus) */
 export type PlaceWithId = PlaceData & { id: string; seeded?: boolean };
@@ -179,9 +180,7 @@ export default function PlaceAdminSection() {
 
       <div className="mt-3 space-y-2">
         {places === null && (
-          <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-600">
-            Memuat daftar tempat…
-          </p>
+          <SkeletonList label="Memuat daftar tempat" count={4} item="h-20" />
         )}
         {places !== null && places.length === 0 && (
           <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-600">
@@ -240,7 +239,7 @@ export default function PlaceAdminSection() {
         ))}
       </div>
 
-      <p className="mt-3 text-[11px] font-semibold text-slate-400">
+      <p className="mt-3 text-[11px] font-semibold text-slate-500">
         Kategori tersedia: {PLACE_CATEGORIES.map((c) => c.label).join(", ")}.
       </p>
     </section>

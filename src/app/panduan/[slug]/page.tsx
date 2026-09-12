@@ -6,6 +6,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import type { GuideData } from "@/lib/types";
 import Link from "next/link";
+import Skeleton from "@/components/Skeleton";
 
 /** Render markdown mini (##, ###, -, **bold**, paragraf) tanpa dependensi */
 function MiniMarkdown({ content }: { content: string }) {
@@ -130,9 +131,16 @@ export default function GuideDetailPage() {
           </div>
         </article>
       ) : (
-        <p role="status" className="mt-4 text-sm font-semibold text-slate-500">
-          Memuat panduan…
-        </p>
+        <div role="status" className="mt-3">
+          <span className="sr-only">Memuat panduan</span>
+          <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <Skeleton className="h-7 w-3/4" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-5/6" />
+            <Skeleton className="h-20 w-full" />
+          </div>
+        </div>
       )}
     </main>
   );

@@ -8,6 +8,8 @@ import type { ReportData } from "@/lib/types";
 import { validateSourceURL } from "@/lib/types";
 import ReportCard from "@/components/ReportCard";
 import PlaceAdminSection from "@/components/PlaceAdminSection";
+import Modal from "@/components/Modal";
+import { SkeletonList } from "@/components/Skeleton";
 import Link from "next/link";
 
 export default function AdminPage() {
@@ -40,8 +42,13 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <main className="mx-auto max-w-lg px-4 py-10 text-center text-sm font-semibold text-slate-500">
-        Memuat…
+      <main className="mx-auto max-w-lg px-4 py-6">
+        <h1 className="text-2xl font-extrabold text-slate-900">
+          🛠️ Panel Admin
+        </h1>
+        <div className="mt-4">
+          <SkeletonList label="Memuat panel admin" count={3} />
+        </div>
       </main>
     );
   }
@@ -175,13 +182,13 @@ export default function AdminPage() {
 
       {/* Modal verifikasi 2-langkah — link berita opsional */}
       {verifyId && verifyingReport && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Verifikasi laporan"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4"
+        <Modal
+          label="Verifikasi laporan"
+          onClose={() => {
+            if (!busy) setVerifyId(null);
+          }}
         >
-          <div className="w-full max-w-md rounded-3xl bg-white p-5 shadow-2xl">
+          <div>
             <h2 className="text-lg font-extrabold text-slate-900">
               ✅ Verifikasi Laporan
             </h2>
@@ -232,7 +239,7 @@ export default function AdminPage() {
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </main>
   );

@@ -99,6 +99,7 @@ export default function ReportLayer({ now }: { now: number }) {
           key={r.id}
           position={[r.lat, r.lng]}
           icon={reportIcon(r.type)}
+          title={`Kejadian ${LABELS[r.type]}: ${r.title}`}
           aria-label={`Kejadian ${LABELS[r.type]}: ${r.title}`}
         >
           <Popup>

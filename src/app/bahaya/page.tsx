@@ -6,6 +6,7 @@ import { db } from "@/lib/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import type { ReportData } from "@/lib/types";
 import ReportCard from "@/components/ReportCard";
+import { SkeletonList } from "@/components/Skeleton";
 import { loginGoogle } from "@/lib/firebase";
 
 export default function BahayaPage() {
@@ -61,11 +62,10 @@ export default function BahayaPage() {
         Kota Bekasi — dapat dipercaya, terbaru dulu.
       </p>
 
+      <h2 className="sr-only">Daftar laporan terverifikasi</h2>
       <div className="mt-4 space-y-3">
         {reports === null && (
-          <p className="text-sm font-semibold text-slate-500" role="status">
-            Memuat info bahaya…
-          </p>
+          <SkeletonList label="Memuat info bahaya" count={4} />
         )}
         {reports?.length === 0 && (
           <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center">

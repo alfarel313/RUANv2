@@ -43,12 +43,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-dvh flex-col">
+      <a href="#konten-utama" className="skip-link">
+        Lewati ke konten utama
+      </a>
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <Link
             href="/"
             className="flex items-center gap-2 rounded-lg py-1"
-            aria-label="RUAN Rute Aman — kembali ke peta"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -137,7 +139,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <div className="flex-1">{children}</div>
+      <div className="flex-1">
+        <div id="konten-utama" className="contents">
+          {children}
+        </div>
+      </div>
 
       {/* Bottom nav mobile (target sentuh ≥48px) */}
       <nav

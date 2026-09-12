@@ -75,6 +75,7 @@ export default function BeaconLayer({
             key={b.id}
             position={[b.lat, b.lng]}
             icon={beaconIcon(b.count)}
+            title={`Keramaian ${b.count} orang aktif`}
             aria-label={`Keramaian ${b.count} orang aktif`}
           >
             <Popup>

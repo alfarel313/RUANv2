@@ -63,7 +63,7 @@ function FilterRow({
         </span>
         <span
           className={`w-8 text-right text-[10px] font-extrabold ${
-            checked ? "text-brand" : "text-slate-400"
+            checked ? "text-brand" : "text-slate-500"
           }`}
         >
           {checked ? "ON" : "OFF"}
@@ -88,7 +88,7 @@ function DropdownShell({
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
-  // tutup saat ketuk di luar panel
+  // tutup saat ketuk di luar panel ATAU tekan Escape (navigasi keyboard)
   useEffect(() => {
     if (!open) return;
     const onDown = (e: TouchEvent | MouseEvent) => {
@@ -96,11 +96,16 @@ function DropdownShell({
         onOpenChange(false);
       }
     };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onOpenChange(false);
+    };
     document.addEventListener("mousedown", onDown);
     document.addEventListener("touchstart", onDown);
+    document.addEventListener("keydown", onKey);
     return () => {
       document.removeEventListener("mousedown", onDown);
       document.removeEventListener("touchstart", onDown);
+      document.removeEventListener("keydown", onKey);
     };
   }, [open, onOpenChange]);
 

@@ -55,6 +55,7 @@ function TapAndDrag({
       position={[value.lat, value.lng]}
       icon={pinIcon()}
       draggable
+      title="Penanda lokasi kejadian — geser atau ketuk peta"
       eventHandlers={{
         dragend: (e) => {
           const p = (e.target as L.Marker).getLatLng();

@@ -99,6 +99,7 @@ export default function PlaceLayer() {
             key={p.id}
             position={[p.lat, p.lng]}
             icon={placeIcon(p, open)}
+            title={`${p.name} — ${open ? "sedang buka" : "tutup"}`}
             aria-label={`${p.name} — ${open ? "sedang buka" : "tutup"}`}
           >
             <Popup>

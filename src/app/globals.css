@@ -6,7 +6,8 @@
   --brand-light: #14b8a6;
   --sos: #dc2626;
   --sos-dark: #b91c1c;
-  --amber: #d97706;
+  /* amber-700 — AA 5.0:1 di latar putih (#d97706 hanya 3.2:1, gagal AA teks kecil) */
+  --amber: #b45309;
 }
 
 @theme inline {
@@ -35,7 +36,7 @@ html.ruan-dark {
   --brand-dark: #0d9488;
   --sos: #ef4444;
   --sos-dark: #dc2626;
-  --amber: #f59e0b;
+  --amber: #fbbf24; /* amber-300 — AA di latar gelap #101a2b */
   color-scheme: dark; /* native input/select/time/scrollbar ikut gelap */
 }
 html.ruan-dark body {
@@ -75,6 +76,9 @@ html.ruan-dark .bg-slate-100 {
   background: #151f31;
   color: #cbd5e1;
 }
+html.ruan-dark .bg-slate-200 { /* blok skeleton loading */
+  background: #1e293b;
+}
 html.ruan-dark .bg-slate-300 { /* sakelar OFF di MapFilterControl */
   background: #334155;
 }
@@ -110,7 +114,6 @@ html.ruan-dark .text-slate-400 {
 /* Border & outline form */
 html.ruan-dark .border-slate-200,
 html.ruan-dark .border-slate-300,
-html.ruan-dark .border-2.slate-200,
 html.ruan-dark .border-slate-400 {
   border-color: #293548;
 }
@@ -168,6 +171,24 @@ body {
   background: #f8fafc;
   color: #0f172a;
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+}
+
+/* Skip link keyboard — muncul hanya saat fokus (a11y navigasi keyboard) */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 0.5rem;
+  z-index: 9999;
+  padding: 0.75rem 1rem;
+  border-radius: 0 0 0.75rem 0.75rem;
+  background: #0f766e;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.875rem;
+  transition: top 0.15s ease;
+}
+.skip-link:focus {
+  top: 0;
 }
 
 /* Leaflet */

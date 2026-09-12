@@ -17,10 +17,14 @@ const LocationPicker = dynamicImport(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-64 items-center justify-center rounded-xl border-2 border-slate-200 bg-slate-100">
-        <p className="animate-pulse text-sm font-semibold text-slate-500">
-          Memuat peta…
-        </p>
+      <div
+        className="h-64 rounded-xl border-2 border-slate-200 bg-slate-100"
+        role="status"
+        aria-label="Memuat peta lokasi"
+      >
+        <div className="flex h-full items-center justify-center">
+          <div className="h-12 w-12 animate-pulse rounded-xl bg-slate-200" />
+        </div>
       </div>
     ),
   }

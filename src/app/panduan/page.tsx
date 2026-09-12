@@ -5,6 +5,7 @@ import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import type { GuideData } from "@/lib/types";
 import Link from "next/link";
+import { SkeletonList } from "@/components/Skeleton";
 
 const CATEGORY_META: Record<string, { label: string; icon: string }> = {
   banjir: { label: "Banjir", icon: "🌊" },
@@ -41,9 +42,17 @@ export default function PanduanPage() {
 
       <div className="mt-4 grid gap-3">
         {guides === null && (
-          <p role="status" className="text-sm font-semibold text-slate-500">
-            Memuat panduan…
-          </p>
+          <SkeletonList label="Memuat panduan" count={5} item="h-20" />
+        )}
+        {guides?.length === 0 && (
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center">
+            <p className="text-3xl" aria-hidden="true">
+              📖
+            </p>
+            <p className="mt-2 text-sm font-semibold text-slate-700">
+              Belum ada panduan tersimpan. Silakan kembali lagi nanti.
+            </p>
+          </div>
         )}
         {guides?.map((g) => {
           const meta = CATEGORY_META[g.category] ?? CATEGORY_META.umum;

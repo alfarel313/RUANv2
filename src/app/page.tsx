@@ -14,10 +14,18 @@ import LoginGate from "@/components/LoginGate";
 const LiveMap = dynamicImport(() => import("@/components/LiveMap"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-[70dvh] items-center justify-center bg-slate-100">
-      <p className="animate-pulse text-sm font-semibold text-slate-500">
-        Memuat peta…
-      </p>
+    <div
+      className="h-[70dvh] bg-slate-100"
+      role="status"
+      aria-label="Memuat peta"
+    >
+      <div className="flex h-full items-center justify-center">
+        <div className="w-full max-w-md space-y-3 px-6">
+          <div className="mx-auto h-16 w-16 animate-pulse rounded-2xl bg-slate-200" />
+          <div className="h-3 w-3/4 animate-pulse rounded-full bg-slate-200" />
+          <div className="h-3 w-1/2 animate-pulse rounded-full bg-slate-200" />
+        </div>
+      </div>
     </div>
   ),
 });

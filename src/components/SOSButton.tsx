@@ -15,6 +15,7 @@ import type {
 } from "@/lib/types";
 import { haversineM, isOpenNow, walkMinutes, formatDistance } from "@/lib/geo";
 import InfoDot from "@/components/InfoDot";
+import Modal from "@/components/Modal";
 
 const TYPES: { value: EmergencyType; label: string; icon: string }[] = [
   { value: "medis", label: "Medis", icon: "🏥" },
@@ -187,13 +188,8 @@ export default function SOSButton() {
       </button>
 
       {open && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Pusat bantuan darurat"
-          className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/60 p-4 sm:items-center"
-        >
-          <div className="w-full max-w-md rounded-3xl bg-white p-5 shadow-2xl">
+        <Modal label="Pusat bantuan darurat" onClose={close}>
+          <div className="w-full max-w-md">
             {!help ? (
               <>
                 <h2 className="text-xl font-extrabold text-sos">
@@ -305,7 +301,7 @@ export default function SOSButton() {
               </>
             )}
           </div>
-        </div>
+        </Modal>
       )}
     </>
   );

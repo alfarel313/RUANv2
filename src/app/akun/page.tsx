@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { db, loginGoogle, logout } from "@/lib/firebase";
 import type { UserSettings } from "@/lib/types";
 import ProfileEditor from "@/components/ProfileEditor";
+import { SkeletonList } from "@/components/Skeleton";
 
 function Toggle({
   label,
@@ -79,9 +80,9 @@ export default function AkunPage() {
       </h1>
 
       {loading && (
-        <p role="status" className="mt-4 text-sm font-semibold text-slate-500">
-          Memuat…
-        </p>
+        <div className="mt-4">
+          <SkeletonList label="Memuat pengaturan akun" count={1} item="h-14" />
+        </div>
       )}
 
       {!user && !loading && (
