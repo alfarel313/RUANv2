@@ -6,7 +6,7 @@ import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { db } from "@/lib/firebase";
 import type { ReportData, ReportType } from "@/lib/types";
-import { reportPhotos } from "@/lib/types";
+import { reportPhotos, sourceDomain } from "@/lib/types";
 import { INCIDENT_RULES } from "@/lib/routing";
 import { useMapFilters } from "@/components/MapFiltersContext";
 import InfoDot from "@/components/InfoDot";
@@ -110,6 +110,19 @@ export default function ReportLayer({ now }: { now: number }) {
             <span style={{ color: "#b45309", fontWeight: 700 }}>
               ⚠️ Terverifikasi admin — hindari area ini
             </span>
+            {sourceDomain(r) && (
+              <>
+                <br />
+                <a
+                  href={r.sourceURL ?? undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#0f766e", fontWeight: 700, fontSize: 12 }}
+                >
+                  📰 Sumber: {sourceDomain(r)}
+                </a>
+              </>
+            )}
             {reportPhotos(r).length > 0 && (
               <div
                 style={{

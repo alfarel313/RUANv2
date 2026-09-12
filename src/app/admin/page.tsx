@@ -5,6 +5,7 @@ import { collection, onSnapshot, query, updateDoc, doc } from "firebase/firestor
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import type { ReportData } from "@/lib/types";
+import { validateSourceURL } from "@/lib/types";
 import ReportCard from "@/components/ReportCard";
 import PlaceAdminSection from "@/components/PlaceAdminSection";
 import Link from "next/link";
@@ -12,6 +13,12 @@ import Link from "next/link";
 export default function AdminPage() {
   const { user, userData, loading } = useAuth();
   const [reports, setReports] = useState<ReportData[]>([]);
+
+  // Modal verifikasi 2-langkah: link berita opsional → simpan sourceURL + status
+  const [verifyId, setVerifyId] = useState<string | null>(null);
+  const [sourceURL, setSourceURL] = useState("");
+  const [linkError, setLinkError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const isAdmin = userData?.role === "admin";
 
@@ -64,6 +71,12 @@ export default function AdminPage() {
   const pending = reports.filter((r) => r.status === "pending");
   const reviewed = reports.filter((r) => r.status !== "pending");
 
+  const openVerify = (id: string) => {
+    setVerifyId(id);
+    setSourceURL("");
+    setLinkError(null);
+  };
+
   const review = async (id: string, status: "verified" | "rejected") => {
     try {
       await updateDoc(doc(db, "reports", id), {
@@ -76,6 +89,34 @@ export default function AdminPage() {
       console.error("Gagal memverifikasi laporan:", err);
     }
   };
+
+  const confirmVerify = async () => {
+    if (!verifyId) return;
+    const err = validateSourceURL(sourceURL);
+    if (err) {
+      setLinkError(err);
+      return;
+    }
+    setBusy(true);
+    try {
+      await updateDoc(doc(db, "reports", verifyId), {
+        status: "verified",
+        verifiedBy: user.uid,
+        verifiedAt: Date.now(),
+        sourceURL: sourceURL.trim() ? sourceURL.trim() : null,
+      });
+      setVerifyId(null);
+    } catch (err) {
+      console.error("Gagal memverifikasi laporan:", err);
+      setLinkError("Gagal menyimpan — periksa koneksi lalu coba lagi.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const verifyingReport = pending.find(
+    (r) => (r as ReportData & { id: string }).id === verifyId
+  );
 
   return (
     <main className="mx-auto max-w-lg px-4 py-6">
@@ -102,7 +143,7 @@ export default function AdminPage() {
               <ReportCard report={r} showStatus />
               <div className="mt-2 flex gap-2">
                 <button
-                  onClick={() => review((r as ReportData & { id: string }).id, "verified")}
+                  onClick={() => openVerify((r as ReportData & { id: string }).id)}
                   className="min-h-[48px] flex-1 rounded-xl bg-brand text-sm font-bold text-white hover:bg-brand-dark"
                 >
                   ✅ Verifikasi
@@ -131,6 +172,68 @@ export default function AdminPage() {
       </section>
 
       <PlaceAdminSection />
+
+      {/* Modal verifikasi 2-langkah — link berita opsional */}
+      {verifyId && verifyingReport && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Verifikasi laporan"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4"
+        >
+          <div className="w-full max-w-md rounded-3xl bg-white p-5 shadow-2xl">
+            <h2 className="text-lg font-extrabold text-slate-900">
+              ✅ Verifikasi Laporan
+            </h2>
+            <p className="mt-1 truncate text-sm font-semibold text-slate-600">
+              {verifyingReport.title}
+            </p>
+            <label
+              htmlFor="source-url"
+              className="mt-4 block text-xs font-bold text-slate-700"
+            >
+              Link berita pendukung (opsional)
+            </label>
+            <input
+              id="source-url"
+              type="url"
+              value={sourceURL}
+              onChange={(e) => {
+                setSourceURL(e.target.value);
+                setLinkError(null);
+              }}
+              maxLength={300}
+              placeholder="https://www.detik.com/…"
+              className="mt-1 min-h-[48px] w-full rounded-xl border-2 border-slate-200 px-3 text-sm font-semibold text-slate-800 focus:border-brand focus:outline-none"
+            />
+            <p className="mt-1 text-[11px] font-semibold text-slate-500">
+              Warga akan melihat sumber sebagai &quot;📰 nama-domain&quot; yang
+              bisa diklik. Wajib https:// bila diisi.
+            </p>
+            {linkError && (
+              <p role="alert" className="mt-1 text-sm font-bold text-sos">
+                ⚠️ {linkError}
+              </p>
+            )}
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={confirmVerify}
+                disabled={busy}
+                className="min-h-[48px] flex-1 rounded-xl bg-brand text-sm font-bold text-white hover:bg-brand-dark disabled:opacity-60"
+              >
+                {busy ? "Menyimpan…" : "✅ Verifikasi"}
+              </button>
+              <button
+                onClick={() => setVerifyId(null)}
+                disabled={busy}
+                className="min-h-[48px] flex-1 rounded-xl border-2 border-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-100 disabled:opacity-60"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

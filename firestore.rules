@@ -86,9 +86,14 @@ service cloud.firestore {
                 && request.resource.data.photos.size() >= 0)
           )
         );
-      allow update: if isAdmin()
-        || (resource.data.reporterUid == request.auth.uid
-            && request.resource.data.status == resource.data.status);
+      allow update: if (
+          isAdmin()
+          || (resource.data.reporterUid == request.auth.uid
+              && request.resource.data.status == resource.data.status)
+        )
+        && (request.resource.data.sourceURL == null
+            || (request.resource.data.sourceURL is string
+                && request.resource.data.sourceURL.size() <= 300));
       allow delete: if isAdmin();
     }
 

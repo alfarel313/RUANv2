@@ -277,6 +277,7 @@ const REPORTS = [
     lat: -6.2498020, lng: 106.9983120, status: "verified",
     reporterName: "Warga Bekasi Timur", city: "Bekasi",
     ageHours: 5,
+    sourceURL: "https://news.detik.com/berita/d-8630504/resmob-polda-metro-tangkap-begal-sadis-yang-bacok-korban-di-bekasi",
   },
   {
     type: "kejahatan",
@@ -485,6 +486,7 @@ async function seed() {
     const { ageHours, ...rest } = r;
     batch.set(reportsCol.doc(), {
       ...rest,
+      sourceURL: rest.sourceURL ?? null,
       photos: [],
       photoURL: null,
       reporterUid: "seed",

@@ -65,6 +65,8 @@ export interface ReportData {
   photos: string[] | null
   /** LEGACY (pra-multi-foto): dipertahankan agar dokumen lama tetap terbaca */
   photoURL: string | null
+  /** LEGACY (pra-sourceURL): dokumen lama tak punya field ini — selalu baca via helper */
+  sourceURL?: string | null
   status: ReportStatus
   reporterUid: string
   reporterName: string
@@ -79,6 +81,34 @@ export function reportPhotos(r: Pick<ReportData, "photos" | "photoURL">): string
   if (r.photos && r.photos.length > 0) return r.photos
   if (r.photoURL) return [r.photoURL]
   return []
+}
+
+/** Ekstrak domain dari sourceURL untuk tampilan warga ("📰 detik.com").
+ *  Murni client-side — tanpa fetch, aman CORS. Return null bila URL tak sehat. */
+export function sourceDomain(r: Pick<ReportData, "sourceURL">): string | null {
+  const url = r.sourceURL
+  if (!url || !/^https:\/\//i.test(url)) return null
+  try {
+    const host = new URL(url).hostname
+    return host ? host.replace(/^www\./i, "") : null
+  } catch {
+    return null
+  }
+}
+
+/** Validasi input link berita admin: wajib https://, maks 300 karakter */
+export function validateSourceURL(url: string): string | null {
+  const u = url.trim()
+  if (u.length === 0) return null // opsional
+  if (u.length > 300) return "Link maksimal 300 karakter."
+  if (!/^https:\/\//i.test(u)) return "Link harus diawali https://"
+  try {
+    const parsed = new URL(u)
+    if (!parsed.hostname.includes(".")) return "Domain tidak valid."
+  } catch {
+    return "Link tidak valid."
+  }
+  return null
 }
 
 export interface PlaceData {
