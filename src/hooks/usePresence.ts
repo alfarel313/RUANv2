@@ -16,13 +16,14 @@ import {
   clusterPresences,
   clustersToBeacons,
   haversineM,
-  BEACON_DISSOLVE_BELOW,
   BEACON_DISSOLVE_MS,
   PRESENCE_TTL_MS,
 } from "@/lib/geo";
 
 const HEARTBEAT_MS = 10_000;
 const BEACON_SWEEP_MS = 5_000;
+/** sweep oleh klien pasif (tidak check-in) — cukup sering untuk dissolve 2 mnt */
+const PASSIVE_SWEEP_MS = 30_000;
 
 export interface UsePresenceResult {
   active: boolean
@@ -92,7 +93,10 @@ export function usePresence(): UsePresenceResult {
     }
   }, [user]);
 
-  // sweep: cluster presence → sinkron dokumen beacons
+  // sweep: cluster presence → sinkron dokumen beacons.
+  // DIJALANKAN OLEH SEMUA KLIEN LOGIN (maintenance kolektif, last-writer-win) —
+  // bukan hanya yang check-in — supaya dissolve tetap diproses walaupun semua
+  // user sudah berhenti check-in (dulu: beacon menggantung selamanya).
   const sweep = useCallback(async () => {
     if (!user) return;
     try {
@@ -113,12 +117,12 @@ export function usePresence(): UsePresenceResult {
         setActiveCount(mine ? mine.count : 1);
       }
 
-      // upsert beacon valid
+      // upsert beacon valid — lowSince: null membersihkan countdown lama
       const validIds = new Set<string>();
       for (const c of valid) {
         const id = beaconIdFor(c.lat, c.lng);
         validIds.add(id);
-        const lowSince = lowSinceRef.current.get(id) ?? null;
+        lowSinceRef.current.delete(id);
         await setDoc(
           doc(db, "beacons", id),
           {
@@ -127,27 +131,20 @@ export function usePresence(): UsePresenceResult {
             count: c.count,
             city: "Bekasi",
             updatedAt: now,
-            ...(lowSince ? { lowSince } : {}),
+            lowSince: null,
           },
           { merge: true }
         );
       }
 
-      // dissolve: dokumen beacon yang klaster-nya tak lagi valid
+      // dissolve: beacon yang klaster-nya tak lagi valid = 0 ORANG EFEKTIF
+      // (JANGAN pakai count dokumen — itu stale saat semua anggota pergi,
+      // membuat beacon tak pernah mati). Window BEACON_DISSOLVE_MS lalu hapus.
       const beaconSnap = await getDocs(collection(db, "beacons"));
-      beaconSnap.forEach(async (d) => {
+      for (const d of beaconSnap.docs) {
         const id = d.id;
-        if (validIds.has(id)) {
-          lowSinceRef.current.delete(id);
-          return;
-        }
+        if (validIds.has(id)) continue; // masih hidup — sudah di-upsert di atas
         const b = d.data() as BeaconData & { lowSince?: number | null };
-        // beacon tak punya klaster valid lagi: mulai hitungan dissolve bila 0 orang tersisa
-        const countNow = b.count ?? 0;
-        if (countNow > BEACON_DISSOLVE_BELOW) {
-          lowSinceRef.current.delete(id);
-          return;
-        }
         const since = lowSinceRef.current.get(id) ?? b.lowSince ?? now;
         lowSinceRef.current.set(id, since);
         if (now - since >= BEACON_DISSOLVE_MS) {
@@ -156,11 +153,11 @@ export function usePresence(): UsePresenceResult {
         } else {
           await setDoc(
             doc(db, "beacons", id),
-            { lowSince: since, count: countNow },
+            { lowSince: since, count: 0 }, // 0 = jujur: tak ada orang lagi
             { merge: true }
           );
         }
-      });
+      }
     } catch {
       /* sweep best-effort; error kecil tak perlu ganggu UI */
     }
@@ -193,6 +190,16 @@ export function usePresence(): UsePresenceResult {
       unsubBeaconRef.current = null;
     };
   }, [user]);
+
+  // maintenance kolektif: SEMUA klien login ikut menyapu beacon (dissolve tak
+  // bergantung pada yang check-in). Interval lebih jarang untuk klien pasif.
+  useEffect(() => {
+    if (!user) return;
+    const t = setInterval(() => {
+      if (!activeRef.current) sweep();
+    }, PASSIVE_SWEEP_MS);
+    return () => clearInterval(t);
+  }, [user, sweep]);
 
   // start/stop
   const start = useCallback(async () => {

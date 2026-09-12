@@ -20,13 +20,15 @@ function dissolveLeftText(lowSince: number | null | undefined): string | null {
 }
 
 function beaconIcon(count: number): L.DivIcon {
+  // count ≤ 0 = dissolving (0 orang, menunggu window 2 mnt): tampil pudar tanpa pulse
+  const dissolving = count <= 0;
   return L.divIcon({
     className: "",
     html: `
       <div style="position:relative;width:44px;height:44px;">
-        <div class="beacon-pulse" style="position:absolute;inset:0;border-radius:9999px;background:#14b8a6;"></div>
-        <div style="position:absolute;inset:4px;border-radius:9999px;background:#0f766e;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,.3);border:2px solid #fff;">
-          ${count}
+        <div class="beacon-pulse" style="position:absolute;inset:0;border-radius:9999px;background:${dissolving ? "#94a3b8" : "#14b8a6"};${dissolving ? "opacity:.45;" : ""}"></div>
+        <div style="position:absolute;inset:4px;border-radius:9999px;background:${dissolving ? "#64748b" : "#0f766e"};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,.3);border:2px solid #fff;${dissolving ? "opacity:.75;" : ""}">
+          ${dissolving ? "—" : count}
         </div>
       </div>`,
     iconSize: [44, 44],
@@ -71,22 +73,25 @@ export default function BeaconLayer({
     <>
       {beacons.map((b) => {
         const left = dissolveLeftText(b.lowSince);
+        const dissolving = b.count <= 0; // 0 orang — menunggu window dissolve habis
         return (
           <Marker
             key={b.id}
             position={[b.lat, b.lng]}
-            icon={beaconIcon(b.count)}
-            title={`Keramaian ${b.count} orang aktif`}
-            aria-label={`Keramaian ${b.count} orang aktif`}
+            icon={beaconIcon(Math.max(b.count, 0))}
+            title={dissolving ? "Keramaian sudah bubar — beacon segera hilang" : `Keramaian ${b.count} orang aktif`}
+            aria-label={dissolving ? "Keramaian sudah bubar — beacon segera hilang" : `Keramaian ${b.count} orang aktif`}
           >
             <Popup>
               <strong style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-                <Users aria-hidden="true" width={14} height={14} /> {b.count} orang aktif
+                <Users aria-hidden="true" width={14} height={14} />{" "}
+                {dissolving ? "Keramaian sudah bubar" : `${b.count} orang aktif`}
               </strong>{" "}
               <InfoDot text="Crowd beacon: keramaian warga yang sedang check-in di radius ±15 m. Terbentuk otomatis dari check-in warga (mode demo: 1 orang cukup). Jika semua orang berhenti check-in, beacon hilang setelah 2 menit." />
               <br />
-              Keramaian terkonfirmasi warga (crowd beacon). Area ramai
-              cenderung lebih aman.
+              {dissolving
+                ? "Tidak ada orang yang check-in lagi di area ini."
+                : "Keramaian terkonfirmasi warga (crowd beacon). Area ramai cenderung lebih aman."}
               <br />
               {left ? (
                 <span
