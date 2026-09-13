@@ -6,6 +6,16 @@
 RUAN membantu warga bergerak aman: melihat keramaian (crowd beacon) secara live, menghindari titik bahaya terverifikasi, dan mendapat **Rute Aman** — rute motor tercepat yang otomatis menghindari titik begal/banjir/jalan rusak — semuanya dalam satu app, tanpa keluar ke Google Maps.
 
 ---
+**RUAN DIBUAT OLEH :**
+
+**Universitas Gunadarma**
+
+- Subkhan Ravi Ramadhan
+- Muhammad Alfarel
+- Ridwan Dwi Saputro
+- Ramadhan Dwi Saputra
+- 
+---
 
 ## Fitur Utama
 
