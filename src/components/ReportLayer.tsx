@@ -102,7 +102,7 @@ export default function ReportLayer({ now }: { now: number }) {
             {LABELS[r.type]} · {ageText(r.createdAt, now)}
             <br />
             <span style={{ color: "#b45309", fontWeight: 700 }}>
-              Terverifikasi admin — hindari area ini
+              Terverifikasi admin 
             </span>
             {sourceDomain(r) && (
               <>

@@ -73,15 +73,22 @@ export default function LiveMap() {
   const pushedDown = route != null;
 
   return (
-    <MapShell>
-      {filters.showBeacons && <BeaconLayer beacons={beacons} />}
-      <PlaceLayer />
-      <ReportLayer now={now} />
-      <RouteLayer />
-      <UserLocationLayer follow={follow} onFollow={setFollow} />
+    <div className="relative h-full w-full">
+      <MapShell>
+        {filters.showBeacons && <BeaconLayer beacons={beacons} />}
+        <PlaceLayer />
+        <ReportLayer now={now} />
+        <RouteLayer />
+        <UserLocationLayer follow={follow} onFollow={setFollow} />
+        <FocusLocationButton follow={follow} onFollow={setFollow} />
+      </MapShell>
+      {/* Kontrol overlay WAJIB DI LUAR MapContainer: Leaflet memasang
+          touch-action:none pada .leaflet-container (drag peta mobile) dan
+          leluhur none memblokir scroll sentuh SEMUA descendant — dropdown
+          filter jadi tak bisa di-scroll di mobile. Di luar container juga
+          membuat panel (z-500) menang atas popup pane Leaflet (z-700). */}
       <MapFilterControl />
-      <FocusLocationButton follow={follow} onFollow={setFollow} />
       <RouteCard pushedDown={pushedDown} />
-    </MapShell>
+    </div>
   );
 }
