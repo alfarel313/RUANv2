@@ -1,5 +1,5 @@
 // Akses koleksi reports — SATU sumber untuk semua konsumen (peta rute, SOS).
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import type { ReportData } from "@/lib/types";
 
@@ -10,7 +10,9 @@ import type { ReportData } from "@/lib/types";
  */
 export async function fetchAllReports(): Promise<ReportData[]> {
   try {
-    const snap = await getDocs(collection(db, "reports"));
+    const snap = await getDocs(
+      query(collection(db, "reports"), where("status", "==", "verified"))
+    );
     const list: ReportData[] = [];
     snap.forEach((d) => list.push(d.data() as ReportData));
     return list;
