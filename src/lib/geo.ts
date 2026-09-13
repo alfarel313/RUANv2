@@ -115,9 +115,9 @@ export function isOpenNow(open: string, close: string, now: Date): boolean {
   return nowMin >= o || nowMin < c // lintas tengah malam (mis. 18:00–02:00)
 }
 
-/** Jarak tempuh jalan kaki (estimasi): 80 m/menit, dibulatkan ke 1 desimal */
-export function walkMinutes(distanceM: number): number {
-  return Math.round((distanceM / 80) * 10) / 10
+/** Jarak tempuh motor (estimasi): 400 m/menit (24 km/jam), dibulatkan ke 1 desimal */
+export function motoMinutes(distanceM: number): number {
+  return Math.round((distanceM / 400) * 10) / 10
 }
 
 export function formatDistance(m: number): string {

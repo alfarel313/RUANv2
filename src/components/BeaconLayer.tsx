@@ -72,6 +72,16 @@ export default function BeaconLayer({
   return (
     <>
       {beacons.map((b) => {
+        // guard: dokumen beacon rusak (tanpa lat/lng — hasil race tulis-merge lawan
+        // hapus antar klien) TIDAK boleh sampai ke Leaflet — Invalid LatLng mematikan seluruh peta
+        if (
+          typeof b.lat !== "number" ||
+          typeof b.lng !== "number" ||
+          Number.isNaN(b.lat) ||
+          Number.isNaN(b.lng)
+        ) {
+          return null;
+        }
         const left = dissolveLeftText(b.lowSince);
         const dissolving = b.count <= 0; // 0 orang — menunggu window dissolve habis
         return (

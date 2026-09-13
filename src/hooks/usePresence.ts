@@ -140,6 +140,10 @@ export function usePresence(): UsePresenceResult {
       // dissolve: beacon yang klaster-nya tak lagi valid = 0 ORANG EFEKTIF
       // (JANGAN pakai count dokumen — itu stale saat semua anggota pergi,
       // membuat beacon tak pernah mati). Window BEACON_DISSOLVE_MS lalu hapus.
+      // ANTI-ZOMBIE: baca ulang dokumen SEBELUM menulis merge — bila klien lain
+      // baru saja menghapusnya, setDoc(merge) akan MEMBUAT DOKUMEN BARU yang
+      // hanya berisi {lowSince, count:0} TANPA lat/lng → dokumen zombie
+      // → BeaconLayer crash "Invalid LatLng (undefined, undefined)".
       const beaconSnap = await getDocs(collection(db, "beacons"));
       for (const d of beaconSnap.docs) {
         const id = d.id;
@@ -153,9 +157,23 @@ export function usePresence(): UsePresenceResult {
         } else {
           await setDoc(
             doc(db, "beacons", id),
-            { lowSince: since, count: 0 }, // 0 = jujur: tak ada orang lagi
+            {
+              ...(b.lat != null && b.lng != null ? { lat: b.lat, lng: b.lng } : {}),
+              lowSince: since,
+              count: 0, // 0 = jujur: tak ada orang lagi
+              updatedAt: d.data().updatedAt ?? now,
+            },
             { merge: true }
           );
+        }
+      }
+      // bersihkan dokumen beacon RUSAK (tanpa lat/lng — hasil race merge-ke-yang-
+      // terhapus) supaya tidak pernah sampai merender "Invalid LatLng"
+      for (const d of beaconSnap.docs) {
+        const b = d.data() as Partial<BeaconData>;
+        if (b.lat == null || b.lng == null || typeof b.lat !== "number" || typeof b.lng !== "number") {
+          await deleteDoc(doc(db, "beacons", d.id));
+          lowSinceRef.current.delete(d.id);
         }
       }
     } catch {

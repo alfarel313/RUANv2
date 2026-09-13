@@ -37,7 +37,9 @@ function mkReport(
   };
 }
 
-// Geometri: rute A (cepat, 1000m) lewat titik begal; rute B (lambat, 1200m) bersih
+// Geometri: rute A (cepat, 4 km) lewat titik begal; rute B (lambat, 4.8 km) bersih.
+// Durasi = jarak / 400 m/mnt (motor, KONFIRMASI USER): A = 600s, B = 720s.
+// Skor A dengan 1 kejahatan = 600 + 180 = 780 > 720 → B menang (margin 60s, bukan seri).
 const A: RouteCandidate = {
   coords: [
     [-6.2300, 106.9700],
@@ -45,8 +47,8 @@ const A: RouteCandidate = {
     [-6.2336, 106.9820],
     [-6.2350, 106.9860],
   ],
-  distanceM: 1000,
-  durationS: 750,
+  distanceM: 4000,
+  durationS: 600,
   source: "osrm",
 };
 const B: RouteCandidate = {
@@ -56,8 +58,8 @@ const B: RouteCandidate = {
     [-6.2320, 106.9800],
     [-6.2350, 106.9860],
   ],
-  distanceM: 1200,
-  durationS: 900,
+  distanceM: 4800,
+  durationS: 720,
   source: "osrm",
 };
 
@@ -77,7 +79,7 @@ console.log("1) Titik begal 20 m dari rute A → terdeteksi sebagai insiden");
 const begalFresh = mkReport(-6.2318, 106.97605, "kejahatan", 5); // ~5 m dari jalur A
 const incA = routeIncidents(A.coords, [begalFresh], now);
 check("insiden rute A = 1", incA.length === 1);
-check("penalti kejahatan = 15 menit", incA[0]?.penaltyMin === 15);
+check("penalti kejahatan = 3 menit (motor, ÷5)", incA[0]?.penaltyMin === 3);
 
 console.log("2) Titik 500 m dari rute → BUKAN insiden");
 const far = mkReport(-6.2700, 106.9900, "kejahatan", 5);
@@ -90,7 +92,7 @@ const banjirOld = mkReport(-6.2318, 106.97605, "banjir", 24 * 3); // 3 hari > 2 
 check("banjir 3 hari → 0", routeIncidents(A.coords, [banjirOld], now).length === 0);
 const banjirFresh = mkReport(-6.2318, 106.97605, "banjir", 24); // 1 hari ≤ 2 hari
 const incBanjir = routeIncidents(A.coords, [banjirFresh], now);
-check("banjir 1 hari → 1, penalti 20", incBanjir.length === 1 && incBanjir[0].penaltyMin === 20);
+check("banjir 1 hari → 1, penalti 4", incBanjir.length === 1 && incBanjir[0].penaltyMin === 4);
 
 console.log("4) Pending / kota lain → diabaikan");
 const pending = mkReport(-6.2318, 106.97605, "kejahatan", 5, "pending");
@@ -101,7 +103,7 @@ const res = pickSafeRoute([A, B], [begalFresh], now);
 check("chosen = B (lebih aman)", res?.chosen === B);
 check("fastest = A", res?.fastest === A);
 check("avoided = 1", res?.avoidedIncidents.length === 1);
-check("extraMinutes = 3 (750→900s)", res?.extraMinutes === 3);
+check("extraMinutes = 2 (600→720s)", res?.extraMinutes === 2);
 console.log(`   reason: ${res?.reasonText}`);
 
 console.log("6) Tanpa insiden → rute tercepat menang");
@@ -124,7 +126,7 @@ const nearBuffer = mkReport(-6.2318 + 0.00054, 106.9760, "kejahatan", 5);
 const inc60 = routeIncidents(A.coords, [nearBuffer], now);
 check("insiden 60 m → terdeteksi (dalam buffer 75 m)", inc60.length === 1);
 const res60 = pickSafeRoute([A, B], [nearBuffer], now);
-check("rute A kena penalti 15 mnt → B menang", res60?.chosen === B);
+check("rute A kena penalti kejahatan 3 mnt → B menang", res60?.chosen === B);
 console.log(`   reason: ${res60?.reasonText}`);
 
 console.log("10) BUFFER: insiden 100 m dari jalur TIDAK terdeteksi");
@@ -135,9 +137,9 @@ const res100 = pickSafeRoute([A, B], [outsideBuffer], now);
 check("tanpa penalti → rute tercepat A menang", res100?.chosen === A);
 
 console.log("11) Sisi buffer: insiden dekat rute B juga menghukum B");
-const nearB = mkReport(-6.2280, 106.9760, "banjir", 12); // ~40 m dari jalur B (banjir 20 mnt)
+const nearB = mkReport(-6.2280, 106.9760, "banjir", 12); // ~40 m dari jalur B (banjir 4 mnt)
 const resB = pickSafeRoute([A, B], [nearB], now);
-check("B kena penalti banjir 20 mnt → A (bersih) menang", resB?.chosen === A);
+check("B kena penalti banjir 4 mnt → A (bersih) menang", resB?.chosen === A);
 console.log(`   reason: ${resB?.reasonText}`);
 
 console.log(`\n${fail === 0 ? "SEMUA LULUS" : "ADA GAGAL"}: ${pass} pass, ${fail} fail`);

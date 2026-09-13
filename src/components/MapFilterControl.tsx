@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
-  Check,
   ChevronDown,
   ChevronUp,
   Compass,
@@ -204,31 +203,22 @@ export default function MapFilterControl() {
               onChange={toggleBeacons}
             />
           </div>
-          <div className="mt-1 grid grid-cols-2 gap-1.5">
-            <button
-              type="button"
-              onClick={allPlacesHidden ? allPlacesOn : allPlacesOff}
-              className={`flex min-h-[44px] items-center justify-center gap-1 rounded-xl text-xs font-extrabold ${
-                allPlacesHidden
-                  ? "bg-brand/10 text-brand hover:bg-brand/20"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-              }`}
-            >
-              {allPlacesHidden ? (
-                <Eye aria-hidden="true" className="h-3.5 w-3.5" />
-              ) : (
-                <EyeOff aria-hidden="true" className="h-3.5 w-3.5" />
-              )}
-              {allPlacesHidden ? "Tampilkan Semua" : "Sembunyikan Semua"}
-            </button>
-            <button
-              type="button"
-              onClick={allPlacesOn}
-              className="flex min-h-[44px] items-center justify-center gap-1 rounded-xl bg-brand/10 text-xs font-extrabold text-brand hover:bg-brand/20"
-            >
-              <Check aria-hidden="true" className="h-3.5 w-3.5" /> Semua Tampil
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={allPlacesHidden ? allPlacesOn : allPlacesOff}
+            className={`flex min-h-[44px] w-full items-center justify-center gap-1 rounded-xl text-xs font-extrabold ${
+              allPlacesHidden
+                ? "bg-brand/10 text-brand hover:bg-brand/20"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+            }`}
+          >
+            {allPlacesHidden ? (
+              <Eye aria-hidden="true" className="h-3.5 w-3.5" />
+            ) : (
+              <EyeOff aria-hidden="true" className="h-3.5 w-3.5" />
+            )}
+            {allPlacesHidden ? "Tampilkan Semua" : "Sembunyikan Semua"}
+          </button>
         </DropdownShell>
 
         <DropdownShell
@@ -261,31 +251,22 @@ export default function MapFilterControl() {
               onChange={toggleRouteIncidents}
             />
           </div>
-          <div className="mt-1 grid grid-cols-2 gap-1.5">
-            <button
-              type="button"
-              onClick={allReportsHidden ? allReportsOn : allReportsOff}
-              className={`flex min-h-[44px] items-center justify-center gap-1 rounded-xl text-xs font-extrabold ${
-                allReportsHidden
-                  ? "bg-amber/10 text-amber hover:bg-amber/20"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-              }`}
-            >
-              {allReportsHidden ? (
-                <Eye aria-hidden="true" className="h-3.5 w-3.5" />
-              ) : (
-                <EyeOff aria-hidden="true" className="h-3.5 w-3.5" />
-              )}
-              {allReportsHidden ? "Tampilkan Semua" : "Sembunyikan Semua"}
-            </button>
-            <button
-              type="button"
-              onClick={allReportsOn}
-              className="flex min-h-[44px] items-center justify-center gap-1 rounded-xl bg-amber/10 text-xs font-extrabold text-amber hover:bg-amber/20"
-            >
-              <Check aria-hidden="true" className="h-3.5 w-3.5" /> Semua Tampil
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={allReportsHidden ? allReportsOn : allReportsOff}
+            className={`mt-1 flex min-h-[44px] w-full items-center justify-center gap-1 rounded-xl text-xs font-extrabold ${
+              allReportsHidden
+                ? "bg-amber/10 text-amber hover:bg-amber/20"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+            }`}
+          >
+            {allReportsHidden ? (
+              <Eye aria-hidden="true" className="h-3.5 w-3.5" />
+            ) : (
+              <EyeOff aria-hidden="true" className="h-3.5 w-3.5" />
+            )}
+            {allReportsHidden ? "Tampilkan Semua" : "Sembunyikan Semua"}
+          </button>
         </DropdownShell>
       </div>
     </div>

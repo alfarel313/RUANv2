@@ -38,7 +38,7 @@ function RouteCard({ pushedDown }: { pushedDown: boolean }) {
       <p className="mt-0.5 text-lg font-extrabold leading-tight text-slate-900!">
         {formatDistance(result.chosen.distanceM)}
         <span className="ml-2 text-sm font-semibold text-slate-600!">
-          ± {Math.max(1, Math.round(result.chosen.durationS / 60))} menit jalan kaki
+          ± {Math.max(1, Math.round(result.chosen.durationS / 60))} menit motor
         </span>
       </p>
       <p className="mt-1 text-sm font-medium text-slate-700!">{result.reasonText}</p>

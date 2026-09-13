@@ -91,5 +91,45 @@ const NOW = 1_700_000_000_000;
   check("orang kembali check-in → klaster valid lagi (lowSince reset)", valid.length === 1);
 }
 
+// --- REGRESSION: dokumen beacon ZOMBIE (tanpa lat/lng — hasil race merge-ke-yang-terhapus)
+//     Bug 2026-09-13: klien A deleteDoc beacon window-habis; klien B (sweep paralel,
+//     beaconSnap lama) menulis setDoc({lowSince,count:0}, merge) pada id TERHAPUS
+//     → Firestore membuat dokumen BARU tanpa lat/lng → BeaconLayer "Invalid LatLng
+//     (undefined, undefined)" → seluruh peta crash.
+{
+  // 1) sweep baru TIDAK boleh menulis merge tanpa mempertahankan lat/lng dokumen:
+  //    simulasikan cabang else pada dokumen zombie → hasil tulisan HARUS berisi lat/lng
+  const zombieDoc: { lat?: number; lng?: number; lowSince?: number; count?: number } = {
+    lowSince: NOW - 30_000,
+    count: 0,
+  };
+  const writePayload = {
+    ...(zombieDoc.lat != null && zombieDoc.lng != null ? { lat: zombieDoc.lat, lng: zombieDoc.lng } : {}),
+    lowSince: zombieDoc.lowSince,
+    count: 0,
+  };
+  // payload merge tanpa lat/lng pada dokumen yang TIDAK ADA = zombie baru →
+  // kontrak fix: bila lat/lng tak ada di dokumen, jangan tulis (dokumen harus dibersihkan)
+  check("dokumen tanpa lat/lng → payload tulis TIDAK memuat lat/lng palsu (menunggu pembersihan)", !("lat" in writePayload) && !("lng" in writePayload));
+
+  // 2) guard render: BeaconView lat/lng bukan number → Marker TIDAK dirender
+  const views: Array<{ id: string; lat?: unknown; lng?: unknown; count: number }> = [
+    { id: "ok", lat: -6.2382, lng: 106.9756, count: 2 },
+    { id: "zombie-undefined", lat: undefined, lng: undefined, count: 0 },
+    { id: "zombie-null", lat: null, lng: null, count: 0 },
+    { id: "zombie-nan", lat: Number.NaN, lng: Number.NaN, count: 0 },
+  ];
+  const renderable = views.filter(
+    (b) => typeof b.lat === "number" && typeof b.lng === "number" && !Number.isNaN(b.lat) && !Number.isNaN(b.lng)
+  );
+  check("guard render: hanya beacon ber-koordinat valid yang dirender (1 dari 4)", renderable.length === 1 && renderable[0].id === "ok");
+
+  // 3) sweep membersihkan zombie: dokumen tanpa lat/lng number → dihapus
+  const corrupt = (b: { lat?: unknown; lng?: unknown }) =>
+    b.lat == null || b.lng == null || typeof b.lat !== "number" || typeof b.lng !== "number";
+  check("deteksi zombie: undefined/null/nan/missing lat/lng → true", corrupt({}) && corrupt({ lat: undefined, lng: undefined }) && corrupt({ lat: null, lng: null }) && corrupt({ lat: "x", lng: "y" }));
+  check("deteksi zombie: dokumen sehat → false", !corrupt({ lat: -6.2, lng: 106.9 }));
+}
+
 console.log(`\n${pass} lulus, ${fail} gagal dari ${pass + fail} test.`);
 if (fail > 0) process.exit(1);

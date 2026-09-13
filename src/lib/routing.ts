@@ -1,8 +1,11 @@
 // Rute Aman engine — murni & teruji tanpa Firebase/DOM (pola src/lib/geo.ts)
-// Kontrak (docs/SPEC-live-nav.md, parameter KONFIRMASI USER):
+// Kontrak (docs/SPEC-live-nav.md):
 // insiden dihitung bila berada dalam BUFFER 75 m di sekitar geometri rute
 // (bukan hanya tepat di jalur) — kejadian terdekat ikut menimbulkan penalti;
 // penalti per tipe × window umur; skor = durasi + 60×penalti → pilih minimal.
+// MODE MOTOR (KONFIRMASI USER 2026-09-13): kecepatan 400 m/mnt (24 km/jam),
+// penalti diskala ÷5 dari kalibrasi jalan kaki — perbandingan detour-vs-penalti
+// dalam meter TIDAK berubah (pilihan rute identik dengan kalibrasi lama).
 
 import type { ReportData, ReportType } from "@/lib/types";
 import { haversineM } from "@/lib/geo";
@@ -13,19 +16,20 @@ export interface LatLng {
 }
 
 export const INCIDENT_RADIUS_M = 75; // buffer 75 m di sekitar rute — kejadian terdekat ikut dihukum (KONFIRMASI USER)
-export const WALK_M_PER_MIN = 80;
+export const MOTO_M_PER_MIN = 400; // 24 km/jam rata-rata motor di kota (KONFIRMASI USER)
 
-/** Penalti (menit) & window umur laporan per tipe — KONFIRMASI USER */
+/** Penalti (menit motor) & window umur laporan per tipe — KONFIRMASI USER
+ *  (skala ÷5 dari kalibrasi jalan kaki; window umur tetap, tidak berubah) */
 export const INCIDENT_RULES: Record<
   ReportType,
   { penaltyMin: number; windowMs: number }
 > = {
-  kejahatan: { penaltyMin: 15, windowMs: 7 * 24 * 3600 * 1000 },
-  banjir: { penaltyMin: 20, windowMs: 2 * 24 * 3600 * 1000 },
-  kebakaran: { penaltyMin: 5, windowMs: 7 * 24 * 3600 * 1000 },
-  jalan_rusak: { penaltyMin: 2, windowMs: 7 * 24 * 3600 * 1000 },
-  kehilangan: { penaltyMin: 2, windowMs: 7 * 24 * 3600 * 1000 },
-  lainnya: { penaltyMin: 5, windowMs: 7 * 24 * 3600 * 1000 },
+  kejahatan: { penaltyMin: 3, windowMs: 7 * 24 * 3600 * 1000 },
+  banjir: { penaltyMin: 4, windowMs: 2 * 24 * 3600 * 1000 },
+  kebakaran: { penaltyMin: 1, windowMs: 7 * 24 * 3600 * 1000 },
+  jalan_rusak: { penaltyMin: 0.4, windowMs: 7 * 24 * 3600 * 1000 },
+  kehilangan: { penaltyMin: 0.4, windowMs: 7 * 24 * 3600 * 1000 },
+  lainnya: { penaltyMin: 1, windowMs: 7 * 24 * 3600 * 1000 },
 };
 
 export const REPORT_LABELS: Record<ReportType, string> = {
@@ -37,7 +41,7 @@ export const REPORT_LABELS: Record<ReportType, string> = {
   lainnya: "lainnya",
 };
 
-const OSRM_BASE = "https://router.project-osrm.org/route/v1/foot";
+const OSRM_BASE = "https://router.project-osrm.org/route/v1/driving"; // profil kendaraan — motor (KONFIRMASI USER)
 const OSRM_TIMEOUT_MS = 5000;
 
 export type RouteSource = "osrm" | "straight";
@@ -45,7 +49,7 @@ export type RouteSource = "osrm" | "straight";
 export interface RouteCandidate {
   coords: [number, number][]; // [lat, lng]
   distanceM: number;
-  durationS: number; // estimasi jalan kaki konsisten (80 m/menit), bukan durasi kendaraan OSRM
+  durationS: number; // estimasi motor konsisten (400 m/mnt), bukan durasi mentah OSRM
   source: RouteSource;
 }
 
@@ -63,8 +67,8 @@ export interface SafeRouteResult {
   reasonText: string;
 }
 
-function walkSeconds(distanceM: number): number {
-  return (distanceM / WALK_M_PER_MIN) * 60;
+function motoSeconds(distanceM: number): number {
+  return (distanceM / MOTO_M_PER_MIN) * 60;
 }
 
 /** Jarak titik→segmen (proyeksi equirectangular lokal — akurat untuk skala kota) */
@@ -246,7 +250,7 @@ function straightCandidate(origin: LatLng, dest: LatLng): RouteCandidate {
       [dest.lat, dest.lng],
     ],
     distanceM,
-    durationS: walkSeconds(distanceM),
+    durationS: motoSeconds(distanceM),
     source: "straight",
   };
 }
@@ -277,7 +281,7 @@ export async function fetchRoutes(
         return {
           coords,
           distanceM: r.distance,
-          durationS: walkSeconds(r.distance),
+          durationS: motoSeconds(r.distance),
           source: "osrm" as const,
         };
       })

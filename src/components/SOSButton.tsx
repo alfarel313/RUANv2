@@ -13,7 +13,7 @@ import type {
   NearestHelp,
   PlaceData,
 } from "@/lib/types";
-import { haversineM, isOpenNow, walkMinutes, formatDistance } from "@/lib/geo";
+import { haversineM, isOpenNow, motoMinutes, formatDistance } from "@/lib/geo";
 import InfoDot from "@/components/InfoDot";
 import Modal from "@/components/Modal";
 import {
@@ -268,7 +268,7 @@ export default function SOSButton() {
                   <p className="mt-2 text-2xl font-extrabold text-slate-900">
                     {formatDistance(help.distanceM)}
                     <span className="ml-2 text-sm font-semibold text-slate-600">
-                      ± {walkMinutes(help.distanceM)} menit jalan kaki
+                      ± {motoMinutes(help.distanceM)} menit motor
                     </span>
                   </p>
                 </div>
@@ -284,7 +284,7 @@ export default function SOSButton() {
                 )}
                 {myPos && (
                   <a
-                    href={`https://www.google.com/maps/dir/?api=1&origin=${myPos.lat},${myPos.lng}&destination=${help.lat},${help.lng}&travelmode=walking`}
+                    href={`https://www.google.com/maps/dir/?api=1&origin=${myPos.lat},${myPos.lng}&destination=${help.lat},${help.lng}&travelmode=two-wheeler`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-2 flex min-h-[48px] items-center justify-center gap-2 rounded-xl border-2 border-slate-200 py-3 text-center text-xs font-bold text-slate-600 hover:bg-slate-50"

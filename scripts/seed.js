@@ -264,10 +264,12 @@ const REPORTS = [
   },
   // ─── Laporan begal demo (verified, umur < 7 hari) — TITIK MENEMPEL DI JALAN ASLI
   //     Koordinat diambil dari geometri rute OSRM Metro→Transmart (rute tercepat,
-  //     koridor Agus Salim–Juanda), sengaja TIDAK menyentuh rute alternatif selatan
-  //     (Pekayon) supaya algoritma Rute Aman benar-benar menghindarinya saat demo:
-  //     jalur Metro→Transmart, rute alternatif +1.3 km (≈+16 mnt) vs penalti begal
-  //     15 mnt → skor alternatif menang → polyline membelok selatan + marker merah.
+  //     koridor Agus Salim–Juanda; diverifikasi identik utk profil foot & driving),
+  //     sengaja TIDAK menyentuh rute alternatif selatan (Pekayon) supaya algoritma
+  //     Rute Aman benar-benar menghindarinya saat demo:
+  //     jalur Metro→Transmart: 4.8 km/12 mnt motor vs alternatif 6.1 km/15 mnt (+3 mnt)
+  //     vs penalti 2 begal × 3 mnt (+6 mnt) → skor alternatif menang → polyline
+  //     membelok selatan + marker merah.
   //     CATATAN: window kejahatan 7 hari — JALANKAN ULANG `npm run seed` sebelum hari demo.
   {
     type: "kejahatan",
