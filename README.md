@@ -1,15 +1,13 @@
 # RUAN — Rute Aman Bekasi
 
 > Platform keselamatan perkotaan berbasis komunikasi untuk Kota Bekasi.
-> Lomba **Exasti** — tema SDG 11 *Public Safe Space*, subtema akses real-time & inklusivitas (disabilitas, lansia, anak-anak).
+> Lomba **Exasti** — tema SDG 11 *Public Safe Space*, subtema akses real-time & inklusivitas (disabilitas, lansia, anak-anak) dengan vibe coding.
 
 RUAN membantu warga bergerak aman: melihat keramaian (crowd beacon) secara live, menghindari titik bahaya terverifikasi, dan mendapat **Rute Aman** — rute motor tercepat yang otomatis menghindari titik begal/banjir/jalan rusak — semuanya dalam satu app, tanpa keluar ke Google Maps.
 
 ---
-**RUAN DIBUAT OLEH :**
 
 **Universitas Gunadarma**
-
 - Subkhan Ravi Ramadhan
 - Muhammad Alfarel
 - Ridwan Dwi Saputro
