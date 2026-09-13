@@ -14,7 +14,7 @@ RUAN membantu warga bergerak aman: melihat keramaian (crowd beacon) secara live,
 - Muhammad Alfarel
 - Ridwan Dwi Saputro
 - Ramadhan Dwi Saputra
-- 
+  
 ---
 
 ## Fitur Utama
