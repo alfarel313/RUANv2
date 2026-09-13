@@ -9,7 +9,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { PLACE_CATEGORIES, PLACE_ICONS, PLACE_LABELS, PLACE_COLORS, type PlaceDraft } from "@/lib/places";
-import type { PlaceData } from "@/lib/types";
+import type { PlaceData, PlaceType } from "@/lib/types";
 import PlaceForm from "@/components/PlaceForm";
 import { SkeletonList } from "@/components/Skeleton";
 import { MapPin, Pencil, Plus, Trash2 } from "lucide-react";
@@ -62,10 +62,16 @@ function DeleteConfirm({
 }
 
 /**
- * Section /admin: kelola titik lokasi aman — tambah, edit (koordinat/jam/nama),
+ * Section admin: kelola titik lokasi aman — tambah, edit (koordinat/jam/nama),
  * hapus dengan konfirmasi. Daftar live via onSnapshot (pola laporan/`/bahaya`).
+ * `filter` opsional (PlaceType | "semua"): batasi daftar per kategori
+ * (dipakai halaman /admin/tempat; default "semua").
  */
-export default function PlaceAdminSection() {
+export default function PlaceAdminSection({
+  filter = "semua",
+}: {
+  filter?: PlaceType | "semua";
+}) {
   const [places, setPlaces] = useState<PlaceWithId[] | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<PlaceWithId | null>(null);
@@ -137,11 +143,16 @@ export default function PlaceAdminSection() {
       }
     : undefined;
 
+  // daftar sesuai filter kategori (default semua) — murni tampilan
+  const visiblePlaces =
+    filter === "semua" ? places : (places ?? []).filter((p) => p.type === filter);
+
   return (
     <section aria-label="Kelola tempat aman" className="mt-8">
       <h2 className="flex items-center gap-2 text-base font-extrabold text-slate-700">
         <MapPin aria-hidden="true" className="h-5 w-5" /> Kelola Tempat Aman
-        ({places?.length ?? "…"})
+        ({visiblePlaces?.length ?? "…"}
+        {filter !== "semua" ? ` dari ${places?.length ?? "…"}` : ""})
       </h2>
       <p className="mt-1 text-xs font-semibold text-slate-500">
         Tambah, perbaiki koordinat, atau hapus titik lokasi aman. Perubahan
@@ -185,12 +196,14 @@ export default function PlaceAdminSection() {
         {places === null && (
           <SkeletonList label="Memuat daftar tempat" count={4} item="h-20" />
         )}
-        {places !== null && places.length === 0 && (
+        {places !== null && (visiblePlaces ?? []).length === 0 && (
           <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-600">
-            Belum ada tempat — tambahkan titik lokasi aman pertama.
+            {filter === "semua"
+              ? "Belum ada tempat — tambahkan titik lokasi aman pertama."
+              : "Tidak ada tempat dalam kategori ini."}
           </p>
         )}
-        {places?.map((p) => (
+        {visiblePlaces?.map((p) => (
           <div
             key={p.id}
             className="rounded-xl border-2 border-slate-200 bg-white p-3 shadow-sm"
